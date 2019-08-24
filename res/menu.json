@@ -1,0 +1,781 @@
+{
+  "backend": [
+    {
+      "code": "B01",
+      "title": "组织",
+      "path": null,
+      "context": null,
+      "weight": 1,
+      "belong_path_list": [],
+      "permission_code_list": [
+        "B01000000",
+        "B01010000",
+        "B01020000",
+        "B01030000"
+      ],
+      "style_name_list": [],
+      "flags": [],
+      "sub_menu_list": [
+        {
+          "code": "B0101",
+          "title": "用户管理",
+          "path": "/backoffice/user/list/",
+          "context": null,
+          "weight": 11,
+          "belong_path_list": [
+            "/backoffice/user/add/",
+            "/backoffice/user/edit/",
+            "/backoffice/user/permission/"
+          ],
+          "permission_code_list": [
+            "B01010000"
+          ],
+          "style_name_list": [
+            "manager_list_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0102",
+          "title": "角色管理",
+          "path": "/backoffice/role/list/",
+          "context": null,
+          "weight": 12,
+          "belong_path_list": [
+            "/backoffice/role/add/",
+            "/backoffice/role/edit/(R)/",
+            "/backoffice/role/perm_assign/(R)/"
+          ],
+          "permission_code_list": [
+            "B01020000"
+          ],
+          "style_name_list": [
+            "role_list_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0103",
+          "title": "会员管理",
+          "path": "/backoffice/member/list/",
+          "context": null,
+          "weight": 13,
+          "belong_path_list": [
+            "/backoffice/member/add/",
+            "/backoffice/member/edit/",
+            "/backoffice/member/detail/"
+          ],
+          "permission_code_list": [
+            "B01030000"
+          ],
+          "style_name_list": [
+            "user_list_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0104",
+          "title": "来源管理",
+          "path": "/backoffice/game_member_source/list/",
+          "context": null,
+          "weight": 14,
+          "belong_path_list": [
+            "/backoffice/game_member_source/add/",
+            "/backoffice/game_member_source/edit/(R)/",
+            "/backoffice/game_member_source/delete/(R)/",
+            "/backoffice/game_member_source/status/change/",
+            "/backoffice/game_member_source/qr/download/(R)/"
+          ],
+          "permission_code_list": [
+            "B01040000"
+          ],
+          "style_name_list": [
+            "member_source_i"
+          ],
+          "flags": []
+        }
+      ]
+    },
+    {
+      "code": "B02",
+      "title": "问卷管理",
+      "context": null,
+      "weight": 2,
+      "disabled": true,
+      "belong_path_list": [],
+      "permission_code_list": [
+        "B02000000"
+      ],
+      "style_name_list": [],
+      "flags": [],
+      "sub_menu_list": [
+        {
+          "code": "B0101",
+          "title": "问卷列表",
+          "path": "/backoffice/questionnaire/list/",
+          "context": null,
+          "weight": 11,
+          "belong_path_list": [
+            "/backoffice/questionnaire/add/"
+          ],
+          "permission_code_list": [
+            "B02010000"
+          ],
+          "style_name_list": [
+            "questionnaire_list_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B102",
+          "title": "活动列表",
+          "path": "/backoffice/activity/list/",
+          "context": null,
+          "weight": 12,
+          "belong_path_list": [
+            "/backoffice/activity/add/",
+            "/backoffice/activity/edit/",
+            "/backoffice/activity/push/list/",
+            "/backoffice/activity/push/detail/",
+            "/backoffice/activity/push/add/",
+            "/backoffice/activity/push/edit/"
+          ],
+          "permission_code_list": [
+            "B02020000"
+          ],
+          "style_name_list": [
+            "activity_list_i"
+          ],
+          "flags": []
+        }
+      ]
+    },
+    {
+      "code": "B03",
+      "title": "车型管理",
+      "path": null,
+      "context": null,
+      "weight": 3,
+      "disabled": true,
+      "belong_path_list": [],
+      "permission_code_list": [
+        "B03000000"
+      ],
+      "style_name_list": [],
+      "flags": [],
+      "sub_menu_list": [
+        {
+          "code": "B0301",
+          "title": "车型发布",
+          "path": "/backoffice/vehicle/list/",
+          "context": null,
+          "weight": 31,
+          "belong_path_list": [
+            "/backoffice/vehicle/add/",
+            "/backoffice/vehicle/edit/(R)/"
+          ],
+          "permission_code_list": [
+            "B03020000"
+          ],
+          "style_name_list": [
+            "vehicle_list_i"
+          ],
+          "flags": []
+        }
+      ]
+    },
+    {
+      "code": "B04",
+      "title": "积分管理",
+      "path": null,
+      "context": null,
+      "weight": 4,
+      "disabled": true,
+      "belong_path_list": [],
+      "permission_code_list": [
+        "B04000000",
+        "B04010000",
+        "B04020000",
+        "B04030000",
+        "B04040000"
+      ],
+      "style_name_list": [],
+      "flags": [],
+      "sub_menu_list": [
+        {
+          "code": "B0401",
+          "title": "积分查询",
+          "path": "/backoffice/integral/list/",
+          "context": null,
+          "weight": 41,
+          "belong_path_list": [
+            "/backoffice/integral/detail/",
+            "/backoffice/integral/edit/"
+          ],
+          "permission_code_list": [
+            "B04010000"
+          ],
+          "style_name_list": [
+            "integral_query_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0402",
+          "title": "积分奖励设置",
+          "path": "/backoffice/integral/reward/",
+          "context": null,
+          "weight": 42,
+          "belong_path_list": [],
+          "permission_code_list": [
+            "B04020000"
+          ],
+          "style_name_list": [
+            "integral_setting_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0403",
+          "title": "兑换商城",
+          "path": "/backoffice/present/list/",
+          "context": null,
+          "weight": 42,
+          "belong_path_list": [
+            "/backoffice/present/add/",
+            "/backoffice/present/edit/"
+          ],
+          "permission_code_list": [
+            "B04030000"
+          ],
+          "style_name_list": [
+            "exchange_mall_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0404",
+          "title": "订单列表",
+          "path": "/backoffice/order/list/",
+          "context": null,
+          "weight": 42,
+          "belong_path_list": [
+            "/backoffice/order/delivery/"
+          ],
+          "permission_code_list": [
+            "B04040000"
+          ],
+          "style_name_list": [
+            "order_list_i"
+          ],
+          "flags": []
+        }
+      ]
+    },
+    {
+      "code": "B05",
+      "title": "小程序",
+      "path": null,
+      "context": null,
+      "weight": 5,
+      "belong_path_list": [],
+      "permission_code_list": [],
+      "style_name_list": [],
+      "flags": [],
+      "sub_menu_list": [
+        {
+          "code": "B0501",
+          "title": "题库管理",
+          "path": null,
+          "context": null,
+          "weight": 51,
+          "belong_path_list": [],
+          "permission_code_list": [],
+          "style_name_list": [
+            "subject_list_i"
+          ],
+          "flags": [],
+          "sub_menu_list": [
+            {
+              "code": "B050101",
+              "title": "难度管理",
+              "disabled": true,
+              "path": "/backoffice/subject/difficulty/list/",
+              "context": null,
+              "weight": 511,
+              "belong_path_list": [
+                "/backoffice/subject/difficulty/add/",
+                "/backoffice/subject/difficulty/edit/(R)/"
+              ],
+              "permission_code_list": [
+                "B05010100"
+              ],
+              "style_name_list": [
+                "subject_difficulty_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B050102",
+              "title": "类别管理",
+              "disabled": true,
+              "path": "/backoffice/subject/category/list/",
+              "context": null,
+              "weight": 512,
+              "belong_path_list": [
+                "/backoffice/subject/category/add/",
+                "/backoffice/subject/category/edit/(R)/"
+              ],
+              "permission_code_list": [
+                "B05010200"
+              ],
+              "style_name_list": [
+                "subject_category_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B050103",
+              "title": "维度管理",
+              "path": "/backoffice/subject/dimension/list/",
+              "context": null,
+              "weight": 513,
+              "belong_path_list": [
+                "/backoffice/subject/dimension/add/",
+                "/backoffice/subject/dimension/edit/(R)/",
+                "/backoffice/subject/sub/dimensions/list/(R)/",
+                "/backoffice/subject/sub/dimensions/add/(R)/",
+                "/backoffice/subject/sub/dimensions/edit/(R)/"
+              ],
+              "permission_code_list": [
+                "B05010300"
+              ],
+              "style_name_list": [
+                "subject_dimension_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B050104",
+              "title": "题目管理",
+              "path": "/backoffice/subject/list/",
+              "context": null,
+              "weight": 514,
+              "belong_path_list": [
+                "/backoffice/subject/add/",
+                "/backoffice/subject/edit/(R)/",
+                "/backoffice/subject/detail/(R)/"
+              ],
+              "permission_code_list": [
+                "B05010400"
+              ],
+              "style_name_list": [
+                "subject_list_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B050105",
+              "title": "抽题管理",
+              "path": "/backoffice/subject/choice/rule/list/",
+              "context": null,
+              "weight": 515,
+              "belong_path_list": [
+                "/backoffice/subject/choice/rule/add/",
+                "/backoffice/subject/choice/rule/edit/(R)/",
+                "/backoffice/subject/choice/rule/setting/(R)/"
+              ],
+              "permission_code_list": [
+                "B05010500"
+              ],
+              "style_name_list": [
+                "subject_choice_i"
+              ],
+              "flags": []
+            }
+          ]
+        },
+        {
+          "code": "B0502",
+          "title": "游戏管理",
+          "path": null,
+          "context": null,
+          "weight": 52,
+          "belong_path_list": [],
+          "permission_code_list": [],
+          "style_name_list": [
+            "subject_list_i"
+          ],
+          "flags": [],
+          "sub_menu_list": [
+            {
+              "code": "B050201",
+              "title": "段位管理",
+              "path": "/backoffice/dan_grade/list/",
+              "context": null,
+              "weight": 521,
+              "belong_path_list": [
+                "/backoffice/dan_grade/add/",
+                "/backoffice/dan_grade/edit/(R)/"
+              ],
+              "permission_code_list": [
+                "B05020100"
+              ],
+              "style_name_list": [
+                "subject_dan_grade_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B050203",
+              "title": "钻石管理",
+              "path": "/backoffice/diamond/list/",
+              "context": null,
+              "weight": 523,
+              "belong_path_list": [
+                "/backoffice/diamond/award/",
+                "/backoffice/diamond/consume/",
+                "/backoffice/diamond/detail/",
+                "/backoffice/diamond/edit/"
+              ],
+              "permission_code_list": [
+                "B05020300"
+              ],
+              "style_name_list": [
+                "diamond_manage_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B050204",
+              "title": "金库设置",
+              "path": "/backoffice/bank/view/",
+              "context": null,
+              "weight": 524,
+              "belong_path_list": [
+                "/backoffice/bank/edit/"
+              ],
+              "permission_code_list": [
+                "B05020400"
+              ],
+              "style_name_list": [
+                "bank_manage_i"
+              ],
+              "flags": []
+            }
+          ]
+        },
+        {
+          "code": "B0503",
+          "title": "竞赛管理",
+          "path": "/backoffice/race/list/",
+          "context": null,
+          "weight": 53,
+          "belong_path_list": [
+            "/backoffice/race/add/",
+            "/backoffice/race/edit/"
+          ],
+          "permission_code_list": [
+            "B06000000"
+          ],
+          "style_name_list": [
+          ],
+          "flags": [
+            "race"
+          ],
+          "sub_menu_list": [
+            {
+              "code": "B050301",
+              "title": "题目管理",
+              "path": "/backoffice/race/subject/list/",
+              "context": null,
+              "weight": 531,
+              "belong_path_list": [
+                "/backoffice/race/subject/list/",
+                "/backoffice/race/subject/refer/list/",
+                "/backoffice/race/subject/refer/add/(R)/",
+                "/backoffice/race/subject/edit/(R)/",
+                "/backoffice/race/subject/detail/(R)/"
+              ],
+              "permission_code_list": [
+                "B06010000"
+              ],
+              "style_name_list": [
+                "race_subject_i"
+              ],
+              "flags": [
+                "config"
+              ]
+            },
+            {
+              "code": "B050303",
+              "title": "抽题规则维护",
+              "path": "/backoffice/race/subject/choice/rule/list/",
+              "context": null,
+              "weight": 532,
+              "belong_path_list": [
+                "/backoffice/race/subject/choice/rule/list/",
+                "/backoffice/race/subject/choice/rule/add/",
+                "/backoffice/race/subject/choice/rule/edit/(R)/",
+                "/backoffice/race/subject/choice/rule/setting/(R)/"
+              ],
+              "permission_code_list": [
+                "B06030000"
+              ],
+              "style_name_list": [
+                "race_choice_rule_i"
+              ],
+              "flags": [
+                "config"
+              ]
+            },
+            {
+              "code": "B050302",
+              "title": "关卡管理",
+              "path": "/backoffice/race/game_checkpoint/list/",
+              "context": null,
+              "weight": 533,
+              "belong_path_list": [
+                "/backoffice/race/game_checkpoint/list/",
+                "/backoffice/race/game_checkpoint/add/",
+                "/backoffice/race/game_checkpoint/edit/(R)/"
+              ],
+              "permission_code_list": [
+                "B06020000"
+              ],
+              "style_name_list": [
+                "race_checkpoint_i"
+              ],
+              "flags": [
+                "config"
+              ]
+            },
+            {
+              "code": "B050304",
+              "title": "红包规则",
+              "path": "/backoffice/race/redpkt_rule/list/",
+              "context": null,
+              "weight": 534,
+              "belong_path_list": [
+                "/backoffice/race/redpkt_rule/list/",
+                "/backoffice/race/redpkt_rule/add/",
+                "/backoffice/race/redpkt_rule/edit/(R)/",
+                "/backoffice/race/lottery/draw/setting/",
+                "/backoffice/race/redpkt_rule/direct/",
+                "/backoffice/race/redpkt_rule/see/result/"
+              ],
+              "permission_code_list": [
+                "B06040000"
+              ],
+              "style_name_list": [
+                "race_checkpoint_i"
+              ],
+              "flags": [
+                "config"
+              ]
+            },
+            {
+              "code": "B050305",
+              "title": "单位管理",
+              "path": "/backoffice/race/unit/manager/list/",
+              "context": null,
+              "weight": 534,
+              "belong_path_list": [
+                "/backoffice/race/unit/manager/list/",
+                "/backoffice/race/unit/manager/add/",
+                "/backoffice/race/unit/manager/edit/(R)/"
+              ],
+              "permission_code_list": [
+                "B06050000"
+              ],
+              "style_name_list": [
+                "race_checkpoint_i"
+              ],
+              "flags": [
+                "config"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "B80",
+      "title": "报表",
+      "path": null,
+      "context": null,
+      "weight": 80,
+      "belong_path_list": [],
+      "permission_code_list": [],
+      "style_name_list": [],
+      "flags": [],
+      "sub_menu_list": [
+        {
+          "code": "B8001",
+          "title": "总结报表",
+          "path": null,
+          "context": null,
+          "weight": 8001,
+          "belong_path_list": [],
+          "permission_code_list": [],
+          "style_name_list": [
+            "subject_list_i"
+          ],
+          "flags": [],
+          "sub_menu_list": [
+            {
+              "code": "B800101",
+              "title": "学习状况",
+              "path": "/backoffice/reports/learning/situation/",
+              "context": null,
+              "weight": 800101,
+              "belong_path_list": [],
+              "permission_code_list": [
+                "B80101000"
+              ],
+              "style_name_list": [
+                "learning_status_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B800102",
+              "title": "学习效果",
+              "path": "/backoffice/reports/learning/tendency/",
+              "context": null,
+              "weight": 800102,
+              "belong_path_list": [],
+              "permission_code_list": [
+                "B80102000"
+              ],
+              "style_name_list": [
+                "learning_effect_i"
+              ],
+              "flags": []
+            }
+          ]
+        },
+        {
+          "code": "B8002",
+          "title": "题库报表",
+          "path": null,
+          "context": null,
+          "weight": 8002,
+          "belong_path_list": [],
+          "permission_code_list": [],
+          "style_name_list": [
+            "subject_list_i"
+          ],
+          "flags": [],
+          "sub_menu_list": [
+            {
+              "code": "B800201",
+              "title": "题库参数",
+              "path": "/backoffice/reports/subject/analysis/parameter/",
+              "context": null,
+              "weight": 800201,
+              "belong_path_list": [],
+              "permission_code_list": [
+                "B80202000"
+              ],
+              "style_name_list": [
+                "subject_parameters_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B800202",
+              "title": "题库透视图",
+              "path": "/backoffice/reports/subject/overall/",
+              "context": null,
+              "weight": 800202,
+              "belong_path_list": [],
+              "permission_code_list": [
+                "B80201000"
+              ],
+              "style_name_list": [
+                "subject_overall_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B800203",
+              "title": "题目分析",
+              "path": "/backoffice/reports/subject/analysis/list/",
+              "context": null,
+              "weight": 800203,
+              "belong_path_list": [],
+              "permission_code_list": [
+                "B80201000"
+              ],
+              "style_name_list": [
+                "subject_analysis_i"
+              ],
+              "flags": []
+            }
+          ]
+        },
+        {
+          "code": "B8003",
+          "title": "用户行为",
+          "path": null,
+          "context": null,
+          "weight": 8003,
+          "belong_path_list": [],
+          "permission_code_list": [],
+          "style_name_list": [
+            "subject_list_i"
+          ],
+          "flags": [],
+          "sub_menu_list": [
+            {
+              "code": "B800301",
+              "title": "学习行为",
+              "path": "/backoffice/reports/learn/operation/statistics/",
+              "context": null,
+              "weight": 800301,
+              "belong_path_list": [],
+              "permission_code_list": [
+                "B80301000"
+              ],
+              "style_name_list": [
+                "learning_behavior_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B800302",
+              "title": "导入行为",
+              "path": "/backoffice/reports/member/source/statistics/",
+              "context": null,
+              "weight": 800302,
+              "belong_path_list": [],
+              "permission_code_list": [
+                "B80301000"
+              ],
+              "style_name_list": [
+                "import_behavior_i"
+              ],
+              "flags": []
+            },
+            {
+              "code": "B800303",
+              "title": "分享行为",
+              "path": "/backoffice/reports/share/operation/statistics/",
+              "context": null,
+              "weight": 800303,
+              "belong_path_list": [],
+              "permission_code_list": [
+                "B80301000"
+              ],
+              "style_name_list": [
+                "share_behavior_i"
+              ],
+              "flags": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

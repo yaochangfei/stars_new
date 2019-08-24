@@ -1,0 +1,45 @@
+{
+  "button": [
+    {
+      "name": "我是车主",
+      "sub_button": [
+        {
+          "type": "click",
+          "name": "最新活动",
+          "key": "MID0101"
+        },
+        {
+          "type": "view",
+          "name": "历史活动",
+          "url": "https://gly.wenjuan.com/wechat/operation/auth/?op_type=1",
+          "key": "MID0102"
+        },
+        {
+          "type": "click",
+          "name": "签到",
+          "key": "MID0103"
+        },
+        {
+          "type": "view",
+          "name": "车主认证",
+          "url": "https://gly.wenjuan.com/wechat/auto_owner/auth/",
+          "key": "MID0104"
+        }
+      ]
+    },
+    {
+      "type": "miniprogram",
+      "name": "车友PK",
+      "url": "https://gly.wenjuan.com/wechat/gamepk/",
+      "key": "MID0201",
+      "appid": "wx7b626bf4694a0d25",
+      "pagepath": "pages/index/index"
+    },
+    {
+      "type": "view",
+      "name": "积分中心",
+      "url": "https://gly.wenjuan.com/wechat/operation/auth/?op_type=2",
+      "key": "MID0301"
+    }
+  ]
+}

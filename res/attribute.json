@@ -1,0 +1,138 @@
+{
+  "vehicle_category": [
+    {
+      "code": "VC_A0",
+      "title": "A0级",
+      "category": 1
+    },
+    {
+      "code": "VC_A1",
+      "title": "A1级",
+      "category": 1
+    },
+    {
+      "code": "VC_B",
+      "title": "B级",
+      "category": 1
+    },
+    {
+      "code": "VC_C",
+      "title": "C级",
+      "category": 1
+    },
+    {
+      "code": "VC_SUV",
+      "title": "SUV",
+      "category": 1
+    }
+  ],
+  "vehicle_brand": [
+    {
+      "code": "VB001",
+      "title": "全球鹰",
+      "category": 2
+    }
+  ],
+  "vehicle_series": [
+    {
+      "code": "VS001",
+      "title": "远景X1",
+      "category": 3,
+      "parent_code": "VB001"
+    }
+  ],
+  "vehicle_cfg": [
+    {
+      "code": "VCF001",
+      "title": "玩家版",
+      "category": 4,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCF002",
+      "title": "疯活版",
+      "category": 4,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCF003",
+      "title": "乐趣版",
+      "category": 4,
+      "parent_code": "VS001"
+    }
+  ],
+  "vehicle_colour": [
+    {
+      "code": "VCO001",
+      "title": "激情红",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO002",
+      "title": "天真蓝+黑",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO003",
+      "title": "清纯白",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO004",
+      "title": "浪漫金",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO005",
+      "title": "自由橙",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO006",
+      "title": "天真蓝",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO007",
+      "title": "激情红+黑",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO008",
+      "title": "机智黄",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO009",
+      "title": "清纯白+黑",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO010",
+      "title": "自由橙+黑",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO011",
+      "title": "机智黄+黑",
+      "category": 5,
+      "parent_code": "VS001"
+    },
+    {
+      "code": "VCO012",
+      "title": "浪漫金+黑",
+      "category": 5,
+      "parent_code": "VS001"
+    }
+  ]
+}
