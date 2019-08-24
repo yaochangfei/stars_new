@@ -1,6 +1,6 @@
 .idea/
 *.pyc
-local_settings.py
+#local_settings.py
 local_settings_new.py
 logs/
 *.orig
@@ -8,7 +8,7 @@ static/files/*
 venv/
 static/audios/*
 static/images/games/*
-requirements.txt
+#requirements.txt
 Pipfile.lock
 Pipfile
 static/js/echarts/map/json/mapdata/*
