@@ -1,0 +1,830 @@
+html {
+	font-size: 62.5%;
+}
+a,
+a:hover,
+a:focus{
+	color: #005996;
+}
+.top_bg{
+	width: 100%;
+	height: 100%;
+	background-image: url(../../images/default/login_xs.jpg);
+	background-size: cover;
+}
+.top_title{
+	width: 240px;
+	height: 100px;
+	color: #fff;
+	font-size: 16px;
+	line-height: 6;
+	text-align: center;
+	background-image: url(../../images/default/logo_png.png);
+	background-repeat: no-repeat;
+	background-position: top center;
+	background-size: 60%;
+	margin-left: -120px;
+	position: absolute;
+	top: 8%;
+	left: 50%
+}
+.big_logo img{
+	max-width: 30%;
+	padding: 1.5rem 0;
+}
+.welcom_big,
+.welcom_small{
+	text-align: center;
+	line-height: 1.2;
+}
+.welcom_big{
+	font-size: 18px;
+	margin-top: 3rem;
+	margin-bottom:2rem;
+}
+.welcom_small{
+	font-size: 12px;
+	margin-top: 1rem;
+}
+#login_form{
+	position: relative;
+	top: 21%;
+}
+.main_t{
+	width: 70%;
+	margin: 0 auto;
+	padding-bottom: 20px;
+	background: #fff;
+	border-radius: 5px;
+}
+.login_p{
+	margin-left: 10%;
+	font-size: 14px;
+	color: #005996;
+	line-height: 4;
+}
+.verTop{
+	margin-left: 10%;
+}
+.verTop,
+.login_in_wrap{
+	margin-bottom: 1.5rem;
+}
+.login_in_wrap input{
+	width: 80%;
+	margin-left: 10%;
+	text-indent: 5px;
+}
+.forgot_btn{
+	display: block;
+	color: #aaa;
+	cursor: pointer;
+}
+.loginbut:hover,
+.loginbut:focus{
+	color: #fff;
+}
+.loginbut{
+	display: block;
+	margin: 1.5rem auto;
+	background: #005996;
+	color: #fff;
+	text-align: center;
+	width: 80px;
+	height: 34px;
+	line-height: 34px;
+	border-radius: 5%;
+}
+.errorMessage{
+	margin-left: 10%;
+	color: red;
+	margin-bottom: 1.5rem;
+}
+.psw_title{
+	font-size: 14px;
+}
+.email_input{
+	width: 80%;
+	margin-left: 10%;
+	margin-top: 20px;
+	text-indent: 5px;
+}
+.send_psw{
+	width: 120px;
+	height: 38px;
+	line-height: 38px;
+	margin: 20px auto;
+	text-align: center;
+	cursor: pointer;
+	border-radius: 5px;
+	background: #005996;
+	color: #fff;
+}
+.change_psw{
+	margin-top: 25%;
+}
+.sent_ok,
+.kowned{
+	text-align: center;
+	font-size: 14px;
+	line-height: 3;
+}
+.kowned{
+	color:#005996;
+	cursor: pointer;
+}
+.show_con{
+	width: 300px;
+	margin: 50px auto;
+}
+.last_survey,
+.last_news,
+.last_discuss,
+.message,
+.car_knowledge{
+	width: 100%;
+	margin: 0 auto 40px;
+	border:1px solid #efefef;
+}
+.last_discuss{
+	margin: 30px auto 20px;
+}
+.last_reply{
+	height: 24px;
+	overflow: hidden;
+}
+.last_reply p img{
+	width: 24px;
+	height: 24px;
+}
+.p_title{
+	color: #005996;
+	font-size: 16px;
+	margin-left: 3%;
+	line-height: 3;
+}
+.survey_table{
+	width: 94%;
+	margin: 0 auto 20px;
+	border: 1px solid #efefef;
+}
+.survey_table td img{
+	border: 1px solid #ececec;
+	border-radius: 50%;
+}
+.survey_table thead{
+	background: #f6f6f6;
+}
+.survey_table td:first-child{
+	padding-left: 10px;
+}
+.survey_table tbody td:first-child{
+	max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+.survey_table td{
+	padding: 5px;
+}
+.survey_table tbody tr:hover{
+	background: #f0f8fe;
+}
+.more_survey, .more_discuss,.more_news,.more_msg,.more_knowledge{
+	margin: 12px 20px 12px 0;
+}
+.news_list{
+	margin-top: 5px;
+}
+.news_list span{
+	display: inline-block;
+}
+.all_news{
+	width: 94%;
+	margin: 0 auto 20px;
+}
+.list_content{
+	position: relative;
+	padding: 5px 0 0;
+}
+.left_list,
+.right_list{
+	display: inline-block;
+}
+.left_list{
+	position: absolute;
+	width: 8%;
+}
+.right_list{
+	width: 90%;
+	margin-left:35px;
+	overflow: hidden;
+}
+.list_user{
+	width: 24px;
+	height: 24px;
+	border-radius: 12px;
+}
+.zai,
+.user_zone,
+.list_time{
+	color: #aaa;
+}
+.user_action{
+	color: #616161;
+}
+.mem_name,
+.user_block{
+	color: #005996;
+}
+.list_time{
+	margin-left: 15px;
+}
+.waiting{
+	display: block;
+	margin: 20px auto;
+}
+.coder{
+	text-align: center;
+	color: #005996;
+	margin-bottom: 50px;
+}
+.msg_ul{
+	width: 94%;
+	margin: 0 auto;
+}
+.msg_list{
+	margin-top: 5px;
+	font-size: 14px;
+	line-height: 1.5;
+}
+.username{
+	display: inline-block;
+	vertical-align: top;
+	color: #005996;
+	margin-left: 10px;
+}
+.msg_div{
+	margin-top: 5px;
+}
+
+.msg_div:hover{
+	background: #f0f8fe;
+}
+
+.msg_div:hover .del_msg{
+	display: inline-block;
+}
+.msg_content{
+	display: inline-block;
+	color: #616161;
+	max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: top;
+}
+.msg_div .msg_reply{
+	float: right;
+	color: #005996;
+	cursor: pointer;
+}
+
+.del_msg{
+	display: none;
+	width: 15px;
+	height: 15px;
+	margin-left: 10px;
+	background-image: url(../../images/default/del.png);
+	background-repeat:no-repeat;
+	background-position: center;
+	cursor: pointer;
+	position: relative;
+	top: 2px;
+}
+
+.del_confirm {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+.msg_time{
+	color: #aaa;
+	margin-left: 39px;
+}
+.msg_input{
+	width: 94%;
+    height: 56px;
+    margin-left: 3%;
+    border: 1px solid #dadada;
+    border-radius: 4px;
+    text-indent: 5px;
+    margin-top: 10px;
+}
+.send_msg{
+	padding: 1px 12px;
+	background: #005996;
+	color: #fff;
+	border-radius: 4px;
+	margin-left: 10px;
+	cursor: pointer;
+}
+.labelBox{
+	cursor: pointer;
+}
+
+.labelBox_p{
+	text-align: center;
+    font-size: 20px;
+    color: #666;
+    vertical-align: middle;
+    line-height: 82px;
+    margin-bottom: 41px;
+}
+#saveCookie{
+	display: none;
+}
+span.label_checkbox {
+    background: transparent url(../../images/default/checkbox.png) no-repeat center top;
+    vertical-align: middle;
+    height: 16px;
+    width: 18px;
+    position: relative;
+    top: -2px;
+    margin-right: 5px;
+    display: inline-block;
+}
+.labelBox input[type=checkbox]:checked+span {
+    background-position: center bottom;
+}
+.find_div{
+	width: 80%;
+	margin: 0 auto;
+}
+.psw_ul{
+	list-style: none;
+    width: 100%;
+    display: block;
+    height: 35px;
+}
+#mobiletab {
+    border-right: 1px solid #CCCCCC;
+}
+.psw_ul li {
+    font-size: 14px;
+    float: left;
+    display: inline;
+    text-align: center;
+    width: 50%;
+    height: 100%;
+    line-height: 35px;
+    cursor: pointer;
+}
+.btndiv {
+    display: inline-block;
+    width: 100%;
+}
+.bymobile,
+.byemail{
+	width: 100%;
+}
+.mobilediv {
+    float: left;
+    position: relative;
+    width: 100%;
+}
+.emaildiv {
+    float: left;
+    width: 100%;
+}
+.mobiletexts,
+.emailtexts{
+    width: 100%;
+    height: 33px;
+    border: 1px #d9dbdb solid;
+    line-height: 33px;
+    background-color: #fff;
+    font-size: 12px;
+    border-radius: 4px;
+    text-indent: 10px;
+}
+.checkword {
+    position: relative;
+}
+.checkword input {
+    width: 50%;
+    height: 33px;
+    line-height: 33px;
+    text-indent: 10px;
+    border: 1px #d9dbdb solid;
+    background-color: #fff;
+    font-size: 12px;
+    border-radius: 4px;
+    margin-right: 0!important;
+}
+.mtop {
+    margin-top: 15px;
+}
+.mobilevcode {
+	float: right;
+    width: 95px;
+    height: 33px;
+    color: #fff;
+    line-height: 33px;
+    text-align: center;
+    background-color: #005996;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.WJButton_login {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background: #005996;
+    border-radius: 5px;
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.show_con a,
+.show_con a:hover,
+.show_con a:focus{
+	color: #005996!important;
+}
+
+
+/*新增新闻模块：*/
+.word_ellipsis{
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.information{
+	background: #FCFCFC;
+}
+.info{
+	width: 22%;
+	margin-right: 4%;
+	background-size: 100% 100%;
+}
+.info:first-child{
+	background: url("../../images/default/info1.jpg") no-repeat center ;
+}
+.info:nth-child(2){
+	background: url("../../images/default/info2.jpg") no-repeat center ;
+}
+.info:nth-child(3){
+	background: url("../../images/default/info3.jpg") no-repeat center ;
+}
+.info:last-child{
+	margin-right: 0;
+	background: url("../../images/default/info4.jpg") no-repeat center ;
+}
+.info h3{
+	color: #fff;
+	bottom: 10px;
+	overflow: hidden;
+}
+.info div{
+	width: 100%;
+	background: rgba(13,38,77,0.5);
+	bottom: 0;
+}
+.info_lg{
+	display: none;
+}
+.info_sm{
+	margin-left: 3%;
+}
+/*新增汽车知识模块：*/
+.car_pic{
+	display: none;
+}
+.car_pic img{
+	width: 100%;
+	height: 100%;
+}
+.knowledge_box{
+	width: 100%;
+}
+.knowledge_info{
+	margin: 0 auto 20px;
+	line-height: 1.8;
+}
+.knowledge_info h3{
+	font-size: 14px;
+	color: #484848;
+}
+.knowledge_info .knowledge_title{
+	margin: 0 10px 5px;
+}
+.knowledge_info .knowledge_con{
+	font-size: 12px;
+	color: #616161;
+	max-height: 62px;
+	overflow: hidden;
+}
+.knowledge_info .knowledge_con img{
+	width: 15px;
+	height: 15px;
+}
+.knowledge_box ul li a{
+	width: 60%;
+}
+.knowledge_box ul li span{
+	width: 30%;
+}
+.knowledge_box ul li a,.knowledge_box ul li span{
+	color: #aaaaaa!important;
+}
+.knowledge_box ul li:hover span{
+	color: #005996!important;
+}
+
+/*修改轮播图样式：*/
+.left_control,.right_control{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 32px;
+	height: 32px;
+	margin-left: -16px;
+	margin-top: -16px;
+}
+.left_control{
+	background: url("../../images/default/left.png") no-repeat center;
+}
+.right_control{
+	background: url("../../images/default/right.png") no-repeat center;
+}
+
+@media (min-width: 335px) {
+	.info_lg{
+		display: none;
+	}
+	.info_sm{
+		display: block;
+	}
+
+
+	.psw_ul li {
+		font-size: 16px;
+	}
+
+	.mobiletexts,
+	.emailtexts {
+		font-size: 14px;
+
+	}
+
+	.checkword input {
+		font-size: 14px;
+	}
+
+	.mobilevcode {
+		width: 120px;
+		font-size: 16px;
+	}
+
+	.WJButton_login {
+		font-size: 16px;
+	}
+	.car_pic{
+		display: none;
+	}
+	.knowledge_box{
+		width: 100%;
+	}
+	.knowledge_info h3{
+		font-size: 14px;
+	}
+}
+@media (min-width: 768px) {
+.info{
+	height: 9rem;
+}
+.info h3{
+	font-size: 1rem;
+	height: 24px;
+	padding-right: 8px;
+}
+.info div{
+	height: 42px;
+	padding: 0 8px;
+}
+.info_lg{
+	display: block;
+}
+.info_sm{
+	display: none;
+}
+.more_info{
+	margin: 5px auto;
+}
+
+.top_bg{
+	background-image: url(../../images/default/login_sm.jpg);
+}
+.top_title{
+	font-size: 26px;
+	line-height: 6;
+	background-size: 80%;
+}
+.big_logo img{
+	max-width: 20%;
+	padding: 1.5rem 0;
+}
+.welcom_big{
+	font-size: 28px;
+	margin-top: 4rem;
+	margin-bottom:2rem;
+}
+.welcom_small{
+	font-size: 14px;
+	margin-top: 1rem;
+}
+.login_p{
+	font-size: 16px;
+	color: #005996;
+}
+.verTop,
+.login_in_wrap{
+}
+.verTop,
+.login_in_wrap input{
+	width: 80%;
+	height: 34px;
+}
+.forgot_btn{
+	float: right;
+	border-bottom: 1px solid #aaa;
+}
+.loginbut{
+	height: 34px;
+}
+.psw_title{
+	font-size: 16px;
+}
+.show_con{
+	width: 600px;
+}
+.p_title{
+	font-size: 20px;
+}
+.more_survey,.more_discuss,.more_news,.more_msg,.more_knowledge{
+	margin: 18px 20px 18px 0;
+}
+.survey_table tbody td:first-child{
+	max-width: 380px;
+}
+.msg_content{
+	max-width: 380px;
+}
+.find_div{
+	width: 55%;
+}
+.psw_ul{
+    height: 45px;
+}
+.psw_ul li {
+    font-size: 20px;
+    line-height: 45px;
+}
+.WJButton_login {
+    font-size: 16px;
+}
+
+.car_pic{
+	width: 30%;
+	margin-right: 6%;
+	display: block;
+}
+.car_pic img{
+	width: 100%;
+	height: 100%;
+}
+.knowledge_box{
+	width: 64%;
+}
+.knowledge_info h3{
+	font-size: 16px;
+}
+
+}
+
+@media (min-width: 992px){
+.info{
+	height: 12rem;
+}
+.info h3{
+	font-size: 1.4rem;
+	height: 30px;
+	padding-right: 14px;
+}
+.info div{
+	height: 50px;
+	padding: 10px 14px;
+}
+.info_lg{
+	display: block;
+}
+.info_sm{
+	display: none;
+}
+.more_info{
+	margin: 10px auto;
+}
+
+
+.top_bg{
+	background-image: url(../../images/default/login.jpg);
+}
+.top_title{
+	font-size: 30px;
+	line-height: 5;
+	background-size: 100%;
+}
+#login_form{
+	top: 32%;
+}
+.welcom_big{
+	font-size: 36px;
+	margin-top: 5rem;
+	margin-bottom:2rem;
+}
+.welcom_small{
+	font-size: 14px;
+	margin-top: 1rem;
+}
+.login_p{
+	margin-left: 10%;
+	font-size: 18px;
+	color: #005996;
+}
+.verTop{
+	margin-left: 10%;
+}
+.verTop,
+.login_in_wrap input{
+	width: 80%;
+}
+.loginbut{
+	width: 25%;
+	height: 38px;
+	line-height: 38px;
+	border-radius: 5%;
+	margin-top: 1.5rem;
+	margin-left: auto;
+	margin-right: auto;
+}
+.main_t{
+	width: 440px;
+}
+.show_con{
+	width: 1000px;
+    min-height: 900px;
+}
+.last_survey{
+	float: left;
+	width: 57%;
+	box-shadow: 0 0 5px #dfeaf2;
+}
+.last_news{
+	float: right;
+	width: 38%;
+	box-shadow: 0 0 5px #dfeaf2;
+}
+.last_discuss,.car_knowledge{
+	float: left;
+	width: 57%;
+	box-shadow: 0 0 5px #dfeaf2;
+}
+.message{
+	float: right;
+	width: 38%;
+	box-shadow: 0 0 5px #dfeaf2;
+	margin-top: 30px;
+}
+.p_title{
+	font-size: 24px;
+}
+.more_survey, .more_discuss,.more_news,.more_msg,.more_knowledge{
+	margin: 24px 20px 24px 0;
+}
+.survey_table tbody td:first-child{
+	max-width: 350px;
+}
+.msg_content{
+	max-width: 180px;
+}
+.last_discuss,
+.message{
+	margin: 0 auto 40px;
+}
+
+}

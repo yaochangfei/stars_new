@@ -1,0 +1,129 @@
+/*分配管理员：*/
+.person_box {
+    color: #555;
+}
+
+.distr_left, .distr_right {
+    width: 230px;
+    margin: 20px 20px 0 20px;
+}
+
+.select_box {
+    border: 1px #dcdcdc solid;
+    margin: 10px 0 0 0;
+}
+
+.select_head {
+    border-bottom: 1px #dcdcdc solid;
+    height: 50px;
+    line-height: 30px;
+    padding: 10px;
+}
+
+.select_head input[type="text"] {
+    width: 100%;
+    height: 30px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding-left: 8px;
+}
+
+.select_head input[type="text"]:focus {
+    border: 1px solid #81BDF8;
+}
+
+.select_head input[type="text"]:focus + input {
+    background-position: -106px -43px;
+}
+
+.select_head .search_btn {
+    width: 20px;
+    height: 20px;
+    background: url("../../images/default/project_list.png") no-repeat;
+    background-position: -106px -8px;
+    border: 0;
+    right: 20px;
+    top: 15px;
+    padding: 5px;
+    cursor: pointer;
+    margin-left: -30px;
+}
+
+.select_list {
+    padding: 10px 15px;
+    height: 180px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.select_arrow {
+    left: 50%;
+    margin-left: -14px;
+    top: 80px;
+}
+
+.arrow_icon {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    background: url("../../images/default/project_list.png") no-repeat;
+    margin-bottom: 20px;
+}
+
+.arrow_right {
+    background-position: -36px -109px;
+}
+
+.arrow_left {
+    background-position: -2px -109px;
+}
+
+.arrow_right_all {
+    background-position: -104px -109px;
+}
+
+.arrow_left_all {
+    background-position: -70px -109px;
+}
+
+.select_list_item {
+    width: 100%;
+    padding-left: 6px;
+    cursor: pointer;
+    height: 24px;
+    line-height: 24px;
+}
+
+.select_list_item.active {
+    color: #71b1f6;
+    background-color: #f5f5f5;
+}
+
+.select_list_item:hover {
+    color: #71b1f6;
+    background-color: #f5f5f5;
+}
+.not_assigned{
+    font-size: 18px;
+    text-align: center;
+    color: #666666;
+    width: 100%;
+    height: 400px;
+    line-height: 400px;
+}
+
+/*审核：*/
+.examine_box {
+    padding: 30px 20px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.examine_box > div {
+    width: 50%;
+    margin-bottom: 30px;
+}
+
+.examine_box > div:last-child {
+    width: 100%;
+}

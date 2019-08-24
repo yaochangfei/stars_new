@@ -1,0 +1,90 @@
+.login_container{
+    height: 100%;
+    background: url("../../images/default/login_bg.jpg") no-repeat center;
+    background-size: 100% 100%;
+}
+.login_content{
+    width: 720px;
+    height: 400px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.company_logo{
+    width: 290px;
+    height: 90px;
+    margin: 20px auto 0;
+    background: url("../../images/default/login_logo.png") no-repeat center;
+}
+.login_error{
+    width: 300px;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 auto;
+    font-size: 14px;
+    color: #ff0207;
+}
+.login_box{
+    width: 50%;
+    height: 100%;
+    background-color: #fff;
+}
+.user_i,.pass_i{
+    display: block;
+    position: absolute;
+    width: 40px;
+    height: 46px;
+    left: 30px;
+    top: 0;
+    background-image: url("../../images/default/icons.png");
+    background-repeat: no-repeat;
+}
+.user_i{
+    background-position: 4px -107px;
+}
+.pass_i{
+    background-position: 4px -144px;
+}
+.user input:focus{
+    border-color: #53A4F4;
+}
+.user input:focus + .user_i{
+    background-position: -43px -107px;
+}
+.password input:focus{
+    border-color: #53A4F4;
+}
+.password input:focus + .pass_i{
+    background-position: -43px -144px;
+}
+.user input,.password input{
+    width: 300px;
+    height: 46px;
+    line-height: 46px;
+    border-radius: 32px;
+    border: 1px solid #EEEEEE;
+    padding-left: 40px;
+    background: #FBFBFB;
+}
+.user.error input,.password.error input{
+    border-color: #ff151d;
+}
+.login_btn{
+    width: 300px;
+    height: 52px;
+    line-height: 52px;
+    text-align: center;
+    font-size: 22px;
+    border-radius: 32px;
+    color: #fff;
+    background: #006BB9;
+    margin: 0 auto;
+    cursor: pointer;
+    opacity: 0.8;
+}
+.login_btn:hover{
+    opacity: 1;
+}

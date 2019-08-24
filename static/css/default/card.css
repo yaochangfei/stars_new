@@ -1,0 +1,311 @@
+.content_div .card_header{
+    color: #005996;
+    box-shadow: 0 0 5px #dfeaf2 inset;
+    padding: 2%;
+    line-height: 80px;
+    display: none;
+}
+.card_header .header_logo{
+    width: 13%;
+}
+.card_header .header_logo img{
+    width: 100%;
+    height: 100%;
+}
+.card_header h3{
+    margin: 0;
+    line-height: 80px;
+    margin-left: 2%;
+    margin-right: 5%;
+}
+.header_text{
+    color: #aaaaaa;
+    font-size: 12px;
+}
+.card_main{
+    margin-top: 2%;
+}
+.card_main .main_header{
+    border: 1px solid #eeeeee;
+    padding: 3% 2%;
+    display: none;
+}
+.post_card{
+    font-weight: bolder;
+    font-size: 16px;
+}
+.card_title{
+    margin: 0;
+    font-size: 16px;
+    font-weight: bolder;
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+.control_btn{
+    color: #005996;
+    font-weight: bolder;
+}
+.control_btn a:nth-child(2){
+    margin: auto 10px;
+}
+.card_content{
+    border: 1px solid #EEEEEE;
+}
+.post_starter:before{
+    content: "楼主";
+    display: none;
+    background: #005996;
+    width: 44px;
+    height: 20px;
+    color: #fff;
+    line-height: 20px;
+    text-align: center;
+    position: absolute;
+}
+.card_content .left_area,.card_content .right_area{
+    padding: 1% 5%;
+    float: none;
+}
+
+.left_area img{
+    border-radius: 50%;
+    width: 50px;
+    height: auto;
+}
+.card_pic img{
+    max-width: 100%;
+    height: auto;
+}
+.post_person{
+    color: #616161;
+    font-size: 14px;
+    margin-left: 10px;
+    display: inline-block;
+}
+.phone_controls{
+    height: 50px;
+    line-height: 50px;
+    float: right;
+    margin-right: 4%;
+}
+.phone_controls span{
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #a3a3a3;
+}
+.phone_btn{
+    right: 2%;
+    display: none;
+}
+.phone_btn a,.phone_btn span{
+    display: block;
+    width: 100px;
+    height: 36px;
+    line-height: 36px;
+    background: #fff;
+    border: 1px solid #dddddd;
+    text-align: center;
+    color: #616161;
+}
+.phone_btn a:active,.phone_btn a:visited,.phone_btn a:focus,.phone_btn a:hover{
+    color: #616161;
+}
+.phone_btn a.active{
+    background: #f6f6f6;
+}
+.bl{
+    border-left: 1px solid #EEEEEE;
+}
+.bt0{
+    border-top: 0!important;
+}
+.right_area p{
+    color: #616161;
+    text-indent: 2em;
+    line-height: 2;
+    word-wrap : break-word;
+}
+.right_area .enclosure{
+    margin-top: 4%;
+    display: none;
+}
+.enclosure a{
+    color: #005996;
+    font-weight: bold;
+}
+.enclosure_size{
+    color: #aaaaaa;
+}
+.post_time{
+    color: #aaaaaa;
+    margin: auto 10px;
+}
+.reply{
+    font-weight: bold;
+    color: #005996;
+}
+.floor_info{
+    margin: 4% auto;
+    float: left;
+}
+.floor_info .reply{
+    display: none;
+}
+.right_area .reply_content{
+    border: 1px solid #EEEEEE;
+    display: inline-block;
+    width: 100%;
+    padding: 2%;
+}
+.reply_time{
+    font-size: 12px;
+    color: #aaaaaa;
+}
+.reply_name{
+    color: #005996;
+    font-weight: bold;
+    margin: auto 10px;
+}
+.reply_main .reply_edit{
+    padding: 3%;
+    border: 1px solid #EEEEEE;
+    display: none;
+}
+.reply_edit textarea{
+    border: 1px solid #EEEEEE;
+    width: 100%;
+    height: 60px;
+    text-indent: 2em;
+}
+.card_main .reply_all{
+    display: none;
+}
+.reply_all textarea{
+    width: 100%;
+    height: 210px;
+    border: 1px solid #EEEEEE;
+    text-indent: 2em;
+}
+.phone_control{
+    width: 100%;
+    position: fixed;
+    bottom: 20px;
+    text-align: center;
+    z-index: 100;
+}
+.phone_control>div{
+    width: 90px;
+    height: 110px;
+}
+.phone_control a{
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background-size: 50px 50px;
+}
+.phone_post{
+    background: url("../../images/default/phone_post.png") no-repeat center;
+}
+.phone_back{
+    background: url("../../images/default/phone_back.png") no-repeat center;
+    margin-top: 54px;
+}
+.phone_top{
+    background: url("../../images/default/to_top.png") no-repeat center;
+    background-size: 50px 50px;
+}
+.modal-body{
+    background: #f6f6f6;
+}
+.modal-body textarea{
+    width: 100%;
+    min-height: 300px;
+    padding-top: 10px;
+    border: 0;
+    border-radius: 3px;
+    text-indent: 1em;
+}
+
+@media (min-width: 768px) {
+.content_div .card_header{
+    display: block;
+}
+.card_main .main_header{
+    display: block;
+}
+.floor_info{
+    float: right;
+}
+.floor_info .reply{
+    display: inline;
+}
+.card_content .left_area{
+    padding: 1% 2%;
+    float: left;
+    width: 15%;
+}
+.card_content .right_area{
+    padding: 1% 2%;
+    float: right;
+    width: 85%;
+    min-height: 160px;
+}
+.right_area .enclosure{
+    display: block;
+}
+.left_area img{
+    border-radius: 0;
+    width: 94%;
+}
+.post_starter:before{
+    display: block;
+}
+.reply_main .reply_edit{
+    display: block;
+}
+.card_main .reply_all{
+    display: block;
+}
+.phone_controls{
+    display: none;
+}
+.phone_btn{
+    display: none;
+}
+.card_footer .phone_control{
+    display: none;
+}
+}
+
+
+@media (min-width: 992px) {
+.right_area .enclosure{
+    display: block;
+}
+.left_area img{
+    border-radius: 0;
+    width: 94%;
+}
+.post_starter:before{
+    display: block;
+}
+.reply_main .reply_edit{
+    display: block;
+}
+.card_main .reply_all{
+    display: block;
+}
+.phone_controls{
+    display: none;
+}
+.phone_btn{
+    display: none;
+}
+.card_footer .phone_control{
+    display: none;
+}
+}

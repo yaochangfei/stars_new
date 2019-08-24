@@ -1,0 +1,102 @@
+.content_div{
+	color: #616161;
+	font-size: 14px;
+}
+.about_top{
+	display: inline-block;
+	width: 96%;
+	margin-left: 2%;
+}
+.team_p,
+.contact_p{
+	line-height: 3;
+	font-size: 18px;
+	color: #005996;
+}
+.contact_div{
+	width: 96%;
+	margin: 0 auto;
+}
+.input_info{
+	margin-top: 20px;
+	padding: 20px;
+	border: 1px solid #efefef;
+}
+.input_info label{
+	display: block;
+}
+.input_info input{
+	width: 75%;
+	border: 1px solid #efefef;
+}
+.high_input{
+	height: 70px;
+}
+.ok_btn{
+	background: #005996;
+	color: #fff;
+	text-align: center;
+	border-radius: 5px;
+	line-height: 3;
+	margin-top: 20px;
+}
+
+@media (min-width: 768px){
+
+}
+
+@media (min-width: 992px){
+	
+.about_top{
+	width: 49%;
+	margin-left: 0;
+}
+.team_p{
+	font-size: 30px;
+	margin-left: 20px;
+}
+.contact_p{
+	font-size: 30px;
+}
+.team_detail{
+	margin-left: 20px;
+}
+.div_right{
+	position: relative;
+	top: 85px;
+}
+.contact_div{
+	margin-top: 50px;
+	width: 70%;
+}
+.input_info{
+	margin-top: 40px;
+	padding: 20px 35px 90px;
+}
+.input_info label{
+	display: inline-block;
+	margin: 10px 0;
+}
+.input_info input{
+	width: 75%;
+	border: 1px solid #efefef;
+	float: right;
+	margin-top: 10px;
+	margin-right: 5%;
+}
+.ok_btn{
+	display: inline-block;
+	width: 70px;
+	height: 35px;
+	background: #005996;
+	color: #fff;
+	text-align: center;
+	border-radius: 5px;
+	line-height: 35px;
+	cursor: pointer;
+	position: relative;
+	top: 60px;
+	left: 84%;
+}
+
+}

@@ -1,0 +1,198 @@
+.pro_publish{
+	display: inline-block;
+	font-size: 14px;
+	color: #005996;
+	cursor: pointer;
+	position: relative;
+	left: 97.5%;
+	margin-left: -68px;
+	margin-top: 10px;
+}
+.pro_new,
+.pro_histroy{
+	width: 95%;
+	margin: 0 auto;
+}
+.new_title,
+.history_title{
+	display: inline-block;
+	font-size: 14px;
+	color: #005996;
+	line-height: 2.5;
+}
+.search_div{
+	float: right;
+	margin-top: 0;
+}
+.pro_search,
+.project_search{
+	height: 28px;
+    border-radius: 14px;
+    border: 1px solid #efefef;
+    float: right;
+    margin-top: 7px;
+    margin-left: 10px;
+    padding: 5px 10px;
+}
+.table_div{
+	border: 1px solid #efefef;
+	background: #fff;
+	margin: 10px 0 30px;
+}
+.table_div a,
+.table_div a:hover{
+	color: #005996;
+}
+.table_div thead{
+	background: #f1f1f1;
+}
+.table_div td{
+	padding: 10px 0;
+}
+.table_div td:first-child{
+	max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 10px;
+}
+.table_div td:nth-child(2),
+.table_div td:nth-child(3){
+	max-width: 49px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.table_div tbody td:nth-child(4){
+	color: #005996;
+	cursor: pointer;
+}
+.span_bt{
+	display: block;
+	padding: 0px 4px;
+	background: #005996;
+	text-align: center;
+	color: #fff!important;
+	border-radius: 4px;
+}
+.pro_edit{
+	margin-bottom: 2px;
+}
+.pro_remove{
+	margin-top: 2px;
+}
+.gray_div{
+	height: 40px;
+	background: #fafafa;
+}
+.gray{
+	background:#fafafa;
+	cursor:text;
+}
+.little_title{
+	font-size: 14px;
+}
+.select_time{
+	width: 46%!important;
+	text-indent: 0px!important;
+}
+.label_div{
+	width: 27%;
+}
+.new_radio_label{
+	margin-right: 0; 
+    font-size: 12px;
+}
+
+@media (min-width: 335px){
+
+.new_radio_label{
+	margin-right: 5px; 
+}
+.label_div{
+	width: 25%;
+}
+.select_time{
+	text-indent: 5px!important;
+}
+
+}
+
+@media (min-width: 768px){
+
+.pro_publish{
+	top: -30px;
+	margin-top: 0;
+}
+.table_div{
+	font-size: 14px;
+}
+.table_div tbody tr:hover{
+	background: #f0f8fe;
+}
+.table_div tbody td:first-child{
+	max-width: 210px;
+	padding-right: 15px;
+}
+.blank_div{
+	height: 20px;
+}
+.select_time{
+	width: 48%!important;
+}
+.break{
+	display: none;
+}
+.table_div td:nth-child(2),
+.table_div td:nth-child(3){
+	max-width: none;
+}
+.table_div tbody td:nth-child(4){
+	cursor: pointer;
+}
+.span_bt{
+	display: inline-block;
+	padding: 0;
+	background: none;
+	text-align: center;
+	color: #005996!important;
+}
+.pro_edit{
+	margin-bottom: 0;
+}
+.pro_remove{
+	margin-top: 0;
+}
+
+}
+
+@media (min-width: 992px){
+
+.new_title,
+.history_title{
+	font-size: 18px;
+}
+.table_div tbody td:first-child{
+	max-width: 360px;
+	padding-right: 20px;
+}
+
+}
+
+.target_time .i_text_wrap {
+    float:left;
+    width:140px;
+}
+.target_time .i_text_connector {
+    float: left;
+    padding-left: 7px;
+    padding-right: 7px;
+}
+.target_time .i_text_wrap input{
+    width:100%;
+}
+
+.span_bt{
+	color: #005996;
+	cursor: pointer;
+}

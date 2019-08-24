@@ -1,0 +1,193 @@
+.notice,.plate{
+    padding: 3% 4%;
+    box-shadow: 0 0 5px #dfeaf2 inset;
+}
+.plate{
+    margin-top: 4%;
+}
+ .notice_title h2,.plate_title h2{
+    color: #005996;
+    font-size: 2.4rem;
+    margin: 30px auto;
+}
+.notice_more,.plate_add{
+    margin: 24px auto;
+    background: #005996;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 3px;
+    font-size: 1.4rem;
+}
+.plate_add{
+    display: none;
+}
+.plate_main>a{
+    width: 45%;
+    margin-right: 10%;
+    box-shadow: 0 0 5px #dfeaf2;
+    color: #484848;
+    overflow: hidden;
+    margin-top: 4%;
+}
+.plate_main>a:nth-child(4n){
+    margin-right: 0;
+}
+.plate_main>a:hover,.plate_main>a:focus{
+    color: #484848;
+}
+.plate_main>a:hover .info_hover{
+    bottom: 0;
+}
+.plate_info{
+    margin: 3%;
+}
+.plate_logo{
+    width: 100%;
+}
+.plate_logo img{
+    width: 100%;
+    height: 100%;
+}
+.info{
+    font-size: 14px;
+    color: #484848;
+}
+.viewed_num{
+    border-radius: 40%;
+    background: #FFACA1;
+    color: #fff;
+    text-align: center;
+}
+.plate_info .card_unm{
+    float: left;
+}
+.plate_des{
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    margin-top: 6%;
+}
+.line{
+    width: 90%;
+    margin: 6% auto;
+    height: 1px;
+    background: #ECECEC;
+}
+.bg_grey{
+    color: #aaaaaa;
+}
+.notice_text{
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+
+/*模态框：*/
+.modal-header{
+    padding: 15px 8%!important;
+}
+.modal-body{
+    padding: 15px 8%!important;
+}
+.modal-body label{
+    width: 100%;
+}
+.modal-body textarea{
+    vertical-align: top;
+    width: 75%;
+    height: 100px;
+}
+.modal-body input[type="text"]{
+    width: 75%;
+}
+.modal-body input[type="file"]{
+    display: inline-block;
+}
+
+@media (min-width: 335px) {
+.plate_main>a{
+    width: 22%;
+    margin-right: 4%;
+}
+.plate_main>a:nth-child(2){
+    margin-right: 4%;
+}
+.plate_main>a:nth-child(4){
+    margin-right: 0;
+}
+.plate_info{
+    font-size: 12px;
+}
+.plate_info .card_unm{
+    float: left;
+}
+.info{
+    font-size: 12px;
+}
+.viewed_num{
+    width: 20px;
+    height: 16px;
+    line-height: 16px;
+}
+
+}
+
+@media (min-width: 768px) {
+.plate_main>a{
+    width: 22%;
+    margin-right: 4%;
+}
+.plate_main>a:nth-child(2){
+    margin-right: 4%;
+}
+.plate_main>a:nth-child(4){
+    margin-right: 0;
+}
+.plate_info{
+    font-size: 12px;
+}
+.info{
+    font-size: 14px;
+}
+.viewed_num{
+    width: 22px;
+    height: 18px;
+    line-height: 18px;
+}
+.plate_info .card_unm{
+    float: left;
+}
+.plate_add{
+    display: block;
+}
+}
+
+@media (min-width: 992px) {
+.plate_main>a{
+    width: 22%;
+    margin-right: 4%;
+    }
+.plate_main>a:nth-child(2){
+    margin-right: 4%;
+}
+.plate_main>a:nth-child(4){
+    margin-right: 0;
+}
+.plate_info{
+    font-size: 13px;
+}
+.plate_info .info{
+    font-size: 16px;
+}
+.viewed_num{
+    width: 28px;
+    height: 22px;
+    line-height: 22px;
+}
+.plate_info .card_unm{
+    float: right;
+}
+.plate_add{
+    display: block;
+}
+}

@@ -1,0 +1,1115 @@
+html {
+	font-size: 62.5%;
+}
+.act{
+	color: #005996!important;
+}
+.top_div{
+	display: inline-block;
+	position: absolute;
+	left: 3rem;
+	z-index: 6;
+}
+.top_logo{
+	max-width: 10rem;
+	margin-top: 12px;
+}
+.top_span{
+	color: #646464;
+	font-size: 1.6rem;
+	position: relative;
+	top: 8px;
+	left:5px;
+}
+.member_nav{
+	background: #fff;
+	border: none;
+	margin-bottom: 0;
+}
+.member_nav_ul{
+	font-size: 14px;
+	color: #616161;
+}
+.logout{
+	color: #ff5d5d!important;
+}
+.user_li{
+	position: static;
+}
+.user_name{
+	position: relative;
+	padding-right: 40px!important;
+}
+.user_portrait{
+	width: 35px;
+	height: 35px;
+	position: absolute;
+	top: 0;
+}
+.content_bg{
+	min-height: 600px;
+	background: #fafafa;
+	padding-top: 40px;
+	padding-bottom: 30px;
+}
+.sub_ul{
+	height: 50px;
+	font-size: 1.2rem;
+	border-bottom: 1px solid #e6e6e6;
+}
+.sub_ul li{
+	float: left;
+	width: 16.6%;
+	height: 50px;
+	line-height: 50px;
+	text-align: center;	
+}
+.sub_ul a{
+	color:#616161;
+}
+.sub_ul a.active,
+.member_nav_ul .active{
+	color:#005996!important;
+}
+.account_div,
+.points_div,
+.manage_div{
+	width: 95%;
+	margin: 0 auto;
+}
+.manage_div{
+	height: 45px;
+}
+.account_div,
+.manage_div{
+	font-size: 1.4rem;
+}
+.points_div{
+	font-size: 1.2rem;
+}
+.login_msg{
+	padding: 10px 0;
+}
+.edit_table{
+	display: none;
+}
+.left_td{
+	width: 25%;
+	text-align: right;
+	padding-right: 10px!important;
+}
+.right_td{
+	width: 75%;
+}
+.login_table,
+.personal_table,
+.car_table{
+	margin-top: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+.login_msg,
+.personal_msg,
+.car_msg{
+	font-size: 1.6rem;
+}
+.edit_icon{
+	cursor: pointer;
+	color:#005996;
+	float: right;
+}
+.edit_psw{
+	cursor: pointer;
+	color:#005996;
+	margin-left: 1.5rem;
+}
+.psw_title{
+	font-size: 14px;
+}
+.change_ok{
+	padding: 30px 0;
+    text-align: center;
+    font-size: 14px;
+}
+.psw_footer{
+	border:none;
+}
+.pic_bt{
+	cursor: pointer;
+	color: #005996;
+	margin-left: 1.5rem;
+}
+.gender_input label{
+	margin-right: 10px;
+}
+.gender_input input{
+	margin-right: 15px;
+}
+.brand_edit,
+.model_edit{
+	width: 60%;
+	text-indent: 5px;
+}
+.head_circle{
+	border-radius: 30px;
+	border:1px solid #ececec;
+}
+.account_div td{
+	padding: 5px 0;
+}
+.my_points,
+.pirze_name,
+.blue{
+	color:#005996;
+}
+.gray{
+	color: #aaa;
+}
+.prizeList,
+.prizeTable,
+#myTabContent{
+	width: 94%;
+	margin: 0 auto;
+	border: 1px solid #efefef;
+}
+.exchange_div{
+	width: 94%;
+	margin: 0 auto;
+}
+.ex_table{
+	border: 1px solid #efefef;
+}
+.ex_table td:first-child{
+	text-indent: 0!important;
+	padding-left: 10px;
+	max-width: 50px;
+	text-overflow:ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.ex_table td:nth-child(2){
+	max-width: 50px;
+	text-overflow:ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.ex_table td:nth-child(5){
+	max-width: 50px;
+	text-overflow:ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+#myTabContent{
+	position: relative;
+	top: 10px;
+	padding-left: 10px;
+}
+.prize_title{
+	font-size: 16px;
+	padding: 10px;
+	color: #005996;
+}
+.prize_div{
+	position: relative;
+	width: 96%;
+	margin: 0 auto;
+	border-bottom:1px solid #efefef; 
+}
+.last_txt{
+	border: none;
+}
+.left_pic{
+	position: absolute;
+	top: 50%;
+    margin-top: -40px;
+}
+.left_pic img{
+	width: 80px;
+	height: 80px;
+}
+.right_txt{
+	margin-left: 100px;
+}
+.pirze_name{
+	line-height:4;
+}
+.pirze_detail{
+	color: #616161;
+}
+.pirze_exchange{
+	cursor: pointer;
+	margin: 10px 0;
+	font-size: 16px;
+	display: inline-block;
+	color: #fff;
+	padding: 5px 15px;
+	border-radius:17px;  
+	background: -webkit-linear-gradient(left, #fd6436 , #ff5656); /* Safari 5.1 - 6.0 */
+    background: -o-linear-gradient(right, #fd6436, #ff5656); /* Opera 11.1 - 12.0 */
+    background: -moz-linear-gradient(right, #fd6436, #ff5656); /* Firefox 3.6 - 15 */
+    background: linear-gradient(to right, #fd6436 , #ff5656); /* 标准的语法 */
+}
+.exchange_body .i_normal{
+	font-style: normal;
+	color: #ff5655;
+	font-size: 18px;
+}
+.ask_pirze{
+	text-align: center;
+	font-size: 14px;
+	line-height: 2;
+}
+.exchange_body{
+	font-size: 14px;
+	margin: 5px 0;
+}
+.p_name{
+	font-size: 18px;
+	color: #005996;
+}
+.ex_number{
+	display: inline-block;
+	height: 38px;
+}
+.ex_tit{
+	display: inline-block;
+	position: relative;
+    top: -15px;
+}
+.ex_number p{
+	float: left;
+	display: inline-block;
+	width: 25px;
+	height: 38px;
+	border: 1px solid #dadada;
+	text-align: center;
+	line-height: 38px;
+	cursor: pointer;
+}
+.ex_number input{
+	float: left;
+	display: inline-block;
+	width: 48px;
+	height: 38px;
+	text-align: center;
+	border-top: 1px solid #dadada;
+	border-bottom: 1px solid #dadada;
+	border-left: none;
+	border-right: none;
+}
+.ex_num,
+.de_num{
+
+}
+.psw_div,
+.exchange_modal,
+.success_modal{
+	margin-top: 40%;
+}
+#publish .manage_modal,
+.edit_modal{
+	margin-top: 5%;
+}
+#add .manage_modal,
+#edit .manage_modal,
+#score .manage_modal,
+#del .manage_modal{
+	margin-top: 20%;
+}
+.publish_modal{
+	margin-top: 20%;
+}
+.edit_body{
+	margin-top: 30px;
+    margin-bottom: 30px;
+}
+.pirze_body{
+	margin-top: 20px;
+}
+.pirze_ok{
+	margin-top: 30px;
+}
+.no_border{
+	border: none!important;
+}
+.kown{
+	cursor: pointer;
+	padding-bottom: 25px;
+}
+.add_pirze, .add_user {
+	float: right;
+	color: #005996;
+	cursor: pointer;
+	padding: 10px 0;
+}
+.prizeTable thead,
+.exchange_div thead{
+	background: #f1f1f1;
+}
+.prizeTable thead td{
+	color: #484848;
+}
+.prizeTable tbody td{
+	color: #616161;
+}
+.prizeTable td:first-child,
+.exchange_div td:first-child{
+	text-indent: 10px;
+}
+.prizeTable td,
+.exchange_div td{
+	padding: 10px 0;
+}
+.list_tab .pirze_edit,
+.list_tab .pirze_del,
+.list_tab .set_score,
+.list_tab .switch_edit,
+.list_tab .edit_user{
+	display: inline-block;
+}
+.list_tab a:hover,
+.list_tab a:focus{
+	color: #fff;
+}
+.pirze_edit,
+.pirze_del,
+.switch_edit,
+.set_score,
+.edit_user{
+	background-color: #005996;
+	color: #fff;
+	padding: 2px 4px;
+}
+.delete_gift{
+	margin-left: 5px;
+}
+.pirze_del{
+	margin-left: 5px;
+}
+.center{
+	text-align: center;
+}
+.del_pirze{
+	padding-top: 15px;
+	color: #005996;
+}
+.add_pic{
+	color: #005996;
+	cursor: pointer;
+	float: right;
+	margin-right: 44%;
+	margin-top: 10px;
+}
+.t7{
+	position: relative;
+	top:7px;
+}
+.add_pic_div{
+	margin-right: 35%;
+}
+.pic_input{
+	margin-top: 10px;
+}
+.add_pic_div span{
+	float: left;
+	color: #005996;
+	cursor: pointer;
+	margin-left: 0.5rem;
+	line-height: 40px;
+}
+.add_pic_div img{
+	float: left;
+	color: #005996;
+	cursor: pointer;
+	line-height: 40px;
+}
+.prize_explain{
+	height: 80px;
+	text-indent: 5px;
+}
+.find_pro{
+	height: 28px;
+	border-radius: 14px;
+	border:1px solid #efefef;
+	float: right;
+	margin-top: 7px;
+	margin-left: 10px;
+	padding: 5px 10px;
+}
+.find_ico{
+	float: right;
+	margin-top: 10px;
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	background-image: url(../../images/default/find.png);
+	background-repeat:no-repeat;
+	background-size:100%;
+	cursor: pointer;
+	position: relative;
+	left: -20px;
+    top: 5px;
+}
+.my_ul .active a{
+	color: #005996!important;
+}
+#myTabContent{
+	border:1px solid #e6e6e6;
+}
+#myTabContent tr td{
+	padding: 5px 0;
+}
+.notice_mem{
+	width: 25px;
+	height: 25px;
+	margin-right: 5px;
+	border-radius: 50%;
+}
+.cut{
+	display: block;
+	max-width: 160px;
+	text-overflow:ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+/*自定义选框*/
+.gender_input label,
+.new_radio_label{
+	margin-right: 20px;
+	font-size: 14px;
+	cursor: pointer;
+	margin-top: -9px;
+} 
+.new_label{
+	font-size: 14px;
+	cursor: pointer;
+}
+.gender_input input,
+.new_radio_input{
+    margin-right: 6px;
+    opacity: 0;
+}
+.gender_input input[type=radio]+span,
+.new_radio_input+span{
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background-color: #dadada;
+	border:1px solid #dadada;
+	margin-right: 5px;
+	position: relative;
+	top: 2px
+}
+.dot{
+	display: inline-block;
+	float: left;
+	width: 4px;
+	height: 4px;
+	border-radius:50%;
+	background-color: #fff;
+	position: relative;
+	top: 3px;
+	left: 3px
+}
+/*自定义选框被选中*/
+.gender_input input[type=radio]:checked+span,
+.new_radio_input[type=radio]:checked+span{
+	background-color: #005996;
+	border-color: #005996;
+}
+.label_div,
+.input_div{
+	display: inline-block;
+}
+.label_div{
+	width: 25%;
+	text-align: right;
+	margin-top: 10px;
+}
+.pic_top{
+	position: relative;
+	top: -15px;
+}
+.new_img{
+	position: relative;
+	top: -9px;
+}
+.input_div .detail_r{
+	height: 40px;
+}
+.cont_label{
+	position: relative;
+	top: -55px;
+}
+.input_div{
+	width: 60%;
+	margin-left:2%;
+}
+.input_div input,
+.input_div textarea{
+	width:100%;
+	border: 1px solid #dadada;
+}
+.input_div input{
+	text-indent: 5px;
+}
+.text_div{
+	position: relative;
+    top: -60px;
+}
+hr{
+	margin-top: 10px;
+    margin-bottom: 10px;
+}
+.age_edit{
+	text-indent: 10px;
+}
+.exchange_p{
+	color: #005996;
+	font-size: 14px;
+	display: inline-block;
+	line-height: 3;
+}
+.search_div{
+	float: right;
+	margin-top: 10px;
+}
+.status_choose,
+.search_select{
+	border: 1px solid #dadada;
+	border-radius: 5px;
+	background: #f5f5f5;
+	color: #005996;
+	padding: 3px;
+}
+.keyword{
+	width: 120px;
+	height: 28px;
+    border-radius: 14px;
+    border: 1px solid #efefef;
+    margin-left: 5px;
+    padding-left: 10px;
+}
+.filter{
+	display: inline-block;
+	width: 55px;
+	height: 22px;
+	text-align: center;
+	line-height: 22px;
+	background: #005996;
+	color: #fff;
+	border-radius: 5px;
+	cursor: pointer;
+	margin-left: 5px;
+}
+.no_filter{
+	color: #005996;
+	cursor: pointer;
+	margin-left: 5px;
+}
+.level{
+	display: inline-block;
+	padding: 0;
+}
+.level img{
+	display: block;
+	margin: 0 auto;
+}
+.cancel{
+	float: right;
+	width: 90px;
+	height: 32px;
+	text-align: center;
+	line-height: 32px;
+	color: #aaa;
+	cursor: pointer;
+}
+.save{
+	float: right;
+	margin-right: 10px;
+	width: 90px;
+	height: 32px;
+	text-align: center;
+	line-height: 32px;
+	cursor: pointer;
+	background: #005996;
+	color: #fff;
+	border-radius: 5px;
+}
+.two_lines{
+	display: none;
+}
+.outline_page{
+	float: right;
+	padding: 20px 0;
+	margin-right:20px;
+}
+.outline_page a,
+.outline_page i{
+	color: #6a6a6a;
+	padding: 5px;
+}
+.outline_page span{
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	text-align: center;
+	border-radius: 50%;
+	background: #005996;
+	color: #fff;
+}
+.mb_20{
+	margin-bottom: 20px!important;
+}
+.slide_div{
+	width: 100%;
+	height: 120px;
+	position: relative;
+	overflow: hidden;
+}
+.slide_img{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+.list_tab td:nth-child(1){
+	max-width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.list_tab td:nth-child(2){
+	max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.list_tab td:nth-child(4){
+	width: 110px;
+}
+.lack{
+	font-size: 12px;
+}
+
+
+/*新增登录页底部信息：*/
+.footer{
+	width: 100%;
+	background: #334857;
+	/*bottom: 0;*/
+	z-index: 10;
+	font-size: 12px;
+    text-align: center;
+}
+.foot{
+	width: 300px;
+	margin: 10px auto 10px;
+}
+.foot_left{
+	color: #fff;
+    float: none;
+}
+.foot_left p{
+    float: none;
+    line-height: 18px;
+}
+.copyright{
+	width: 100%;
+	margin: 0;
+	color: #fff;
+}
+.download{
+	margin-left: 9%;
+    display: none;
+}
+.download_text{
+	color: #fff;
+	margin-top: 36px;
+}
+.download_bg{
+	width: 80px;
+	height: 80px;
+	margin-top: 10px;
+}
+.download_bg img{
+	width: 80px;
+	height: 80px;
+}
+.about_us{
+	color: #fff;
+    float: none;
+    line-height: 32px;
+    text-decoration: underline;
+}
+
+
+
+@media (min-width: 335px){
+.level{
+	display: inline-block;
+	padding: 5px;
+}
+.sub_ul{
+	font-size: 1.4rem;
+}
+.top_div{
+	left: 5rem;
+}
+.points_div{
+	font-size: 1.4rem;
+}
+.cut{
+	max-width: 200px;
+}
+.list_tab td:nth-child(4){
+	min-width: 110px;
+}
+.pirze_edit,
+.pirze_del,
+.switch_edit,
+.set_score,
+.edit_user{
+	padding: 2px 4px;
+}
+.copyright{
+	width: 100%;
+	margin: 0;
+}
+}
+
+@media (min-width: 768px){
+.download{
+    display: block;
+}
+.foot{
+	width: 100%;
+}
+.foot_left{
+    float:left;
+    margin-top: 40px;
+}
+.foot_left p{
+    float: left;
+    line-height: normal;
+}
+.about_us{
+    float: right;
+    margin-top: 40px;
+    line-height: normal;
+}
+
+.copyright{
+	margin-left: 20px;
+}
+
+.top_div{
+	left:3rem;
+	top: 15px;
+}
+.slide_div{
+	height: 280px;
+}
+.top_logo{
+	max-width: 10rem;
+	margin-top: 15px;
+}
+.top_span{
+	display: none;
+}
+.member_nav{
+	margin-left:16%;
+	padding: 15px 0;
+}
+.user_name{
+	position: relative;
+	padding-right: 15px!important;
+}
+.user_portrait{
+	display: none;
+}
+.content_div{
+	width: 80%;
+	margin-left:auto;
+	margin-right:auto;
+	background: #fff;
+}
+.sub_ul{
+	width: 90%;
+	height: 70px;
+	font-size: 16px;
+	margin: 0 auto;
+}
+.my_ul{
+	width: 90%;
+	margin: 0 auto
+}
+.my_ul li a{
+	color: #616161;
+}
+.prizeList,
+.prizeTable,
+#myTabContent,
+.exchange_div{
+	width: 90%;
+	margin: 0 auto;
+}
+.sub_ul li{
+	width: 15%;
+	height: 70px;
+	line-height: 70px;	
+}
+.sub_ul a{
+	display: inline-block;
+	height: 70px;
+	border-bottom: 3px solid transparent;
+}
+.sub_ul a.active{
+	border-color: #005996;
+}
+.account_div,
+.points_div,
+.manage_div{
+	width: 90%;
+}
+.psw_div{
+	margin-top: 10%;
+}
+.psw_title{
+	font-size: 16px;
+}
+.psw_content input,
+.manage_body input{
+	margin-right: 20%;
+}
+.change_ok{
+	padding: 50px 0;
+}
+.now_points{
+	line-height: 5;
+	font-size: 16px;
+}
+.my_points{
+	font-size: 24px;
+}
+.rules{
+	font-size: 12px;
+}
+.pirze_name{
+	font-size: 14px;
+}
+.small_txt{
+	font-style: normal;
+	font-size: 12px;
+}
+.left_pic{
+	top: 50%;
+	margin-top: -65px;	
+}
+.prize_div{
+	min-height: 160px;
+}
+.psw_div,
+.exchange_modal,
+.success_modal{
+	margin-top: 10%;
+}
+#publish .manage_modal,
+#edit .manage_modal,
+#add .manage_modal,
+#score .manage_modal,
+#del .manage_modal
+.edit_modal{
+	margin-top: 10%;
+}
+.publish_modal{
+	margin-top: 5%;
+}
+.prizeTable,
+#myTabContent,
+.exchange_div{
+	font-size: 1.4rem;
+}
+.prizeTable tbody tr:hover,
+.exchange_div tbody tr:hover{
+	background: #f0f8fe;
+}
+.pirze_edit,
+.pirze_del{
+	background-color:transparent; 
+	color: #005996;
+	cursor: pointer;
+	padding:0 10px 0 0;
+}
+.del_tip{
+	font-size: 1.4rem;
+}
+.del_pirze{
+	font-size: 18px;
+}
+.add_pic{
+	margin-right: 62%;
+}
+.add_pic_div{
+	margin-right: 54%;
+}
+.exchange_p{
+	font-size: 16px;
+}
+.keyword,
+.filter,
+.no_filter{
+    margin-left: 5px;
+}
+.left_td{
+	width: 15%;
+	padding-right: 15px!important;
+}
+.right_td{
+	width: 85%;
+}
+.level{
+	padding: 10px;
+}
+.three_lines{
+	display: block;
+}
+.two_lines{
+	display: none;
+}
+.left_pic img{
+	width: 130px;
+	height: 130px;
+}
+.right_txt{
+	margin-left: 150px;
+}
+.cut{
+	max-width: 300px;
+}
+.lack{
+	font-size: 14px;
+}
+.list_tab a:hover,
+.list_tab a:focus{
+	color: #005996;
+}
+.pirze_edit,
+.pirze_del,
+.switch_edit,
+.set_score,
+.edit_user{
+	background-color: transparent;
+	color: #005996;
+	padding: 0;
+}
+.set_score,
+.edit_user{
+	cursor: pointer;
+}
+.ex_table .break{
+	display: none;
+}
+.list_tab td:nth-child(4){
+	width: 160px;
+}
+
+}
+
+@media (min-width: 992px){
+.footer{
+	height: 100px;
+}
+.foot{
+	width: 80%;
+    margin: 0 auto;
+}
+.foot_left{
+    float:left;
+    margin-top: 40px;
+}
+.foot_left p{
+    float: left;
+    line-height: normal;
+}
+.about_us{
+    margin-top: 40px;
+    float: right;
+    line-height: normal;
+}
+
+
+
+.top_div{
+	left: 4rem;
+}
+.slide_div{
+	height: 380px;
+}
+.top_logo{
+	max-width: 15rem;
+	margin-top: -10px;
+}
+.top_span{
+	display: inline-block;
+	font-size: 2.4rem;
+	line-height: 50px;
+	position: relative;
+	top: -1px;
+	left: 0px;
+}
+.member_nav{
+	margin-left:34%;
+}
+.user_name{
+	position: relative;
+	padding-right: 40px!important;
+}
+.user_portrait{
+	display: inline-block;
+	top:5px;
+	right: 2px;
+}
+.sub_ul li{
+	width: 12%;	
+}
+.add_pic2{
+	margin-right:30% !important;
+}
+.keyword,
+.filter,
+.no_filter{
+    margin-left: 20px;
+}
+.left_td{
+	width: 12%;
+}
+.right_td{
+	width: 88%;
+}
+.level {
+    padding: 10px 0;
+}
+.two_lines,
+.three_lines{
+	display: none;
+}
+.cut{
+	max-width: 570px;
+}
+
+#publish .manage_modal,
+.edit_modal{
+	margin-top: 5%;
+}
+#score .manage_modal,
+#del .manage_modal{
+	margin-top: 10%;
+}
+
+}
+@media (min-width: 1345px){
+.level {
+    padding: 10px;
+}
+}
