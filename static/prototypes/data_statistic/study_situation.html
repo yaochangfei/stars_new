@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="汽车体验社区">
+        <meta name="description" content="汽车体验社区">
+        <title>中国科普研究所</title>
+        <link rel="shortcut icon" href="../../images/favicon.ico">
+        <link rel="stylesheet" href="../../css/base.css">
+        <link rel="stylesheet" href="../../css/default/user_list.css">
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/public.js"></script>
+        <script src="../../js/base_utils.js"></script>
+        <script src="../../js/plugins/layer/layer.js"></script>
+    </head>
+    <body>
+        <div class="header clear">
+            <div class="fl header_logo">
+                <a href="javascript:void (0)">汽车用户体验社区</a>
+            </div>
+            <ul class="fl header_nav clear">
+                <li class="fl">
+                    <a href="#">首页</a>
+                </li>
+                <li class="fl">
+                    <a href="#">用户管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">问卷管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">车型维护</a>
+                </li>
+                <li class="fl">
+                    <a href="#">积分管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">小程序设置</a>
+                </li>
+                <li class="fl active">
+                    <a href="#">数据统计</a>
+                </li>
+            </ul>
+            <div class="fr header_user clear">
+                <div class="switch_skin fl pr mr30">
+                    <i class="switch_i"></i>
+                </div>
+                <div class="user_info fl mr20 pr">
+                    <div class="user_img pr clear">
+                        <img class="fl mr10" src="../../images/default/user_img.png" alt="">
+                        <div class="user_name ellipsis fl">体验admin</div>
+                    </div>
+                    <div class="outer_login pa"><i class="outer_i"></i>退出登录</div>
+                </div>
+            </div>
+        </div>
+        <div class="main clear">
+            <div class="left_area fl pr">
+                <ul class="left_menu">
+                    <li class="first_menu pr">
+                        <a href="javascript:void(0)">小程序管理</a>
+                        <i class="arrow_i active"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">题目管理</a>
+                        <i class="subject_list_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">钻石管理</a>
+                        <i class="diamond_manage_i"></i>
+                    </li>
+                </ul>
+                <ul class="left_menu">
+                    <li class="first_menu pr">
+                        <a href="javascript:void(0)">抽题管理</a>
+                        <i class="arrow_i"></i>
+                    </li>
+                    <li class="active pr">
+                        <a href="#">段位管理</a>
+                        <i class="subject_dan_grade_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">难度管理</a>
+                        <i class="subject_difficulty_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">题目类别管理</a>
+                        <i class="subject_category_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">自定义纬度</a>
+                        <i class="subject_custom_i"></i>
+                    </li>
+                </ul>
+            </div>
+            <div class="right_area clear">
+                <div class="main_header pt10 pb10 clear">
+                    <div class="fl bread_nav">
+                        <a href="#" class="pl10 ml10">学习状况统计</a>
+                    </div>
+                </div>
+                <div class="edit_info_box fl chart4">
+                    <div class="edit_info pr no_m">
+                        <div class="clear add_manage">
+                            <div class="fl">
+                                <h3 class="list_title pr">公民参与科学素质学习累计<i class="chart_i chart_1"></i></h3>
+                            </div>
+                            <div class="fr chart_control">
+                                <a href="javascript:void (0)" class="back_chart tips" data-name="返回"></a>
+                                <div class="switch_chart pr">
+                                    <div class="switch_con pa">
+                                        <ul class="switch_box">
+                                            <li>切换人数</li>
+                                            <li>切换次数数</li>
+                                            <li>切换正确率</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>
+                            </div>
+                        </div>
+                        <div class="echart_box clear">
+                            <div class="echart2 fl"></div>
+                            <div class="echart2 fl"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="edit_info_box fl chart1 mb10">
+                    <div class="edit_info pr no_m">
+                        <div class="clear add_manage">
+                            <div class="fl">
+                                <h3 class="list_title pr">公民科学素质答对题目数分布<i class="chart_i chart_2"></i></h3>
+                            </div>
+                            <div class="fr chart_control">
+                                <a href="javascript:void (0)" class="add_entry tips" data-name="新增条目"></a>
+                                <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>
+                            </div>
+                        </div>
+                        <div class="echart_box">
+                            <div class="screen_box clear">
+                                <div class="checkbox fl"><i class="checkbox_i"></i>全体人群答对题目分布</div>
+                                <div class="opens on fr">收起</div>
+                            </div>
+                            <div class="echart3">
+                                <!--echart-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="edit_info_box fl chart2 mb10 no_pl">
+                    <div class="edit_info pr no_m">
+                        <div class="clear add_manage">
+                            <div class="fl">
+                                <h3 class="list_title pr">公民科学素质雷达图<i class="chart_i chart_2"></i></h3>
+                            </div>
+                            <div class="fr chart_control">
+                                <a href="javascript:void (0)" class="add_entry tips" data-name="新增条目"></a>
+                                <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>
+                            </div>
+                        </div>
+                        <div class="echart_box">
+                            <div class="screen_box clear">
+                                <div class="checkbox fl"><i class="checkbox_i"></i>全部正确率</div>
+                                <div class="opens fr">展开</div>
+                            </div>
+                            <div class="echart3">
+                                <!--echart-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        $(function () {
+            $(".switch_chart").mouseover(function () {
+                $(this).find(".switch_con").show();
+            }).mouseout(function () {
+                $(this).find(".switch_con").hide();
+            });
+
+            $(document).on("click",".add_entry",function () {
+                var _this = $(this);
+                layer.open({
+                    type:1,
+                    title:'新增条目',
+                    area: ['640px', 'auto'],
+                    btn:["确认","取消"],
+                    content: '<table class="pop_table"> <tr> <td width="20%">年龄段：</td> <td> <select> <option value="请选择">请选择</option> <option value="青年">青年</option> <option value="中年">中年</option> <option value="老年">老年</option></select> </td> </tr> <tr> <td width="20%">性别：</td> <td> <select> <option value="请选择">请选择</option> <option value="男">男</option> <option value="女">女</option></select> </td> </tr> <tr> <td width="20%">受教育程度：</td> <td> <select> <option value="请选择">请选择</option> <option value="初中及以下">初中及以下</option> <option value="高中/中专/技校">高中/中专/技校</option> <option value="大专">大专</option> <option value="本科/学士">本科/学士</option> <option value="硕士及以上">硕士及以上</option> </select> </td> </tr> <tr> <td class="vt">地区：</td><td> <div class="area_box clear"><ul class="province_box fl mr10"> <li>江苏省</li> <li>安徽省</li> <li>北京市</li> <li>河北省</li> <li>河北省</li> <li>河北省</li> <li>河北省</li> <li>河北省</li> <li>河北省</li> <li>河北省</li> </ul><ul class="city_box fl"> <li class="clear"> <div class="checkbox fl ellipsis" title="全部"><i class="checkbox_i checked_all"></i>全部</div> <div class="checkbox fl ellipsis" title="江苏市"><i class="checkbox_i"></i>江苏市</div> <div class="checkbox fl ellipsis" title="南京市"><i class="checkbox_i"></i>南京市</div> <div class="checkbox fl ellipsis" title="南通市"><i class="checkbox_i"></i>南通市</div> <div class="checkbox fl ellipsis" title="徐州市"><i class="checkbox_i"></i>徐州市</div> <div class="checkbox fl ellipsis" title="乌鲁木齐市"><i class="checkbox_i"></i>乌鲁木齐市</div> </li> <li></li> </ul> </div> </td> </tr><tr><td class="vt">学科部类：</td><td><div class="knowledge_kind clear"><div class="checkbox fl ellipsis" title="科学观念与方法"><i class="checkbox_i"></i>科学观念与方法</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div></div></td></tr></table>',
+                    yes:function (index) {
+                        var arr = [];
+                        $(".pop_table select").each(function () {
+                            if($(this).val()!=="请选择"){
+                                arr.push($(this).val())
+                            }
+                        });
+                        $(".city_box .checkbox_i.checked").each(function () {
+                            arr.push($(this).parent().text())
+                        });
+                        $(".knowledge_kind .checkbox_i.checked").each(function () {
+                            arr.push($(this).parent().text())
+                        });
+                        if(arr == ""){
+                            tip_msg("请至少选择一个筛选条件",1000);
+                        }
+                        else{
+                            var num = $(".more_screen_box").children().length + 1;
+                            if(num>4){
+                                tip_msg("最多生成5个图表");
+                            }
+                            else{
+                                var chart = "cl" + num.toString();
+                                var moreScreen = '<div class="more_screen clear in_block mr20"> <div class="checkbox fl"><i class="checkbox_i '+ chart +' checked"></i>'+ arr.join()+'</div> <div class="screen_control fl"> <i class="edit_i"></i> <i class="delete_i"></i> </div> </div>';
+                                _this.parents(".edit_info").find(".more_screen_box").append(moreScreen);
+                                layer.close(index);
+                            }
+                        }
+                    }
+                });
+            });
+            //删除新增的条目：
+            $(document).on("click",".delete_i",function () {
+               $(this).parents(".more_screen").remove();
+            });
+            //选择省份请求城市信息：
+            $(document).on("click",".province_box li",function () {
+                $(".province_box li").removeClass("active");
+                $(this).addClass("active");
+                //请求城市信息：
+            });
+            //城市最多选5个，部类最多选3个：
+            $(document).on("click",".checkbox",function () {
+                if($(this).parents(".city_box").find(".checkbox_i.checked").length>=5&&!$(this).find(".checkbox_i").hasClass("checked")){
+                    tip_msg("最多选五个",1000);
+                    return false
+                }
+                else if($(this).parents(".knowledge_kind").find(".checkbox_i.checked").length>=3&&!$(this).find(".checkbox_i").hasClass("checked")){
+                    tip_msg("最多选三个",1000);
+                    return false
+                }
+                else{
+                    $(this).find(".checkbox_i").toggleClass("checked");
+                }
+            });
+            //展开收起：
+            $(".opens").on("click",function () {
+                if($(this).hasClass("on")){
+                    $(this).removeClass("on").html("展开");
+                    $(this).parents(".echart_box").find(".more_screen_box").slideUp();
+                }
+                else{
+                    $(this).addClass("on").html("收起");
+                    $(this).parents(".echart_box").find(".more_screen_box").slideDown();
+                }
+            });
+        })
+    </script>
+</html>

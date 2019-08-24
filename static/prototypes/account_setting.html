@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="中国科普研究所">
+        <meta name="description" content="中国科普研究所">
+        <title>中国科普研究所</title>
+        <link rel="shortcut icon" href="../images/favicon.ico">
+        <link rel="stylesheet" href="../css/base.css">
+        <link rel="stylesheet" href="../css/default/user_list.css">
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/public.js"></script>
+    </head>
+    <body>
+        <div class="header clear">
+            <div class="fl header_logo">
+                <a href="javascript:void (0)">汽车用户体验社区</a>
+            </div>
+            <ul class="fl header_nav clear">
+                <li class="fl">
+                    <a href="#">首页</a>
+                </li>
+                <li class="fl active">
+                    <a href="user_list/user_list.html">用户管理</a>
+                </li>
+                <li class="fl">
+                    <a href="questionnaire_list/questionnaire_list.html">问卷管理</a>
+                </li>
+                <li class="fl">
+                    <a href="vehicle_list/vehicle_list.html">车型维护</a>
+                </li>
+                <li class="fl">
+                    <a href="integral_manage/integral_query.html">积分管理</a>
+                </li>
+                <li class="fl">
+                    <a href="program_setting/subject_list.html">小程序设置</a>
+                </li>
+            </ul>
+            <div class="fr header_user clear">
+                <div class="switch_skin fl pr mr30">
+                    <i class="switch_i"></i>
+                </div>
+                <div class="user_info fl mr20 pr">
+                    <div class="user_img pr clear">
+                        <img class="fl mr10" src="../images/default/user_img.png" alt="">
+                        <div class="user_name ellipsis fl">体验admin</div>
+                    </div>
+                    <div class="outer_login pa"><i class="outer_i"></i>退出登录</div>
+                </div>
+            </div>
+        </div>
+        <div class="main clear">
+            <div class="left_area fl pr">
+                <ul class="left_menu">
+                    <li class="active pr">
+                        <a href="user_list/user_list.html">用户列表</a>
+                        <i class="user_list_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="user_list/manage_list.html">管理员列表</a>
+                        <i class="manager_list_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="user_list/role_list.html">角色列表</a>
+                        <i class="role_list_i"></i>
+                    </li>
+                </ul>
+                <div class="contact_info">
+                    <div>
+                        <i class="email_i"></i>
+                        <span class="email">wcy129@qq.com</span>
+                    </div>
+                    <div>
+                        <i class="qq_i"></i>
+                        <span class="qq">515673298</span>
+                    </div>
+                </div>
+            </div>
+            <div class="right_area">
+                <div class="main_header pt10 pb10 clear">
+                    <div class="fl bread_nav">
+                        <h3 class="pl10 ml10">账户设置</h3>
+                    </div>
+                    <div class="fr">
+                        <a href="#" class="refresh_btn pl20 mr20"><i class="refresh_i"></i>刷新</a>
+                    </div>
+                </div>
+                <div class="edit_info m20 pl10 pr10">
+                    <div>
+                        <h3 class="list_title pr add_manage">账户设置<i class="edit_i_txt"></i></h3>
+                    </div>
+                    <div class="edit_info_detail">
+                        <table class="table_form">
+                            <tr>
+                                <th width="40%"></th>
+                                <td>
+                                    <div class="header_pic_box">
+                                        <div class="header_pic mb10">
+                                            <img src="../images/default/header_pic.png" alt="">
+                                        </div>
+                                        <div class="pic_upload_box">
+                                            <div class="pr">
+                                                <input type="file" id="upload_pic_btn" class="pa" accept="image/jpeg,image/png,image/gif,image/jpg">
+                                                <a href="#" class="btn btn_primary_empty upload_pic_btn">上传图片</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="necessary">*</span>账号</th>
+                                <td>
+                                    <input class="input_text input_disabled" type="text" disabled="disabled" value="admin">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="pt10 vt">Email</th>
+                                <td>
+                                    <input class="input_text input_disabled" type="text" disabled="disabled" value="18000000000@vip.qq.com">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="necessary">*</span>旧密码</th>
+                                <td><input class="input_text" type="text"></td>
+                            </tr>
+                            <tr>
+                                <th><span class="necessary">*</span>新密码</th>
+                                <td><input class="input_text" type="text"></td>
+                            </tr>
+                            <tr>
+                                <th><span class="necessary">*</span>确认密码</th>
+                                <td><input class="input_text" type="text"></td>
+                            </tr>
+                            <tr>
+                                <th>key ID</th>
+                                <td>
+                                    <div class="account_info">
+                                        sadfasdfasdkjfwejfpoisjdpofijasl;djf;lakwejfpoihpsdoifh
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Secret ID</th>
+                                <td>
+                                    <div class="account_info">
+                                        sadfasdfasdkjfwejfpoisjdpofijasl;djf;lakwejfpoihps234234234134doifh
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <span class="cl_danger">这是错误信息</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td><a href="#" class="btn btn_primary btn_lg mt10">提交</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function single_reads(file){
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function(){
+                    $(".header_pic img").attr("src",reader.result);
+                };
+            }
+            $(function () {
+//               单图片上传预览：
+                var uploadPicBtn = $("#upload_pic_btn");
+//                按钮闪烁bug：
+                uploadPicBtn.on("mouseover",function(){
+					$(this).addClass("current");
+				});
+				uploadPicBtn.on("mouseup",function(){
+					$(this).removeClass("current");
+				});
+				uploadPicBtn.on("mouseout",function(){
+					$(this).removeClass("current");
+				});
+                uploadPicBtn.on("change",function () {
+                    var file = this.files[0];
+                    single_reads(file);
+                });
+            })
+        </script>
+    </body>
+</html>

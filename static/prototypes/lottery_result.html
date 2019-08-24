@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="keywords" content="中国科普研究所">
+    <meta name="description" content="中国科普研究所">
+    <title>中国科普研究所</title>
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/default/user_list.css">
+    <script src="../js/jquery-1.10.2.min.js"></script>
+    <script src="../js/public.js"></script>
+</head>
+<body>
+<div class="header clear">
+    <div class="fl header_logo">
+        <a href="javascript:void (0)">
+            <img src="../images/default/header_logo.png" alt="">
+        </a>
+    </div>
+    <ul class="fl header_nav clear">
+        <li class="fl">
+            <a href="javascript:void(0)">组织</a>
+        </li>
+        <li class="fl">
+            <a href="javascript:void(0)">抽奖管理</a>
+        </li>
+        <li class="fl active">
+            <a href="javascript:void(0)">报表</a>
+        </li>
+    </ul>
+    <div class="fr header_user clear">
+        <div class="switch_skin fl pr mr30">
+            <i class="switch_i"></i>
+        </div>
+        <div class="user_info fl mr20 pr">
+            <div class="user_img pr clear">
+                <img class="fl mr10" src="../images/default/user_img.png" alt="">
+                <div class="user_name ellipsis fl">体验admin</div>
+            </div>
+            <div class="outer_login pa"><i class="outer_i"></i>退出登录</div>
+        </div>
+    </div>
+</div>
+<div class="main clear">
+    <div class="left_area fl pr">
+        <ul class="left_menu">
+            <li class="active pr">
+                <a href="javascript:void(0)">抽奖管理</a>
+                <i class="lottery_i"></i>
+            </li>
+        </ul>
+        <div class="contact_info">
+            <div>
+                <i class="email_i"></i>
+                <span class="email">wcy129@qq.com</span>
+            </div>
+            <div>
+                <i class="qq_i"></i>
+                <span class="qq">515673298</span>
+            </div>
+        </div>
+    </div>
+    <div class="right_area">
+        <div class="edit_info m20 pl10 pr10">
+            <div class="atlas_tabs clear">
+                <a href="lottery_manage.html">抽奖设置</a>
+                <a href="lottery_result.html" class="active">结果查看</a>
+            </div>
+            <div class="mb10">
+                <div class="clear">
+                    <div class="fl">
+                        <h3 class="list_title pr">抽奖总览<i class="list_title_i"></i></h3>
+                    </div>
+                </div>
+                <table class="table_list">
+                    <tr>
+                        <th>奖项名称</th>
+                        <th>奖品数量</th>
+                        <th>已中奖</th>
+                        <th>剩余名额</th>
+                    </tr>
+                    <tr>
+                        <td>一等奖</td>
+                        <td>3</td>
+                        <td>1</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>一等奖</td>
+                        <td>3</td>
+                        <td>1</td>
+                        <td>2</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <div class="clear">
+                    <div class="fl">
+                        <h3 class="list_title pr">抽奖详情<i class="list_title_i"></i></h3>
+                    </div>
+                </div>
+                <div class="filter_box clear no_m">
+                    <div class="filter_condition fl">
+                        <span>筛选条件：</span>
+                        <input type="text" placeholder="请输入关键词" value="">
+                        <select name="" id="">
+                            <option value="一等奖">一等奖</option>
+                            <option value="二等奖">二等奖</option>
+                            <option value="三等奖">三等奖</option>
+                            <option value="未中奖">未中奖</option>
+                        </select>
+                    </div>
+                    <div class="filter_btn fr">
+                        <a href="javascript:void (0)" class="btn btn_i btn_primary pr mr5">
+                            查询
+                            <i class="btn_search"></i>
+                        </a>
+                        <a href="javascript:void (0)" class="btn btn_default">取消筛选</a>
+                    </div>
+                </div>
+                <table class="table_list mt10">
+                    <tr>
+                        <th>会员ID</th>
+                        <th>微信昵称</th>
+                        <th>城市</th>
+                        <th>抽奖时间</th>
+                        <th>抽中奖项</th>
+                    </tr>
+                    <tr>
+                        <td>65452125</td>
+                        <td>wangchengyi</td>
+                        <td>苏州</td>
+                        <td>2019.1.4</td>
+                        <td>未中奖</td>
+                    </tr>
+                </table>
+                <div class="fix_page clear no_m white_bg">
+                    <div class="fr">
+                        <span>跳至</span>
+                        <input type="text" class="jump_num">
+                        <span>页</span>
+                    </div>
+                    <div class="paging fr mr10">
+                        <a href="#">首页</a>
+                        <a href="#" class="btn_disabled">上一页</a>
+                        <a href="#" class="active">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">4</a>
+                        <a href="#">5</a>
+                        <a href="#">...</a>
+                        <a href="#">50</a>
+                        <a href="#">下一页</a>
+                        <a href="#">尾页</a>
+                    </div>
+                    <div class="fr mr20">
+                        共<span class="page_all">10</span>页/<span class="data_all">100</span>条数据
+                    </div>
+                    <div class="fr mr15">
+                        <span>每页</span>
+                        <select>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                        <span>条</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

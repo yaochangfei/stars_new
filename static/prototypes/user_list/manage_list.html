@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="中国科普研究所">
+        <meta name="description" content="中国科普研究所">
+        <title>中国科普研究所</title>
+        <link rel="shortcut icon" href="../../images/favicon.ico">
+        <link rel="stylesheet" href="../../css/base.css">
+        <link rel="stylesheet" href="../../css/default/user_list.css">
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/public.js"></script>
+    </head>
+    <body>
+        <div class="header clear">
+            <div class="fl header_logo">
+                <a href="javascript:void (0)">中国科普研究所</a>
+            </div>
+            <ul class="fl header_nav clear">
+                <li class="fl">
+                    <a href="#">首页</a>
+                </li>
+                <li class="fl active">
+                    <a href="#">用户管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">问卷管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">车型维护</a>
+                </li>
+                <li class="fl">
+                    <a href="../integral_manage/integral_query.html">积分管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">小程序设置</a>
+                </li>
+            </ul>
+            <div class="fr header_user clear">
+                <div class="switch_skin fl pr mr30">
+                    <i class="switch_i"></i>
+                </div>
+                <div class="user_info fl mr20 pr">
+                    <div class="user_img pr clear">
+                        <img class="fl mr10" src="../../images/default/user_img.png" alt="">
+                        <div class="user_name ellipsis fl">体验admin</div>
+                    </div>
+                    <div class="outer_login pa"><i class="outer_i"></i>退出登录</div>
+                </div>
+            </div>
+        </div>
+        <div class="main clear">
+            <div class="left_area fl pr">
+                <ul class="left_menu">
+                    <li class="pr">
+                        <a href="user_list.html">用户列表</a>
+                        <i class="user_list_i"></i>
+                    </li>
+                    <li class="active pr">
+                        <a href="manage_list.html">管理员列表</a>
+                        <i class="manager_list_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="role_list.html">角色列表</a>
+                        <i class="role_list_i"></i>
+                    </li>
+                </ul>
+                <div class="contact_info">
+                    <div>
+                        <i class="email_i"></i>
+                        <span class="email">wcy129@qq.com</span>
+                    </div>
+                    <div>
+                        <i class="qq_i"></i>
+                        <span class="qq">515673298</span>
+                    </div>
+                </div>
+            </div>
+            <div class="right_area">
+                <div class="ml10 mr10 pt8 pb8 clear">
+                    <a href="manage_edit.html" class="btn btn_i btn_primary btn_lg pr fl">新增管理员<i class="add_manage_i"></i></a>
+                    <a href="#" class="refresh_btn pl20 mr20 fr mt10"><i class="refresh_i"></i>刷新</a>
+                </div>
+                <div class="filter_box clear">
+                    <div class="filter_condition fl">
+                        <span>筛选条件：</span>
+                        <input type="text" class="account" placeholder="用户名/姓名">
+                        <input type="text" class="username" placeholder="输入管理员手机号">
+                    </div>
+                    <div class="filter_btn fr">
+                        <a href="#" class="btn btn_i btn_primary pr mr5">查询<i class="btn_search"></i></a>
+                        <a href="#" class="btn btn_default">取消筛选</a>
+                    </div>
+                </div>
+                <div class="data_list pr">
+                    <div class="clear">
+                        <div class="fl">
+                            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+                        </div>
+                        <div class="fr">
+                            <select>
+                                <option value="排列方式">排列方式</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <table class="table_list">
+                            <tr>
+                                <th width="50"></th>
+                                <th>管理员账号</th>
+                                <th>姓名</th>
+                                <th>邮箱地址</th>
+                                <th>手机号码</th>
+                                <th>添加时间</th>
+                                <th>最后登录时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox" checked="checked">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i checked"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox" checked="checked">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i checked"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox" checked="checked">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i checked"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox" checked="checked">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i checked"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox" checked="checked">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tc">
+                                    <i class="checkbox_i checked"></i>
+                                </td>
+                                <td>476469</td>
+                                <td>王忱益</td>
+                                <td>wcy129@qq.com</td>
+                                <td>18976541234</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>2017-08-05 15:47:44</td>
+                                <td>
+                                    <label class="table_switch">
+                                        <input type="checkbox">
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td class="tools">
+                                    <a href="manage_access.html" class="setting_i fl"></a>
+                                    <a href="manage_edit.html" class="edit_i fl"></a>
+                                    <a href="#" class="delete_i fl"></a>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="table_control clear">
+                            <div class="fl"><i class="checkbox_i mr25 ml15"></i>全选</div>
+                            <div class="fl ml20">
+                                 <select>
+                                    <option value="启用">启用</option>
+                                    <option value="停用">停用</option>
+                                    <option value="删除">删除</option>
+                                </select>
+                            </div>
+                            <div class="fl">
+                                <a href="#" class="btn btn_primary ml20 btn_sm">确定</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fix_page clear">
+                    <div class="fr">
+                        <span>跳至</span>
+                        <input type="text" class="jump_num">
+                        <span>页</span>
+                    </div>
+                    <div class="paging fr mr10">
+                        <a href="#">首页</a>
+                        <a href="#">上一页</a>
+                        <a href="#" class="active">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">4</a>
+                        <a href="#">5</a>
+                        <a href="#">...</a>
+                        <a href="#">50</a>
+                        <a href="#">下一页</a>
+                        <a href="#">尾页</a>
+                    </div>
+                    <div class="fr mr20">
+                        共<span class="page_all">10</span>页/<span class="data_all">100</span>条数据
+                    </div>
+                    <div class="fr mr15">
+                        <span>每页</span>
+                        <select>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                        <span>条</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

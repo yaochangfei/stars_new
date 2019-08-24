@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="汽车体验社区">
+        <meta name="description" content="汽车体验社区">
+        <title>中国科普研究所</title>
+        <link rel="shortcut icon" href="../../images/favicon.ico">
+        <link rel="stylesheet" href="../../css/base.css">
+        <link rel="stylesheet" href="../../css/default/user_list.css">
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/public.js"></script>
+        <script src="../../js/base_utils.js"></script>
+        <script src="../../js/plugins/layer/layer.js"></script>
+        <script src="../../js/city2.js"></script>
+    </head>
+    <body>
+        <div class="header clear">
+            <div class="fl header_logo">
+                <a href="javascript:void (0)">汽车用户体验社区</a>
+            </div>
+            <ul class="fl header_nav clear">
+                <li class="fl">
+                    <a href="#">首页</a>
+                </li>
+                <li class="fl">
+                    <a href="#">用户管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">问卷管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">车型维护</a>
+                </li>
+                <li class="fl">
+                    <a href="#">积分管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">小程序设置</a>
+                </li>
+                <li class="fl active">
+                    <a href="#">数据统计</a>
+                </li>
+            </ul>
+            <div class="fr header_user clear">
+                <div class="switch_skin fl pr mr30">
+                    <i class="switch_i"></i>
+                </div>
+                <div class="user_info fl mr20 pr">
+                    <div class="user_img pr clear">
+                        <img class="fl mr10" src="../../images/default/user_img.png" alt="">
+                        <div class="user_name ellipsis fl">体验admin</div>
+                    </div>
+                    <div class="outer_login pa"><i class="outer_i"></i>退出登录</div>
+                </div>
+            </div>
+        </div>
+        <div class="main clear">
+            <div class="left_area fl pr">
+                <ul class="left_menu">
+                    <li class="first_menu pr">
+                        <a href="javascript:void(0)">小程序管理</a>
+                        <i class="arrow_i active"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">题目管理</a>
+                        <i class="subject_list_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">钻石管理</a>
+                        <i class="diamond_manage_i"></i>
+                    </li>
+                </ul>
+                <ul class="left_menu">
+                    <li class="first_menu pr">
+                        <a href="javascript:void(0)">抽题管理</a>
+                        <i class="arrow_i"></i>
+                    </li>
+                    <li class="active pr">
+                        <a href="#">段位管理</a>
+                        <i class="subject_dan_grade_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">难度管理</a>
+                        <i class="subject_difficulty_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">题目类别管理</a>
+                        <i class="subject_category_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">自定义纬度</a>
+                        <i class="subject_custom_i"></i>
+                    </li>
+                </ul>
+            </div>
+            <div class="right_area clear">
+                <div class="main_header pt10 pb10 clear">
+                    <div class="fl bread_nav">
+                        <a href="#" class="pl10 ml10">学习效果趋势</a>
+                    </div>
+                </div>
+                <div class="edit_info_box fl chart3 no_pr">
+                    <div class="edit_info pr no_m">
+                        <div class="clear add_manage">
+                            <div class="fl">
+                                <h3 class="list_title pr">公民科学素质答题人次趋势<i class="chart_i chart_2"></i></h3>
+                            </div>
+                            <div class="fr chart_control">
+                                <a href="javascript:void (0)" class="export_data tips" data-name="导出数据"></a>
+                                <a href="javascript:void (0)" class="add_entry tips" data-name="新增条目"></a>
+                                <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>
+                            </div>
+                        </div>
+                        <div class="echart_box">
+                            <div class="screen_box clear">
+                                <div class="checkbox fl"><i class="checkbox_i"></i>全国答题人数</div>
+                                <div class="opens on fr">收起</div>
+                            </div>
+                            <div class="more_screen_box clear"></div>
+                            <div class="echart1">
+                                <!--echart-->
+                            </div>
+                            <div class="set_time_box clear">
+                                <div class="set_time fr">
+                                    <ul class="clear">
+                                        <li><a href="javascript:void(0)" class="active">1月</a></li>
+                                        <li><a href="javascript:void(0)">3月</a></li>
+                                        <li><a href="javascript:void(0)">6月</a></li>
+                                        <li><a href="javascript:void(0)">1年</a></li>
+                                        <li><a href="javascript:void(0)">3年</a></li>
+                                        <li><a href="javascript:void(0)">5年</a></li>
+                                    </ul>
+                                </div>
+                                <div class="fr set_time_info">选择时间</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="edit_info_box fl chart3">
+                    <div class="edit_info pr no_m">
+                        <div class="clear add_manage">
+                            <div class="fl">
+                                <h3 class="list_title pr">公民科学素质答题正确率趋势<i class="chart_i chart_2"></i></h3>
+                            </div>
+                            <div class="fr chart_control">
+                                <a href="javascript:void (0)" class="export_data tips" data-name="导出数据"></a>
+                                <a href="javascript:void (0)" class="add_entry tips" data-name="新增条目"></a>
+                                <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>
+                            </div>
+                        </div>
+                        <div class="echart_box">
+                            <div class="screen_box clear">
+                                <div class="checkbox fl"><i class="checkbox_i"></i>总体正确率</div>
+                                <div class="opens on fr">收起</div>
+                            </div>
+                            <div class="more_screen_box clear"></div>
+                            <div class="echart1">
+                                <!--echart-->
+                            </div>
+                            <div class="set_time_box clear">
+                                <div class="set_time fr">
+                                    <ul class="clear">
+                                        <li><a href="javascript:void(0)" class="active">1月</a></li>
+                                        <li><a href="javascript:void(0)">3月</a></li>
+                                        <li><a href="javascript:void(0)">6月</a></li>
+                                        <li><a href="javascript:void(0)">1年</a></li>
+                                        <li><a href="javascript:void(0)">3年</a></li>
+                                        <li><a href="javascript:void(0)">5年</a></li>
+                                    </ul>
+                                </div>
+                                <div class="fr set_time_info">选择时间</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="edit_info_box fl chart3 mb10 no_pr">
+                    <div class="edit_info pr no_m">
+                        <div class="clear add_manage">
+                            <div class="fl">
+                                <h3 class="list_title pr">公民科学素质答对题目数分布<i class="chart_i chart_2"></i></h3>
+                            </div>
+                            <div class="fr chart_control">
+                                <a href="javascript:void (0)" class="export_data tips" data-name="导出数据"></a>
+                                <a href="javascript:void (0)" class="add_entry tips" data-name="新增条目"></a>
+                                <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>
+                            </div>
+                        </div>
+                        <div class="echart_box">
+                            <div class="screen_box clear">
+                                <div class="checkbox fl"><i class="checkbox_i"></i>全体人群答对题目分布</div>
+                                <div class="opens on fr">收起</div>
+                            </div>
+                            <div class="more_screen_box clear"></div>
+                            <div class="echart3">
+                                <!--echart-->
+                            </div>
+                            <div class="set_time_box clear">
+                                <div class="set_time fr">
+                                    <ul class="clear">
+                                        <li><a href="javascript:void(0)" class="active">1月</a></li>
+                                        <li><a href="javascript:void(0)">3月</a></li>
+                                        <li><a href="javascript:void(0)">6月</a></li>
+                                        <li><a href="javascript:void(0)">1年</a></li>
+                                        <li><a href="javascript:void(0)">3年</a></li>
+                                        <li><a href="javascript:void(0)">5年</a></li>
+                                    </ul>
+                                </div>
+                                <div class="fr set_time_info">选择时间</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="edit_info_box fl chart3 mb10">
+                    <div class="edit_info pr no_m">
+                        <div class="clear add_manage">
+                            <div class="fl">
+                                <h3 class="list_title pr">公民科学素质雷达图<i class="chart_i chart_2"></i></h3>
+                            </div>
+                            <div class="fr chart_control">
+                                <a href="javascript:void (0)" class="export_data tips" data-name="导出数据"></a>
+                                <a href="javascript:void (0)" class="add_entry tips" data-name="新增条目"></a>
+                                <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>
+                            </div>
+                        </div>
+                        <div class="echart_box">
+                            <div class="screen_box clear">
+                                <div class="checkbox fl"><i class="checkbox_i"></i>全部正确率</div>
+                                <div class="opens fr">展开</div>
+                            </div>
+                            <div class="more_screen_box clear"></div>
+                            <div class="echart3">
+                                <!--echart-->
+                            </div>
+                            <div class="set_time_box clear">
+                                <div class="set_time fr">
+                                    <ul class="clear">
+                                        <li><a href="javascript:void(0)" class="active">1月</a></li>
+                                        <li><a href="javascript:void(0)">3月</a></li>
+                                        <li><a href="javascript:void(0)">6月</a></li>
+                                        <li><a href="javascript:void(0)">1年</a></li>
+                                        <li><a href="javascript:void(0)">3年</a></li>
+                                        <li><a href="javascript:void(0)">5年</a></li>
+                                    </ul>
+                                </div>
+                                <div class="fr set_time_info">选择时间</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        var a = {"age_group_list":[1],"gender_list":[1],"education_list":[1],"province_code_list":["110000","120000","130000"],"city_code_list":["110100","120100","130000"]};
+        var b = [{"p_code":'130000',"p_name":'河北',sub:[{c_name: "石家庄市", c_code: "130100"},{c_name: "唐山市", c_code: "130200"}]}];
+        var city_checked = [];
+        var pro_checked = [];
+        // 已选城市初始化：
+        for(var m=0;m<b.length;m++){
+            for(var n= 0;n<b[m].sub.length;n++){
+                city_checked.push(b[m].sub[n].c_name);
+            }
+        }
+        // 初始化省份个数：
+        function initNum(arr) {
+            var p_box = $(".province_box");
+            for(var i = 0;i<arr.length;i++){
+                var obj = p_box.find("li[data-code='" + arr[i].substring(0,2)+"0000']").find(".city_num");
+                obj.removeClass("dis_none");
+                obj.html(parseInt(obj.html()==""?0:obj.html())+1);
+            }
+        }
+        //删除条目颜色重排：
+        function colReset(obj) {
+            var that = obj.find(".checkbox_i");
+            that.removeClass("cl1 cl2 cl3 cl4");
+            that.each(function (i) {
+                $(this).addClass("cl"+(i+1));
+            })
+        }
+        function opensShow(obj) {
+            if(obj.parents(".edit_info").find(".more_screen_box").children().length>0){
+                obj.parents(".edit_info").find(".opens").show();
+            }
+            else{
+                obj.parents(".edit_info").find(".opens").hide();
+            }
+        }
+        function checkedNum() {
+            var checked_num = $(".city_box .checkbox_i.checked");
+            if(checked_num.length>0){
+                $(".province_box li.active").find(".city_num").removeClass("dis_none").html(checked_num.length);
+            }
+            else{
+                $(".province_box li.active").find(".city_num").addClass("dis_none");
+            }
+        }
+        function success() {
+            //加载省份信息：
+            var provinceBox = $(".province_box");
+            var cityBox = $(".city_box");
+            for (var i = 0; i < city_data.length; i++) {
+                provinceBox.append('<li title="'+ city_data[i].name +'" data-code="' + city_data[i].code + '">' + city_data[i].name + '<div class="city_num pa dis_none"></li>')
+            }
+            //请求城市信息：
+            $(".area_box").on("click",".province_box li",function () {
+                if ($(this).hasClass("active")) {
+                    return false;
+                } else {
+                    $(".province_box li").removeClass("active");
+                    $(this).addClass("active");
+                    //筛选城市并渲染：
+                    var p_code = $(this).attr("data-code");
+                    var p_name = $(this).attr("title");
+                    var p_obj = city_data.filter(function (e) {return e.code == p_code;})[0].sub;
+                    if(p_obj.length>1){
+                        cityBox.empty().append('<li class="clear"><div class="checkbox_all fl ellipsis" title="'+ p_name +'" data-code="' + p_code + '"><i class="checkbox_i"></i>全市</div></li><li class="city_choose clear"></li>');
+                    }
+                    else{
+                        cityBox.empty().append('<li class="clear dis_none"><div class="checkbox_all fl ellipsis" title="'+ p_name +'" data-code="' + p_code + '"><i class="checkbox_i"></i>全市</div></li><li class="city_choose clear"></li>');
+                    }
+                    for (var i = 0; i < p_obj.length; i++) {
+                        $(".city_box .city_choose").append('<div class="checkbox fl ellipsis" title="' + p_obj[i].name + '" data-code="' + p_obj[i].code + '"><i class="checkbox_i"></i>' + p_obj[i].name + '</div>')
+                    }
+                    for(var j=0;j<city_checked.length;j++){
+                        cityBox.find("div[title='"+ city_checked[j] +"']").find(".checkbox_i").addClass("checked");
+                    }
+                }
+            });
+            //城市最多选5个，部类最多选3个：
+            $(".pop_table").on("click",".checkbox",function () {
+                if(city_checked.length>=5&&$(this).attr("data-code")&&!$(this).find(".checkbox_i").hasClass("checked")&&!$(this).parent().siblings().find(".checkbox_i").hasClass("checked")){
+                    tip_msg("最多选五个",1000);
+                    return false
+                }
+                else if($(this).parents(".knowledge_kind").find(".checkbox_i.checked").length>=3&&!$(this).find(".checkbox_i").hasClass("checked")){
+                    tip_msg("最多选三个",1000);
+                    return false
+                }
+                else{
+                    //城市信息才有data-code属性,进行勾选操作：
+                    if($(this).attr("data-code")){
+                        var c_data = $(this).attr("title");
+                        var c_code = $(this).attr("data-code");
+                        var p_data = $(this).parents(".city_box").find(".checkbox_all").attr("title");
+                        var p_code = $(this).parents(".city_box").find(".checkbox_all").attr("data-code");
+                        var checked = false;
+                        if(!$(this).find(".checkbox_i").hasClass("checked")){
+                            $(this).parents(".city_box").find(".checkbox_all .checkbox_i").removeClass("checked");
+                            $(this).find(".checkbox_i").addClass("checked");
+                            city_checked.remove(p_data);
+                            city_checked.push(c_data);
+                            pro_checked.removeObj(p_data);
+                            if(pro_checked.length>0){
+                                for(var n = 0;n<pro_checked.length;n++){
+                                    if(pro_checked[n].p_name == p_data){
+                                        pro_checked[n].sub.push({'c_name':c_data,'c_code':c_code});
+                                        checked = true;
+                                        break;
+                                    }
+                                }
+                                if(!checked){
+                                    pro_checked.push({'p_name':p_data,'p_code':p_code,'sub':[{'c_name':c_data,'c_code':c_code}]});
+                                }
+                            }
+                            else{
+                                pro_checked.push({'p_name':p_data,'p_code':p_code,'sub':[{'c_name':c_data,'c_code':c_code}]});
+                            }
+                            pro_checked.deleteObj();
+                        }
+                        else{
+                            $(this).find(".checkbox_i").removeClass("checked");
+                            city_checked.remove(c_data);
+                            pro_checked.removeObj(c_data);
+                            pro_checked.deleteObj();
+                        }
+                        checkedNum();
+                    }
+                    else{
+                        $(this).find(".checkbox_i").toggleClass("checked");
+                    }
+                }
+            });
+             // 全市互斥：
+             cityBox.on("click",".checkbox_all",function () {
+                if(city_checked.length>=5&&!$(this).parents(".city_box").find(".city_choose .checkbox_i").hasClass("checked")){
+                    tip_msg("最多选五个",1000);
+                    return false
+                }
+                else if(!$(this).find(".checkbox_i").hasClass("checked")){
+                    $(this).find(".checkbox_i").addClass("checked");
+                    $(this).parent().siblings(".city_choose").find(".checkbox").each(function () {
+                        if($(this).find(".checked")){
+                            city_checked.remove($(this).attr("title"));
+                            pro_checked.removeObj($(this).attr("title"));
+                        }
+                    });
+                    pro_checked.deleteObj();
+                    city_checked.push($(this).attr("title"));
+                    pro_checked.push({'p_name':$(this).attr("title"),'p_code':$(this).attr("data-code"),'sub':[{'c_name':$(this).attr("title"),'c_code':$(this).attr("data-code")}]});
+                    $(this).parents(".city_box").find(".city_choose .checkbox_i").removeClass("checked");
+                }
+                else{
+                    $(this).find(".checkbox_i").removeClass("checked");
+                    city_checked.remove($(this).attr("title"));
+                    pro_checked.removeObj($(this).attr("title"));
+                    pro_checked.deleteObj();
+                }
+                checkedNum();
+            });
+        }
+        function yes() {
+            var arr = [],city=[];
+            var text = $(".more_screen .checkbox");
+            var repeat = false;
+            $(".pop_table select").each(function () {
+                if($(this).find("option:selected").text()!=="请选择"){
+                    arr.push($(this).find("option:selected").text())
+                }
+            });
+            for(var i=0;i<pro_checked.length;i++){
+                city.push(pro_checked[i].p_name);
+                for(var j=0;j<pro_checked[i].sub.length;j++){
+                    city.push(pro_checked[i].sub[j].c_name);
+                }
+            }
+            city = city.removeRepeat();
+            arr = arr.concat(city);
+            $(".knowledge_kind .checkbox_i.checked").each(function () {
+                arr.push($(this).parent().text())
+            });
+            text.each(function () {
+                if($(this).text()==arr.join()){
+                    repeat = true;
+                    return false;
+                }
+            });
+            if(arr == ""){
+                tip_msg("请至少选择一个筛选条件",1000);
+            }
+            else if(repeat){
+                tip_msg("筛选条件已存在，请修改该条目",2000);
+            }
+            else{
+                var flag = true;
+                var moreScreenBox = $(".more_screen_box");
+                moreScreenBox.each(function () {
+                    if($(this).children().length>3){
+                        tip_msg("最多生成5个图表");
+                        flag = false;
+                        return false;
+                    }
+                });
+                if(flag){
+                    moreScreenBox.each(function () {
+                        var chart = "cl" + ($(this).children().length + 1).toString();
+                        var moreScreen = '<div class="more_screen clear fl mr20"><div class="checkbox fl"><i class="checkbox_i '+ chart +' checked"></i>'+ arr.join()+'</div> <div class="screen_control fl"> <i class="edit_i"></i> <i class="delete_i"></i> </div> </div>';
+                        $(this).append(moreScreen);
+                    });
+                    opensShow(moreScreenBox);
+                    layer.closeAll();
+                }
+            }
+        }
+        function end() {
+            // 销毁已选城市数组对象：
+            city_checked = [];
+            pro_checked= [];
+        }
+        function success_edit() {
+            //初始化数值：
+            if(a.age_group_list){
+                $(".age_group_list").find("option").eq(a.age_group_list[0]).prop("selected",true);
+            }
+            if(a.gender_list){
+                $(".gender_list").find("option").eq(a.gender_list[0]).prop("selected",true);
+            }
+            if(a.education_list){
+                $(".education_list").find("option").eq(a.education_list[0]).prop("selected",true);
+            }
+            //加载省份信息：
+            var provinceBox = $(".province_box");
+            var cityBox = $(".city_box");
+            for (var i = 0; i < city_data.length; i++) {
+                provinceBox.append('<li title="'+ city_data[i].name +'" data-code="' + city_data[i].code + '">' + city_data[i].name + '<div class="city_num pa dis_none"></li>')
+            }
+            initNum(a.city_code_list);
+            //请求城市信息：
+            $(".area_box").on("click",".province_box li",function () {
+                if ($(this).hasClass("active")) {
+                    return false;
+                } else {
+                    $(".province_box li").removeClass("active");
+                    $(this).addClass("active");
+                    //筛选城市并渲染：
+                    var p_code = $(this).attr("data-code");
+                    var p_name = $(this).attr("title");
+                    var p_obj = city_data.filter(function (e) {return e.code == p_code;})[0].sub;
+                    if(p_obj.length>1){
+                        cityBox.empty().append('<li class="clear"><div class="checkbox_all fl ellipsis" title="'+ p_name +'" data-code="' + p_code + '"><i class="checkbox_i"></i>全市</div></li><li class="city_choose clear"></li>');
+                    }
+                    else{
+                        cityBox.empty().append('<li class="clear dis_none"><div class="checkbox_all fl ellipsis" title="'+ p_name +'" data-code="' + p_code + '"><i class="checkbox_i"></i>全市</div></li><li class="city_choose clear"></li>');
+                    }
+                    for (var i = 0; i < p_obj.length; i++) {
+                        $(".city_box .city_choose").append('<div class="checkbox fl ellipsis" title="' + p_obj[i].name + '" data-code="' + p_obj[i].code + '"><i class="checkbox_i"></i>' + p_obj[i].name + '</div>')
+                    }
+                    for(var j=0;j<city_checked.length;j++){
+                        cityBox.find("div[title='"+ city_checked[j] +"']").find(".checkbox_i").addClass("checked");
+                    }
+                }
+            });
+            //城市最多选5个，部类最多选3个：
+            $(".pop_table").on("click",".checkbox",function () {
+                if(city_checked.length>=5&&$(this).attr("data-code")&&!$(this).find(".checkbox_i").hasClass("checked")&&!$(this).parent().siblings().find(".checkbox_i").hasClass("checked")){
+                    tip_msg("最多选五个",1000);
+                    return false
+                }
+                else if($(this).parents(".knowledge_kind").find(".checkbox_i.checked").length>=3&&!$(this).find(".checkbox_i").hasClass("checked")){
+                    tip_msg("最多选三个",1000);
+                    return false
+                }
+                else{
+                    //城市信息才有data-code属性,进行勾选操作：
+                    if($(this).attr("data-code")){
+                        var c_data = $(this).attr("title");
+                        var c_code = $(this).attr("data-code");
+                        var p_data = $(this).parents(".city_box").find(".checkbox_all").attr("title");
+                        var p_code = $(this).parents(".city_box").find(".checkbox_all").attr("data-code");
+                        var checked = false;
+                        if(!$(this).find(".checkbox_i").hasClass("checked")){
+                            $(this).parents(".city_box").find(".checkbox_all .checkbox_i").removeClass("checked");
+                            $(this).find(".checkbox_i").addClass("checked");
+                            city_checked.remove(p_data);
+                            city_checked.push(c_data);
+                            pro_checked.removeObj(p_data);
+                            if(pro_checked.length>0){
+                                for(var n = 0;n<pro_checked.length;n++){
+                                    if(pro_checked[n].p_name == p_data){
+                                        pro_checked[n].sub.push({'c_name':c_data,'c_code':c_code});
+                                        checked = true;
+                                        break;
+                                    }
+                                }
+                                if(!checked){
+                                    pro_checked.push({'p_name':p_data,'p_code':p_code,'sub':[{'c_name':c_data,'c_code':c_code}]});
+                                }
+                            }
+                            else{
+                                pro_checked.push({'p_name':p_data,'p_code':p_code,'sub':[{'c_name':c_data,'c_code':c_code}]});
+                            }
+                            pro_checked.deleteObj();
+                        }
+                        else{
+                            $(this).find(".checkbox_i").removeClass("checked");
+                            city_checked.remove(c_data);
+                            pro_checked.removeObj(c_data);
+                            pro_checked.deleteObj();
+                        }
+                        checkedNum();
+                    }
+                    else{
+                        $(this).find(".checkbox_i").toggleClass("checked");
+                    }
+                }
+            });
+             // 全市互斥：
+             cityBox.on("click",".checkbox_all",function () {
+                if(city_checked.length>=5&&!$(this).parents(".city_box").find(".city_choose .checkbox_i").hasClass("checked")){
+                    tip_msg("最多选五个",1000);
+                    return false
+                }
+                else if(!$(this).find(".checkbox_i").hasClass("checked")){
+                    $(this).find(".checkbox_i").addClass("checked");
+                    $(this).parent().siblings(".city_choose").find(".checkbox").each(function () {
+                        if($(this).find(".checked")){
+                            city_checked.remove($(this).attr("title"));
+                            pro_checked.removeObj($(this).attr("title"));
+                        }
+                    });
+                    pro_checked.deleteObj();
+                    city_checked.push($(this).attr("title"));
+                    pro_checked.push({'p_name':$(this).attr("title"),'p_code':$(this).attr("data-code"),'sub':[{'c_name':$(this).attr("title"),'c_code':$(this).attr("data-code")}]});
+                    $(this).parents(".city_box").find(".city_choose .checkbox_i").removeClass("checked");
+                }
+                else{
+                    $(this).find(".checkbox_i").removeClass("checked");
+                    city_checked.remove($(this).attr("title"));
+                    pro_checked.removeObj($(this).attr("title"));
+                    pro_checked.deleteObj();
+                }
+                checkedNum();
+            });
+        }
+        $(function () {
+            //检查是否隐藏展开收起：
+            opensShow($(".more_screen_box"));
+            //新增条目：
+            $(document).on("click",".add_entry",function () {
+                var content = '<table class="pop_table"> <tr> <td width="20%">年龄段：</td> <td> <select class="age_group_list"> <option value="请选择">请选择</option> <option value="1">青年</option> <option value="2">中年</option> <option value="3">老年</option></select> </td> </tr> <tr> <td width="20%">性别：</td> <td> <select class="gender_list"> <option value="请选择">请选择</option> <option value="1">男</option> <option value="2">女</option></select> </td> </tr> <tr> <td width="20%">受教育程度：</td> <td> <select class="education_list"> <option value="请选择">请选择</option> <option value="1">初中及以下</option> <option value="2">高中/中专/技校</option> <option value="3">大专</option> <option value="4">本科/学士</option> <option value="5">硕士及以上</option> </select> </td> </tr> <tr> <td class="vt">地区：</td><td> <div class="area_box clear"><ul class="province_box fl mr10"></ul><ul class="city_box fl"></ul> </div> </td> </tr><tr><td class="vt">学科部类：</td><td><div class="knowledge_kind clear"><div class="checkbox fl ellipsis" title="科学观念与方法"><i class="checkbox_i"></i>科学观念与方法</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div></div></td></tr></table>';
+                entry_dialog("新增条目","740px","auto",content,success,yes,end);
+            });
+            $(".set_time a").click(function () {
+               $(this).parents(".set_time").find("a").removeClass("active");
+               $(this).toggleClass("active");
+            });
+//            编辑条目：
+            $(document).on("click",".edit_i",function () {
+                var content = '<table class="pop_table"> <tr> <td width="20%">年龄段：</td> <td> <select class="age_group_list"> <option value="请选择">请选择</option> <option value="1">青年</option> <option value="2">中年</option> <option value="3">老年</option></select> </td> </tr> <tr> <td width="20%">性别：</td> <td> <select class="gender_list"> <option value="请选择">请选择</option> <option value="1">男</option> <option value="2">女</option></select> </td> </tr> <tr> <td width="20%">受教育程度：</td> <td> <select class="education_list"> <option value="请选择">请选择</option> <option value="1">初中及以下</option> <option value="2">高中/中专/技校</option> <option value="3">大专</option> <option value="4">本科/学士</option> <option value="5">硕士及以上</option> </select> </td> </tr> <tr> <td class="vt">地区：</td><td> <div class="area_box clear"><ul class="province_box fl mr10"></ul><ul class="city_box fl"></ul> </div> </td> </tr><tr><td class="vt">学科部类：</td><td><div class="knowledge_kind clear"><div class="checkbox fl ellipsis" title="科学观念与方法"><i class="checkbox_i"></i>科学观念与方法</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div><div class="checkbox fl ellipsis" title="物质与能量"><i class="checkbox_i"></i>物质与能量</div></div></td></tr></table>';
+                entry_dialog("修改条目","740px","auto",content,success_edit,yes,end);
+            });
+            //删除新增的条目：
+            $(document).on("click",".delete_i",function () {
+               var _this = $(this);
+               confirm_dialog("删除条目","确认删除吗？",function () {
+                   var this_screen_box = _this.parents(".more_screen_box");
+                    _this.parents(".more_screen").remove();
+                   colReset(this_screen_box);
+                   opensShow(this_screen_box);
+               });
+            });
+            $(".echart_box").on("click",".checkbox",function () {
+               $(this).find(".checkbox_i").toggleClass("checked");
+            });
+            //展开收起：
+            $(document).on("click",".opens",function () {
+                if($(this).hasClass("on")){
+                    $(this).removeClass("on").html("展开");
+                    $(this).parents(".echart_box").find(".more_screen_box").slideUp();
+                }
+                else{
+                    $(this).addClass("on").html("收起");
+                    $(this).parents(".echart_box").find(".more_screen_box").slideDown();
+                }
+            });
+        })
+    </script>
+</html>

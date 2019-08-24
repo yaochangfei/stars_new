@@ -1,0 +1,134 @@
+/*对话框*/
+.tui_popWinBox {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	-webkit-transition-duration: 400ms;
+    transition-duration: 400ms;
+	opacity: 0;
+}
+.tui_popWinBox.show{
+	display: -webkit-box;
+	display: box;
+	opacity:1;
+}
+.tui_popWinBox.show .tui_winMask{
+	width: 100%;
+	position: fixed;
+	background: #000000;
+	top: 0;
+	bottom: 0;
+	opacity: 0.4;
+}
+
+.dialog_hd {
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+	position: relative;
+	padding: 0 15px;
+}
+.dialog_hd h3 {
+	font-weight: bold;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	padding:0;
+	font-size:17px;
+}
+.dialog_cnt {
+	border-radius: 12px;
+	width: 270px;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	pointer-events: auto;
+	background-color: rgba(253, 253, 253, 0.95);
+	position: relative;
+	font-size: 16px;
+}
+.dialog_bd {
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+	padding: 0 45px 18px;
+	display: -webkit-box;
+	display: box;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	-webkit-box-orient: vertical;
+	font-size: 14px;
+	box-sizing:border-box;
+	color: #000000;
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+	word-wrap: break-word;
+}
+.dialog .dialog_bd{
+	padding: 12px 0;
+}
+.dialog_bd > h4 {
+	margin-bottom: 4px;
+	width: 100%;
+	text-align: center;
+}
+.dialog_bd > div, .dialog_bd > ul {
+	width: 100%;
+}
+.dialog_ft {
+	border-bottom-left-radius: 12px;
+	border-bottom-right-radius: 12px;
+	display: -webkit-box;
+	width: 100%;
+	box-sizing: border-box;
+	-webkit-box-align: center;
+	border-top: 1px solid #e0e0e0;
+	height: 42px;
+	line-height: 42px;
+}
+
+.dialog_ft button {
+	border: none;
+	color: #007AFF;
+	text-align: center;
+	border-right: 1px #E0E0E0 solid;
+	width: 100%;
+	line-height: 42px;
+	background: transparent;
+	display: block;
+	margin: 0 !important;
+	-webkit-box-flex: 1;
+}
+.dialog_ft button:active {
+	background-color: rgba(0, 0, 0, 0.1) !important;
+}
+.dialog_ft button:first-child {
+	border-bottom-left-radius: 12px;
+}
+.dialog_ft button:last-child {
+	border-right: 0;
+	border-bottom-right-radius: 12px;
+}
+ @media screen and (-webkit-min-device-pixel-ratio: 2) {
+.dialog_ft {
+	position: relative;
+	border: 0;
+	background-position: left top;
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.5, transparent), color-stop(0.5, #e0e0e0), to(#e0e0e0));
+	background-repeat: repeat-x;
+	-webkit-background-size: 100% 1px;
+}
+.dialog_ft button {
+	background-position: right top;
+	background-image: -webkit-gradient(linear, left top, right top, color-stop(0.5, transparent), color-stop(0.5, #e0e0e0), to(#e0e0e0));
+	background-repeat: repeat-y;
+	-webkit-background-size: 1px 100%;
+}
+.dialog_ft button:last-child {
+	background: none;
+}
+}

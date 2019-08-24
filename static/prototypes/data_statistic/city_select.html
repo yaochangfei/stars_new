@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="汽车体验社区">
+        <meta name="description" content="汽车体验社区">
+        <title>中国科普研究所</title>
+        <link rel="shortcut icon" href="../../images/favicon.ico">
+        <link rel="stylesheet" href="../../css/base.css">
+        <link rel="stylesheet" href="../../css/default/user_list.css">
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/public.js"></script>
+        <script src="../../js/base_utils.js"></script>
+        <script src="../../js/plugins/layer/layer.js"></script>
+        <script src="../../js/city2.js"></script>
+    </head>
+    <body>
+        <div class="filter_condition">
+            <select id="province_box" class="subject_dimension" name="province_box">
+                <option value="">请选择省份</option>
+            </select>
+            <select id="city_box" class="subject_dimension" name="city_box">
+                <option value="">请选择城市</option>
+            </select>
+        </div>
+    </body>
+    <script>
+        $(function () {
+            var s_province = 130000;
+            var s_city = 130100;
+            var cityBox = $("#city_box");
+            for (var i = 0; i < city_data.length; i++) {
+                if(s_province&&city_data[i].code == s_province){
+                    $("#province_box").append('<option selected value="'+ city_data[i].code +'">'+ city_data[i].name +'</option>');
+                    var p_obj = city_data.filter(function (e) {return e.code == s_province;})[0].sub;
+                    cityBox.empty();
+                    for(var j=0;j<p_obj.length;j++){
+                        if(s_city&&p_obj[j].code == s_city){
+                            cityBox.append('<option selected value="'+ p_obj[j].code +'">'+ p_obj[j].name +'</option>')
+                        }
+                        cityBox.append('<option value="'+ p_obj[j].code +'">'+ p_obj[j].name +'</option>')
+                    }
+                }
+                else{
+                    $("#province_box").append('<option value="'+ city_data[i].code +'">'+ city_data[i].name +'</option>');
+                }
+            }
+            $("#province_box").change(function () {
+                var p_code = $(this).val();
+                if(p_code){
+                    var p_obj = city_data.filter(function (e) {return e.code == p_code;})[0].sub;
+                    cityBox.empty();
+                    for(var j=0;j<p_obj.length;j++){
+                        cityBox.append('<option value="'+ p_obj[j].code +'">'+ p_obj[j].name +'</option>')
+                    }
+                }
+            });
+        })
+    </script>
+</html>

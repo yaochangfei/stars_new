@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="汽车体验社区">
+        <meta name="description" content="汽车体验社区">
+        <title>中国科普研究所</title>
+        <link rel="shortcut icon" href="../../images/favicon.ico">
+        <link rel="stylesheet" href="../../css/base.css">
+        <link rel="stylesheet" href="../../css/default/user_list.css">
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/public.js"></script>
+        <script src="../../js/base_utils.js"></script>
+        <script src="../../js/plugins/layer/layer.js"></script>
+    </head>
+    <body>
+        <div class="header clear">
+            <div class="fl header_logo">
+                <a href="javascript:void (0)">汽车用户体验社区</a>
+            </div>
+            <ul class="fl header_nav clear">
+                <li class="fl">
+                    <a href="#">首页</a>
+                </li>
+                <li class="fl">
+                    <a href="../user_list/user_list.html">用户管理</a>
+                </li>
+                <li class="fl">
+                    <a href="../questionnaire_list/questionnaire_list.html">问卷管理</a>
+                </li>
+                <li class="fl">
+                    <a href="../vehicle_list/vehicle_list.html">车型维护</a>
+                </li>
+                <li class="fl">
+                    <a href="../integral_manage/integral_query.html">积分管理</a>
+                </li>
+                <li class="fl active">
+                    <a href="subject_list.html">小程序设置</a>
+                </li>
+            </ul>
+            <div class="fr header_user clear">
+                <div class="switch_skin fl pr mr30">
+                    <i class="switch_i"></i>
+                </div>
+                <div class="user_info fl mr20 pr">
+                    <div class="user_img pr clear">
+                        <img class="fl mr10" src="../../images/default/user_img.png" alt="">
+                        <div class="user_name ellipsis fl">体验admin</div>
+                    </div>
+                    <div class="outer_login pa"><i class="outer_i"></i>退出登录</div>
+                </div>
+            </div>
+        </div>
+        <div class="main clear">
+            <div class="left_area fl pr">
+                <ul class="left_menu">
+                    <li class="first_menu pr">
+                        <a href="javascript:void(0)">小程序管理</a>
+                        <i class="arrow_i active"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">题目管理</a>
+                        <i class="subject_list_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">钻石管理</a>
+                        <i class="diamond_manage_i"></i>
+                    </li>
+                </ul>
+                <ul class="left_menu">
+                    <li class="first_menu pr">
+                        <a href="javascript:void(0)">抽题管理</a>
+                        <i class="arrow_i"></i>
+                    </li>
+                    <li class="active pr">
+                        <a href="subject_manage.html">段位管理</a>
+                        <i class="subject_dan_grade_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">难度管理</a>
+                        <i class="subject_difficulty_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">题目类别管理</a>
+                        <i class="subject_category_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">自定义纬度</a>
+                        <i class="subject_custom_i"></i>
+                    </li>
+                </ul>
+                <div class="contact_info">
+                    <div>
+                        <i class="email_i"></i>
+                        <span class="email">wcy129@qq.com</span>
+                    </div>
+                    <div>
+                        <i class="qq_i"></i>
+                        <span class="qq">515673298</span>
+                    </div>
+                </div>
+            </div>
+            <div class="right_area">
+                <div class="main_header pt10 pb10 clear">
+                    <div class="fl bread_nav">
+                        <a href="subject_manage.html" class="pl10 ml10">段位管理</a>
+                        <span>&gt; 抽题设置</span>
+                    </div>
+                    <div class="fr clear">
+                        <a href="#" class="fl back_btn pl20 mr20"><i class="back_i"></i>返回</a>
+                    </div>
+                </div>
+                <div class="filter_box clear">
+                    <div class="filter_condition fl">
+                        <span class="mr15">单局题目总数</span>
+                        <input type="text" class="q_total only_num">
+                    </div>
+                </div>
+                <div class="edit_info">
+                    <div>
+                        <h3 class="list_title pr add_manage">题目难度 <span class="list_title_remark">(相关值必须为大于等于0的整数，且总和等于单局题目总数)</span><i class="subject_choose_i"></i></h3>
+                    </div>
+                    <div class="pl30 pr30">
+                        <div class="mt30 clear">
+                            <div class="award_box fl diff_box">
+                                <div class="award_info">难度一</div>
+                                <div>
+                                    <input type="text" class="only_num"><span class="ml5">题</span>
+                                </div>
+                            </div>
+                            <div class="award_box fl diff_box">
+                                <div class="award_info">难度二</div>
+                                <div>
+                                    <input type="text" class="only_num"><span class="ml5">题</span>
+                                </div>
+                            </div>
+                            <div class="award_box fl diff_box">
+                                <div class="award_info">难度三</div>
+                                <div>
+                                    <input type="text" class="only_num"><span class="ml5">题</span>
+                                </div>
+                            </div>
+                            <div class="award_box fl diff_box">
+                                <div class="award_info">难度四</div>
+                                <div>
+                                    <input type="text" class="only_num"><span class="ml5">题</span>
+                                </div>
+                            </div>
+                            <div class="award_box fl diff_box">
+                                <div class="award_info">难度五</div>
+                                <div>
+                                    <input type="text" class="only_num"><span class="ml5">题</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="list_title pr add_manage">题目类别<i class="subject_choose_i"></i></h3>
+                    </div>
+                    <div class="pl30 pr30 clear mb30 table_role">
+                        <div class="mt15 mb15">选择题目类别（数量小于等于涵盖题目类别数）</div>
+                        <div class="subject_kind fl">
+                            <i class="checkbox_i"></i>
+                            科学观念与方法
+                        </div>
+                        <div class="subject_kind fl">
+                            <i class="checkbox_i"></i>
+                            数学与信息
+                        </div>
+                        <div class="subject_kind fl">
+                            <i class="checkbox_i"></i>
+                            物质与能量
+                        </div>
+                        <div class="subject_kind fl">
+                            <i class="checkbox_i"></i>
+                            生命与健康
+                        </div>
+                        <div class="subject_kind fl">
+                            <i class="checkbox_i"></i>
+                            地球与环境
+                        </div>
+                        <div class="subject_kind fl">
+                            <i class="checkbox_i"></i>
+                            工程与技术
+                        </div>
+                        <div class="subject_kind fl">
+                            <i class="checkbox_i"></i>
+                            科技与社会
+                        </div>
+                        <div class="subject_kind fl">
+                            <i class="checkbox_i"></i>
+                            能力与发展
+                        </div>
+                    </div>
+                    <div class="dimension_all">
+                        <div class="dimension_box">
+                            <div class="clear add_manage">
+                                <h3 class="list_title pr fl">知识纬度 <span class="list_title_remark">(总和必须为100%)</span><i class="subject_choose_i"></i></h3>
+                                <a href="#" class="fr delete_dimension"></a>
+                            </div>
+                            <div class="pl30 pr30 clear">
+                                <div class="mt30 clear">
+                                    <div class="award_box fl diff_box">
+                                        <div class="award_info">知识纬度1</div>
+                                        <div>
+                                            <input type="text" class="only_num"><span class="ml5">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="award_box fl diff_box">
+                                        <div class="award_info">知识纬度2</div>
+                                        <div>
+                                            <input type="text" class="only_num"><span class="ml5">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="award_box fl diff_box">
+                                        <div class="award_info">知识纬度3</div>
+                                        <div>
+                                            <input type="text" class="only_num"><span class="ml5">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="award_box fl diff_box">
+                                        <div class="award_info">知识纬度4</div>
+                                        <div>
+                                            <input type="text" class="only_num"><span class="ml5">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb30 tc">
+                        <a href="#" class="btn btn_i btn_primary btn_lg pr add_dimension">增加自定义纬度<i class="subject_dimension_add_i"></i></a>
+                    </div>
+                    <!--<div class="mb20">-->
+                        <!--<h3 class="list_title pr">备注<span class="list_title_remark">(选填)</span><i class="subject_choose_i"></i></h3>-->
+                        <!--<textarea class="add_remakes"></textarea>-->
+                    <!--</div>-->
+                    <div class="ml30 pb50">
+                        <a href="#" class="btn btn_primary_empty btn_lg mr5">筛选</a>
+                        <a href="#" class="btn btn_primary btn_lg">提交</a>
+                        <div class="remark">当前共有<span>987</span>道题符合要求</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        $(function () {
+            //删除纬度：
+            $(document).on("click",".delete_dimension",function () {
+                $(this).parents(".dimension_box").remove();
+            });
+            //新增自定义纬度:
+            $(".add_dimension").on("click",function () {
+                layer.open({
+                    type:1,
+                    title:'新增自定义纬度',
+                    area: ['500px', '300px'],
+                    btn:["确认","取消"],
+                    content:'<div class="tc"><select class="choose_dimension"><option value="简单纬度" cid = "type1">简单纬度</option><option value="中等纬度" cid = "type2">中等纬度</option><option value="困难纬度" cid = "type3">困难纬度</option></select></div>',
+                    yes:function (index) {
+                        var dimensionType = $(".choose_dimension");
+                        if(dimensionType.find("option:selected").attr("cid")=="type1"){
+                            $(".dimension_all").append('<div class="dimension_box"><div class="clear add_manage"> <h3 class="list_title pr fl"> '+dimensionType.val() + '<span class="list_title_remark">(总和必须为100%)</span><i class="subject_choose_i"></i></h3><a href="#" class="fr delete_dimension"></a></div><div class="pl30 pr30 clear"><div class="mt30 clear"> <div class="award_box fl diff_box"> <div class="award_info">知识纬度1</div> <div> <input type="text" class="only_num"><span class="ml5">%</span> </div> </div> <div class="award_box fl diff_box"> <div class="award_info">知识纬度2</div> <div> <input type="text" class="only_num"><span class="ml5">%</span> </div> </div> <div class="award_box fl diff_box"> <div class="award_info">知识纬度3</div> <div> <input type="text" class="only_num"><span class="ml5">%</span> </div> </div> <div class="award_box fl diff_box"> <div class="award_info">知识纬度4</div> <div> <input type="text" class="only_num"><span class="ml5">%</span> </div></div></div></div></div>');
+                            layer.close(index);
+                        }
+                        else if(dimensionType.find("option:selected").attr("cid")=="type2"){
+                            $(".dimension_all").append('<div class="dimension_box"> <div class="clear add_manage"> <h3 class="list_title pr fl">'+dimensionType.val() + '<i class="subject_choose_i"></i></h3> <a href="#" class="fr delete_dimension"></a> </div> <div class="pl30 pr30 clear mb30 table_role mt30"> <div class="subject_kind fl"> <i class="checkbox_i"></i> 知识纬度1 </div> <div class="subject_kind fl"> <i class="checkbox_i"></i> 知识纬度2 </div> <div class="subject_kind fl"> <i class="checkbox_i"></i> 知识纬度3 </div> <div class="subject_kind fl"> <i class="checkbox_i"></i> 知识纬度4 </div> </div> </div>');
+                            layer.close(index);
+                        }
+                        else{
+
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</html>

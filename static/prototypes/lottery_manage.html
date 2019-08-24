@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="keywords" content="中国科普研究所">
+    <meta name="description" content="中国科普研究所">
+    <title>中国科普研究所</title>
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/default/user_list.css">
+    <script src="../js/jquery-1.10.2.min.js"></script>
+    <script src="../js/public.js"></script>
+</head>
+<body>
+    <div class="header clear">
+        <div class="fl header_logo">
+            <a href="javascript:void (0)">
+                <img src="../images/default/header_logo.png" alt="">
+            </a>
+        </div>
+        <ul class="fl header_nav clear">
+            <li class="fl">
+                <a href="javascript:void(0)">组织</a>
+            </li>
+            <li class="fl">
+                <a href="javascript:void(0)">抽奖管理</a>
+            </li>
+            <li class="fl active">
+                <a href="javascript:void(0)">报表</a>
+            </li>
+        </ul>
+        <div class="fr header_user clear">
+            <div class="switch_skin fl pr mr30">
+                <i class="switch_i"></i>
+            </div>
+            <div class="user_info fl mr20 pr">
+                <div class="user_img pr clear">
+                    <img class="fl mr10" src="../images/default/user_img.png" alt="">
+                    <div class="user_name ellipsis fl">体验admin</div>
+                </div>
+                <div class="outer_login pa"><i class="outer_i"></i>退出登录</div>
+            </div>
+        </div>
+    </div>
+    <div class="main clear">
+        <div class="left_area fl pr">
+            <ul class="left_menu">
+                <li class="active pr">
+                    <a href="javascript:void(0)">抽奖管理</a>
+                    <i class="lottery_i"></i>
+                </li>
+            </ul>
+            <div class="contact_info">
+                <div>
+                    <i class="email_i"></i>
+                    <span class="email">wcy129@qq.com</span>
+                </div>
+                <div>
+                    <i class="qq_i"></i>
+                    <span class="qq">515673298</span>
+                </div>
+            </div>
+        </div>
+        <div class="right_area">
+            <div class="edit_info m20 pl10 pr10">
+                <div class="atlas_tabs clear mb10">
+                    <a href="lottery_manage.html" class="active">抽奖设置</a>
+                    <a href="lottery_result.html">结果查看</a>
+                </div>
+                <div class="lottery_info_box clear">
+                    <div class="fl lottery_info">
+                        <div class="base_setup">
+                            <div class="setup_title">基础设置</div>
+                            <table class="base_table">
+                                <tr>
+                                    <td width="130">奖项数</td>
+                                    <td class="setup_prize clear">
+                                        <div>1</div>
+                                        <div>2</div>
+                                        <div class="active">3</div>
+                                        <div>4</div>
+                                        <div>5</div>
+                                        <div>6</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>预计抽奖人数</td>
+                                    <td>
+                                        <input type="text" placeholder="请输入" class="only_num">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>每天中奖上线</td>
+                                    <td>
+                                        <input type="text" placeholder="请输入" class="only_num">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="price_setup">
+                            <div class="setup_title">奖项设置</div>
+                            <table class="price_table">
+                                <tr>
+                                    <td width="150">奖品名称</td>
+                                    <td width="100">红包金额</td>
+                                    <td width="100">奖品数量</td>
+                                    <td>设置提示语</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" value="5元红包奖励">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="only_num" value="5">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="only_num" value="10">
+                                    </td>
+                                    <td>
+                                        <input type="text" value="恭喜您，获得了5元现金红包奖励">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" value="5元红包奖励">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="only_num" value="5">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="only_num" value="10">
+                                    </td>
+                                    <td>
+                                        <input type="text" value="恭喜您，获得了5元现金红包奖励">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" value="5元红包奖励">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="only_num" value="5">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="only_num" value="10">
+                                    </td>
+                                    <td>
+                                        <input type="text" value="恭喜您，获得了5元现金红包奖励">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="base_setup">
+                            <div class="setup_title">提示语设置</div>
+                            <table class="base_table title_table">
+                                <tr>
+                                    <td width="130">未中奖</td>
+                                    <td>
+                                        <input type="text" placeholder="请输入提示语内容">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>所有奖项发完</td>
+                                    <td>
+                                        <input type="text" placeholder="请输入提示语内容">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>已达到每日上限</td>
+                                    <td>
+                                        <input type="text" placeholder="请输入提示语内容">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>抽奖说明</td>
+                                    <td>
+                                        <input type="text" placeholder="请输入提示语内容">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <a href="javascript:void(0)" class="btn btn_primary btn_lg ml10">提交</a>
+                    </div>
+                    <div class="fr lottery_preview three_price">
+                        <div>5元红包奖励</div>
+                        <div>10元红包奖励</div>
+                        <div>5元红包奖励</div>
+                        <!--<div>2元红包奖励</div>-->
+                        <!--<div>20元红包奖励</div>-->
+                        <!--<div>1元红包奖励</div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $(".setup_prize div").on("click",function () {
+                var val = parseInt($(this).html()),tr = $(".price_table tr"),num = tr.length - 1;
+                $(this).addClass("active").siblings().removeClass("active");
+                if(val<num){
+                    tr.eq(val).nextAll().remove();
+                }
+                else if(val>num){
+                    for(var i=0;i<val-num;i++){
+                        $(".price_table").append('<tr> <td> <input type="text"> </td> <td> <input type="text" class="only_num"> </td> <td> <input type="text" class="only_num"> </td> <td> <input type="text"> </td> </tr>');
+                    }
+                }
+            })
+        })
+    </script>
+</body>
+</html>

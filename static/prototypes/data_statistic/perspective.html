@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="汽车体验社区">
+        <meta name="description" content="汽车体验社区">
+        <title>中国科普研究所</title>
+        <link rel="shortcut icon" href="../../images/favicon.ico">
+        <link rel="stylesheet" href="../../css/base.css">
+        <link rel="stylesheet" href="../../css/default/user_list.css">
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/public.js"></script>
+        <script src="../../js/base_utils.js"></script>
+        <script src="../../js/plugins/layer/layer.js"></script>
+    </head>
+    <body>
+        <div class="header clear">
+            <div class="fl header_logo">
+                <a href="javascript:void (0)">汽车用户体验社区</a>
+            </div>
+            <ul class="fl header_nav clear">
+                <li class="fl">
+                    <a href="#">首页</a>
+                </li>
+                <li class="fl">
+                    <a href="#">用户管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">问卷管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">车型维护</a>
+                </li>
+                <li class="fl">
+                    <a href="#">积分管理</a>
+                </li>
+                <li class="fl">
+                    <a href="#">小程序设置</a>
+                </li>
+                <li class="fl active">
+                    <a href="#">数据统计</a>
+                </li>
+            </ul>
+            <div class="fr header_user clear">
+                <div class="switch_skin fl pr mr30">
+                    <i class="switch_i"></i>
+                </div>
+                <div class="user_info fl mr20 pr">
+                    <div class="user_img pr clear">
+                        <img class="fl mr10" src="../../images/default/user_img.png" alt="">
+                        <div class="user_name ellipsis fl">体验admin</div>
+                    </div>
+                    <div class="outer_login pa"><i class="outer_i"></i>退出登录</div>
+                </div>
+            </div>
+        </div>
+        <div class="main clear">
+            <div class="left_area fl pr">
+                <ul class="left_menu">
+                    <li class="first_menu pr">
+                        <a href="javascript:void(0)">小程序管理</a>
+                        <i class="arrow_i active"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">题目管理</a>
+                        <i class="subject_list_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">钻石管理</a>
+                        <i class="diamond_manage_i"></i>
+                    </li>
+                </ul>
+                <ul class="left_menu">
+                    <li class="first_menu pr">
+                        <a href="javascript:void(0)">抽题管理</a>
+                        <i class="arrow_i"></i>
+                    </li>
+                    <li class="active pr">
+                        <a href="#">段位管理</a>
+                        <i class="subject_dan_grade_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">难度管理</a>
+                        <i class="subject_difficulty_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">题目类别管理</a>
+                        <i class="subject_category_i"></i>
+                    </li>
+                    <li class="pr">
+                        <a href="#">自定义纬度</a>
+                        <i class="subject_custom_i"></i>
+                    </li>
+                </ul>
+            </div>
+            <div class="right_area clear">
+                <div class="data_list pr pb10 mb15">
+                    <div class="clear">
+                        <div class="fl">
+                            <h3 class="list_title pr">计数项（学科部类）<i class="list_title_i"></i></h3>
+                        </div>
+                    </div>
+                    <div>
+                        <table class="per_table">
+                            <tr>
+                                <th width="18%"></th>
+                                <th width="8%">1</th>
+                                <th width="8%">2</th>
+                                <th width="8%">3</th>
+                                <th width="8%">4</th>
+                                <th width="8%">5</th>
+                                <th width="8%">6</th>
+                                <th width="8%">7</th>
+                                <th>8</th>
+                                <th width="">总计</th>
+                            </tr>
+                            <tr class="dark_bg">
+                                <td class="tr_fold">
+                                    <div class="pr pl40">
+                                        <i class="tr_open"></i>
+                                        难度1
+                                    </div>
+                                </td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td>3</td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr>
+                                <td class="no_hover">
+                                    <div class="pl40">知识维度1</div>
+                                </td>
+                                <td></td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td>3</td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr>
+                                <td class="no_hover">
+                                    <div class="pl40">知识维度2</div>
+                                </td>
+                                <td>10</td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td></td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr class="dark_bg">
+                                <td class="tr_fold">
+                                    <div class="pr pl40">
+                                        <i class="tr_open"></i>
+                                        难度2
+                                    </div>
+                                </td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td>3</td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr>
+                                <td class="no_hover">
+                                    <div class="pl40">知识维度1</div>
+                                </td>
+                                <td></td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td>3</td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr>
+                                <td class="no_hover">
+                                    <div class="pl40">知识维度2</div>
+                                </td>
+                                <td>10</td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td></td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr class="dark_bg">
+                                <td class="tr_fold">
+                                    <div class="pr pl40">
+                                        <i class="tr_open"></i>
+                                        难度1
+                                    </div>
+                                </td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td>3</td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr>
+                                <td class="no_hover">
+                                    <div class="pl40">知识维度1</div>
+                                </td>
+                                <td></td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td>3</td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr>
+                                <td class="no_hover">
+                                    <div class="pl40">知识维度2</div>
+                                </td>
+                                <td>10</td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td></td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr class="dark_bg">
+                                <td class="tr_fold">
+                                    <div class="pr pl40">
+                                        <i class="tr_open"></i>
+                                        难度2
+                                    </div>
+                                </td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td>3</td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr>
+                                <td class="no_hover">
+                                    <div class="pl40">知识维度1</div>
+                                </td>
+                                <td></td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td>3</td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr>
+                                <td class="no_hover">
+                                    <div class="pl40">知识维度2</div>
+                                </td>
+                                <td>10</td>
+                                <td>6</td>
+                                <td>24</td>
+                                <td>40</td>
+                                <td>11</td>
+                                <td>8</td>
+                                <td></td>
+                                <td>10</td>
+                                <td>102</td>
+                            </tr>
+                            <tr class="dark_bg">
+                                <td class="tr_fold">
+                                    <div class="pl40">总计</div>
+                                </td>
+                                <td>286</td>
+                                <td>66</td>
+                                <td>24</td>
+                                <td>410</td>
+                                <td>111</td>
+                                <td>86</td>
+                                <td>131</td>
+                                <td>102</td>
+                                <td>1112</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        $(function () {
+            $(".tr_fold").click(function () {
+                $(this).find("i").toggleClass("tr_open");
+                if($(this).find("i").hasClass("tr_open")){
+                    $(this).parents(".dark_bg").nextUntil(".dark_bg").slideDown(100);
+                }
+                else{
+                    $(this).parents(".dark_bg").nextUntil(".dark_bg").slideUp(100);
+                }
+            })
+        })
+    </script>
+</html>
