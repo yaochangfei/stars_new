@@ -1,0 +1,181 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <h3 class="pl10 ml10">账户设置</h3>
+    </div>
+    <div class="fr">
+        <a href="{{ reverse_url('backoffice_account') }}" class="refresh_btn pl20 mr20"><i class="refresh_i"></i>刷新</a>
+    </div>
+</div>
+<div class="edit_info m20 pl10 pr10">
+    <div>
+        <h3 class="list_title pr add_manage">账户设置<i class="edit_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <table class="table_form">
+            <tr>
+                <th width="40%"></th>
+                <td>
+                    <div class="header_pic_box">
+                        <div class="header_pic mb10">
+                            <img src="{{ static_url('images/default/header_pic.png') }}" alt="">
+                        </div>
+                        <!--<div class="pic_upload_box">-->
+                        <!--<div class="pr">-->
+                        <!--<input type="file" id="upload_pic_btn" class="pa"-->
+                        <!--accept="image/jpeg,image/png,image/gif,image/jpg">-->
+                        <!--暂无 -->
+                        <!--<a href="#" class="btn btn_primary_empty upload_pic_btn">上传图片</a>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><span class="necessary">*</span>账号</th>
+                <td>
+                    <input class="input_text input_disabled" type="text" disabled="disabled"
+                           value="{{ string_display(edit_account.login_name) }}">
+                </td>
+            </tr>
+            <tr>
+                <th class="pt10 vt">Email</th>
+                <td>
+                    <input class="input_text input_disabled email_input" type="text" disabled="disabled"
+                           id="email" value="{{ string_display(edit_account.email) }}">
+                </td>
+            </tr>
+            <tr class="pwd dis_none">
+                <th><span class="necessary">*</span>旧密码</th>
+                <td><input id="origin_pwd" class="input_text" type="password"></td>
+            </tr>
+            <tr class="pwd dis_none">
+                <th><span class="necessary">*</span>新密码</th>
+                <td><input id="new_pwd" class="input_text" type="password"></td>
+            </tr>
+            <tr class="pwd dis_none">
+                <th><span class="necessary">*</span>确认密码</th>
+                <td><input id="new_pwd_confirm" class="input_text" type="password"></td>
+            </tr>
+            {% if edit_account.access_secret_id %}
+            <tr>
+                <th>key ID</th>
+                <td>
+                    <div class="account_info">
+                        {{ edit_account.access_secret_id }}
+                    </div>
+                </td>
+            </tr>
+            {% end %}
+            {% if edit_account.access_secret_key %}
+            <tr>
+                <th>Secret ID</th>
+                <td>
+                    <div class="account_info">
+                        {{ edit_account.access_secret_key }}
+                    </div>
+                </td>
+            </tr>
+            {% end %}
+            <tr>
+                <td></td>
+                <td>
+                    <span class="cl_danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td>
+                    <a href="#" class="btn btn_primary btn_lg mt10 edit_account edit_btn">修改</a>
+                    <a href="#" class="btn btn_primary btn_lg mt10 submit_btn dis_none">提交</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+    function single_reads(file) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            $(".header_pic img").attr("src", reader.result);
+        };
+    }
+
+    $(function () {
+        //单图片上传预览：
+        var uploadPicBtn = $("#upload_pic_btn");
+        //按钮闪烁bug：
+        uploadPicBtn.on("mouseover", function () {
+            $(this).addClass("current");
+        });
+        uploadPicBtn.on("mouseup", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("mouseout", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("change", function () {
+            var file = this.files[0];
+            single_reads(file);
+        });
+
+        $('.edit_account').on("click", function () {
+
+            $(this).addClass('dis_none');
+            $('.submit_btn').removeClass('dis_none');
+            $('.pwd').removeClass('dis_none');
+
+        });
+
+        $('.submit_btn').on("click", function () {
+
+            var origin_pwd = $('#origin_pwd').val();
+            var new_pwd = $('#new_pwd').val();
+            var new_pwd_confirm = $('#new_pwd_confirm').val();
+            var account_id = "{{ edit_account.oid }}";
+
+            if (account_id && origin_pwd && new_pwd && new_pwd_confirm) {
+
+                if (new_pwd != new_pwd_confirm) {
+                    $('.cl_danger').html('前后密码不一致！');
+                } else {
+
+                    var data = {
+                        'new_pwd': new_pwd,
+                        'new_pwd_confirm': new_pwd_confirm,
+                        'origin_pwd': origin_pwd,
+                        'account_id': account_id
+                    };
+                    var url = "{{ reverse_url('backoffice_account') }}";
+
+                    ajaxPost(url, data, function (ret) {
+                        if (ret.code == -1) {
+                            $('.cl_danger').html('请填写完整信息！');
+                        } else if (ret.code == -2) {
+                            $('.cl_danger').html('前后密码不一致！');
+                        } else if (ret.code == -3) {
+                            $('.cl_danger').html('原密码不正确！');
+                        } else if (ret.code == -4) {
+                            $('.cl_danger').html('新旧密码不能相同！');
+                        } else {
+                            tip_msg('修改账号信息成功，请重新登录！', 2000, function () {
+                                var cookie_id = "38B9CFE3-5710-4B49-9124-3678481AEEF7";
+                                $.removeCookie(cookie_id, {path: '/backoffice/login/'});
+                                window.location.href = "{{ reverse_url('backoffice_logout') }}";
+                            })
+                        }
+                    });
+
+                }
+
+            } else {
+                $('.cl_danger').html('请填写完整信息！');
+            }
+
+        });
+    })
+</script>
+{% end %}

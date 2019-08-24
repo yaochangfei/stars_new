@@ -1,0 +1,348 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db.enums import STATUS_RACE_ACTIVE, STATUS_RACE_INACTIVE %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    {% if not button_hide %}
+    <a href="{{ reverse_url('backoffice_race_add') }}" class="btn btn_i btn_primary btn_lg pr fl">
+        创建活动 <i class="add_manage_i"></i>
+    </a>
+    {% end %}
+    <a href="javascript:window.location.reload();" class="refresh_btn pl20 mr10 fr mt10">
+        <i class="refresh_i"></i>刷新
+    </a>
+</div>
+{% if not button_hide %}
+<div class="filter_box clear">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <input id="search_keywords" type="text" class="account" placeholder="标题关键字"
+               value="{{ string_display(search_keywords, '') }}">
+        <input type="text" readonly class="partake_time fr input_text time_i pointer time_range" id="search_date"
+               name="search_date" placeholder="请选择日期" value="{{ search_date }}">
+        <select id="search_province" title="省份" class="mr10">
+            <option value="">--请选择--</option>
+            {% if province_list %}
+            {% for province in province_list %}
+            <option {% if search_province== province.code %}selected{% end %}
+                    value="{{ string_display(province.code) }}">{{ string_display(province.title) }}
+            </option>
+            {% end %}
+            {% end %}
+        </select>
+        <select id="search_city" title="城市">
+            <option value="">--请选择--</option>
+            {% if city_list %}
+            {% for city in city_list %}
+            <option {% if search_city== city.code %}selected{% end %}
+                    value="{{ string_display(city.code) }}">
+                {{ string_display(city.title) }}
+            </option>
+            {% end %}
+            {% end %}
+        </select>
+    </div>
+    <div class="filter_btn fr">
+        <a href="javascript:;" class="btn btn_i btn_primary pr mr5 search_data">查询<i class="btn_search"></i></a>
+        <a href="{{ reverse_url('backoffice_race_list') }}" class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+{% end %}
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr">
+            <select id="sort_type" name="sort_type" title="排序" onchange="do_jump_2_page(event, 1)">
+                <option value="1" {% if int(sort_type)== 1 %} selected {% end %}>按活动时间降序</option>
+                <option value="2" {% if int(sort_type)== 2 %} selected {% end %}>按活动时间升序</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th width="50">序号</th>
+                <th width="110">活动编号</th>
+                <th>活动标题</th>
+                <th>活动范围</th>
+                <th width="300" class="tc">活动周期</th>
+                <th width="70" class="tc">执行状态</th>
+                {% if not button_hide %}
+                <th width="60" class="tc">状态</th>
+                {% end %}
+                <th width="280">操作</th>
+            </tr>
+            {% set race_list = paging.page_items %}
+            {% if race_list %}
+            {% for index, race in enumerate(race_list) %}
+            <tr>
+                <td>
+                    {{ index + 1 }}
+                </td>
+                <td>{{ string_display(race.code) }}</td>
+                <td>{{ string_display(race.title) }}</td>
+                <td>{{ string_display(race.province_list[0].title if race.province_list else '') }}
+                    {{ race.city_list[0].title if race.city_list else '' }}
+                </td>
+                <td class="tc">
+                    {{ datetime_format(race.start_datetime) }}
+                    ~
+                    {{ datetime_format(race.end_datetime) }}
+                </td>
+                <td class="tc">
+                    {% if race.start_datetime > now %}
+                    未执行
+                    {% elif race.end_datetime < now %}
+                    已过期
+                    {% else %}
+                    执行中
+                    {% end %}
+                </td>
+                {% if not button_hide %}
+                <td class="tc">
+                    <label class="table_switch">
+                        <input cid="{{ race.cid }}" class="status_switch" type="checkbox"
+                               {% if race.status== STATUS_RACE_ACTIVE %}checked="checked" {% end %}>
+                        <i></i>
+                    </label>
+                </td>
+                {% end %}
+                <td class="tools">
+                    {% if not button_hide %}
+                        <a href="{{ reverse_url('backoffice_race_edit') }}?race_cid={{ race.cid }}" class="edit_i fl tips spec_setting {% if race.status == STATUS_RACE_ACTIVE %} dis_none {% end %}"
+                           cid="{{ race.cid }}" data-name="编辑"></a>
+                        <div id="setting" {% if race.status== STATUS_RACE_ACTIVE %}
+                             class="setting dis_none" {% else %} class="setting" {% end %}>
+                            <a href="/backoffice/race/config/{{ race.cid }}/" class="exam_setup_i fl tips spec_setting {% if race.status == STATUS_RACE_ACTIVE %} dis_none {% end %}"
+                               cid="{{ race.cid }}" data-name="设置"></a>
+                        </div>
+                        <a href="javascript:;" class="copy_activity_i fl tips" cid="{{ race.cid }}"
+                           data_title="{{ race.title }}" data-name="复制该活动"></a>
+                        {% if race.start_datetime > now %}
+                        <a href="javascript:;" class="delete_i fl tips spec_setting {% if race.status == STATUS_RACE_ACTIVE %} dis_none {% end %}"
+                           cid="{{ race.cid }}" data_title="{{ race.title }}" data-name="删除"></a>
+                        {% end %}
+                    {% end %}
+                    <a href="javascript:;" class="see_report fl tips dis_none"  cid="{{ race.cid }}"
+                       data_title="{{ race.title }}" data-name="查看报表"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="9" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+    </div>
+</div>
+<div class="fix_page clear {% if not paging.page_items %}dis_none{% end %}">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, '{{ paging.previous_page_num }}');"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, '{{ paging.next_page_num }}');"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, '{{ paging.total_pages }}');"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                // 填充请求参数
+                display_loading();
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val() || '{{ per_page_quantity }}',
+                    'search_keywords': $('#search_keywords').val(),
+                    'sort_type': $('#sort_type').val(),
+                    'search_date': $('#search_date').val(),
+                };
+                window.location.href = "{{ reverse_url('backoffice_race_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+
+    $(function () {
+        laydate.render({
+            elem: '#search_date', //指定元素
+            trigger: 'click', //采用click弹出
+            range: true
+        });
+         $('.status_switch').on('click', function () {
+            var obj = $(this);
+            var setting_div = $(this).parent().parent().next().find('.spec_setting');
+            var race_cid = $(this).attr('cid');
+            var target_status = $(this).prop('checked') ? {{ STATUS_RACE_ACTIVE }} : {{ STATUS_RACE_INACTIVE }};
+            function recovery() {
+                obj.prop('checked', false);
+            }
+            function hidden_setting() {
+                setting_div.addClass('dis_none');
+            }
+
+            if (target_status === {{ STATUS_RACE_ACTIVE }}) {
+                confirm_dialog('警告', '确认激活该活动？', function () {
+                    dialog('提示', "{{ reverse_url('backoffice_race_verify') }}?race_cid=" + race_cid, "410px", "280px", null, function () {
+                        beginVerify(recovery, hidden_setting);
+                    });
+                }, recovery);
+            } else {
+                if (race_cid && target_status === 0) {
+                    var data = {
+                        'race_cid': race_cid,
+                        'target_status': target_status
+                    };
+                    var url = "{{ reverse_url('backoffice_race_status') }}";
+                    display_loading();
+                    ajaxPost(url, data, function (ret) {
+                        if (ret.code !== 1) {
+                            tip_msg("活动状态变更失败！", 2000, function () {
+                                if (target_status === {{ STATUS_RACE_ACTIVE }}) {
+                                    obj.prop('checked', '');
+                                    window.location.reload();
+                                } else {
+                                    obj.prop('checked', 'checked');
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            tip_msg("活动状态已变更！", 2000, function () {
+                                if (target_status === {{ STATUS_RACE_ACTIVE }}) {
+                                    $(setting_div).addClass('dis_none');
+                                    window.location.reload();
+                                } else {
+                                    $(setting_div).removeClass('dis_none');
+                                    window.location.reload();
+                                }
+
+                                });
+                        }
+                    });
+                    remove_loading();
+
+                } else {
+                    tip_msg("活动状态变更失败！", 2000, function () {
+                        if (target_status === {{ STATUS_RACE_ACTIVE }}) {
+                            obj.prop('checked', '')
+                            window.location.reload();
+                        } else {
+                            obj.prop('checked', 'checked');
+                            window.location.reload();
+                        }
+                    });
+                }
+            }
+
+        });
+        $('#search_province').on('change', function () {
+            let province_code = $('#search_province').val();
+            $('#search_city').empty();
+            let obj = document.getElementById('search_city');
+            obj.options.add(new Option('请选择', ''));
+
+            if (province_code) {
+                let url = "{{ reverse_url('common_admin_division') }}";
+                let data = {'post_code': province_code};
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code === 1) {
+                        for (let i = 0; i < ret.division_list.length; i++) {
+                            obj.options.add(new Option(ret.division_list[i]['title'], ret.division_list[i]["code"])); //这个兼容IE与firefox
+                        }
+                    } else {
+                        tip_msg("选择城市失败！", 2000);
+                    }
+                });
+                remove_loading();
+            }
+        });
+
+        $('.assign_owner_i').on('click', function () {
+            var race_cid = $(this).attr('cid');
+            custom_dialog("/backoffice/race/owner/assign/?race_cid=" + race_cid, "600px", "400px")
+        });
+
+        $('.copy_activity_i').on('click', function () {
+            var race_cid = $(this).attr('cid');
+            var race_title = $(this).attr('data_title');
+            confirm_dialog("警告", "复制活动【 " + race_title + " 】吗？", function () {
+                custom_dialog("/backoffice/race/copy/?race_cid=" + race_cid, "600px", "288px")
+            });
+        });
+
+        $('.delete_i').on('click', function () {
+            var race_cid = $(this).attr('cid');
+            var race_title = $(this).attr('data_title');
+            confirm_dialog("警告", "确定删除活动【 " + race_title + " 】吗？", function () {
+                display_loading();
+                ajaxPost("{{ reverse_url('backoffice_race_delete') }}", {'race_cid': race_cid}, function (ret) {
+                    let msg = '该记录异常, 请联系管理员.';
+                    if (ret.code === 0) {
+                        msg = '服务器异常!';
+                    }
+                    if (ret.code === 1) {
+                        msg = '删除成功!'
+                    }
+                    if (ret.code === -2) {
+                        msg = '结束活动及执行中活动禁止删除!'
+                    }
+                    remove_loading();
+                    tip_msg(msg, 2000, function () {
+                        window.location.reload();
+                    })
+                })
+            });
+        });
+        $('.see_report').click(function () {
+           var race_cid = $(this).attr('cid');
+            window.location = '/backoffice/race/reports/area/analysis/?race_cid=' + race_cid
+        });
+        $(".search_data").on('click', function () {
+            var params = {
+                'per_page_quantity': '{{ per_page_quantity }}',
+                'search_keywords': $('#search_keywords').val(),
+                'sort_type': $('#sort_type').val(),
+                'search_date': $('#search_date').val(),
+                'search_province': $('#search_province').val(),
+                'search_city': $("#search_city").val()
+            };
+            window.location.href = "{{ reverse_url('backoffice_race_list') }}?" + dict_2_url_params(params);
+        });
+
+    });
+</script>
+{% end %}

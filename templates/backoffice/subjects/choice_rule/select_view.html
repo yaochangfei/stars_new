@@ -1,0 +1,14 @@
+{% if dimension_list %}
+<div class="tc">
+    <select class="choose_dimension">
+        {% for dimension in dimension_list %}
+        <option value="{{ dimension.cid }}">{{ dimension.title }}</option>
+        {% end %}
+    </select>
+</div>
+{% else %}
+<div class="tc" style="margin-top:70px;">
+    <span>没有可选择的维度信息</span>
+</div>
+{% end %}
+

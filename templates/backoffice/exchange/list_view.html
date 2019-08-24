@@ -1,0 +1,325 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CATEGORY_PRESENT_DICT, STATUS_PRESENT_ACTIVE, STATUS_PRESENT_INACTIVE %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <a href="{{ reverse_url('backoffice_present_add') }}" class="btn btn_i btn_primary btn_lg pr fl">新增礼品<i
+            class="add_gifts_i"></i></a>
+    <a href="javascript:window.location.reload();" class="refresh_btn pl20 mr20 fr mt10"><i class="refresh_i"></i>刷新</a>
+</div>
+<div class="tabs pr">
+    <a href="{{ reverse_url('backoffice_present_list') }}"
+       class="{% if not search_status %}active{% end %}">全部礼品(<span>{{ all_amount }}</span>)</a>
+    <a href="{{ reverse_url('backoffice_present_list') }}?search_status={{ STATUS_PRESENT_ACTIVE }}"
+       class="{% if search_status == str(STATUS_PRESENT_ACTIVE) %}active{% end %}">已上架(<span>{{ active_amount }}</span>)</a>
+    <a href="{{ reverse_url('backoffice_present_list') }}?search_status={{ STATUS_PRESENT_INACTIVE }}"
+       class="{% if search_status == str(STATUS_PRESENT_INACTIVE) %}active{% end %}">未上架(<span>{{ inactive_amount }}</span>)</a>
+    <hr class="tabs_line pa">
+</div>
+<div class="filter_box clear">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <input type="text" placeholder="礼品名称" id="search_title" value="{{ search_title }}">
+        <select id="search_category">
+            <option value="">请选择礼品分类</option>
+            {% for code, title in CATEGORY_PRESENT_DICT.items() %}
+            <option value="{{ code }}" {% if str(code) == search_category %}selected{% end %}>{{ title }}</option>
+            {% end %}
+        </select>
+    </div>
+    <div class="filter_btn fr">
+        <a href="#" class="btn btn_i btn_primary pr mr5 search_data">查询<i class="btn_search"></i></a>
+        <a href="{{ reverse_url('backoffice_present_list') }}?search_status={{ search_status }}"
+           class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr">
+            <select>
+                <option value="排列方式">排列方式</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th width="50"></th>
+                <th>编号</th>
+                <th>礼品图片</th>
+                <th>礼品名称</th>
+                <th>需要积分数</th>
+                <th>排序</th>
+                <th>库存剩余</th>
+                <th>已兑换</th>
+                <th>礼品分类</th>
+                <th>上架状态</th>
+                <th>操作</th>
+            </tr>
+            {% set present_list = paging.page_items %}
+            {% if present_list %}
+            {% for present in present_list %}
+            <tr>
+                <td class="tc"><i class="checkbox_i" oid="{{ present.oid }}"></i></td>
+                <td>{{ string_display(present.code) }}</td>
+                <td class="no_p">
+                    <div class="gift_img">
+                        {% if present.placard %}
+                        <img src="{{ static_url(present.needless.get('placard_title')) }}">
+                        {% end %}
+                    </div>
+                </td>
+                <td>{{ string_display(present.title) }}</td>
+                <td>{{ present.ex_integral }}</td>
+                <td>{{ present.sort }}</td>
+                <td>
+                    <span>{{ present.inventory }}</span>
+                    <a href="#" class="modify_stock" oid="{{ present.oid }}" value="{{ present.inventory }}">修改</a>
+                </td>
+                <td>{{ present.exchanged }}</td>
+                <td>{{ CATEGORY_PRESENT_DICT.get(present.category) }}</td>
+                <td>
+                    <label class="table_switch">
+                        <input oid="{{ present.oid }}" class="status_switch" type="checkbox"
+                               {% if present.status == STATUS_PRESENT_ACTIVE %}checked="checked"{% end %}>
+                        <i></i>
+                    </label>
+                </td>
+                <td class="tools">
+                    <a href="{{ reverse_url('backoffice_present_edit') }}?present_id={{ present.oid }}"
+                       class="edit_i fl tips edit_present" data-name="编辑"></a>
+                    <a href="#" oid="{{ present.oid }}" class="delete_i fl tips delete_present" data-name="删除"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="10" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr10 ml15"></i>全选</div>
+            <div class="fl ml20">
+                <select id="selected_operation">
+                    <option value="active">上架</option>
+                    <option value="inactive">下架</option>
+                </select>
+            </div>
+            <div class="fl">
+                <a href="#" class="btn btn_primary ml20 btn_sm selected_change">确定</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="fix_page clear {% if not present_list %}dis_none{% end %}">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val(),
+                    'search_title': $('#search_title').val(),
+                    'search_category': $('#search_category').val(),
+                    'search_status': '{{ search_status }}'
+                };
+                window.location.href = "{{ reverse_url('backoffice_present_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+
+    $(function () {
+
+        $('.modify_stock').on('click', function () {
+            var inventory = $(this).attr('value');
+            var oid = $(this).attr('oid');
+            layer.prompt({
+                value: inventory
+            }, function (value, index, elem) {
+
+                var url = "{{ reverse_url('backoffice_present_inventory') }}";
+                var data = {
+                    'present_id': oid,
+                    'inventory': value
+                };
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code == 1) {
+                        // layer.close(index);
+                        tip_msg("库存修改成功！", 2000, function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        tip_msg("库存修改失败！", 2000);
+                    }
+                });
+            });
+        });
+
+        $('.selected_change').on('click', function () {
+            var operation = $('#selected_operation').val();
+            var selected_present_ids = [];
+            var obj_list = $('.table_list').find('.checkbox_i.checked');
+            for (var i = 0; i < obj_list.length; i++) {
+                var obj = obj_list[i];
+                if ($(obj).attr('oid')) {
+                    selected_present_ids.push($(obj).attr('oid'));
+                }
+            }
+            if (selected_present_ids.length > 0) {
+                var data = {
+                    'present_ids': selected_present_ids
+                };
+                if (operation == 'inactive' || operation == 'active') {
+
+                    data['target_status'] = operation == 'active' ? {{ STATUS_PRESENT_ACTIVE }} :{{ STATUS_PRESENT_INACTIVE }};
+
+                    var action = operation == 'active' ? '上架' : '下架';
+
+                    confirm_dialog('警告', '确认' + action + '礼品？', function () {
+                        display_loading();
+                        var url = "{{ reverse_url('backoffice_present_status') }}";
+                        ajaxPost(url, data, function (ret) {
+                            if (ret.code == 1) {
+                                tip_msg(action + "礼品成功！", 2000, function () {
+                                    window.location.reload();
+                                });
+                            } else {
+                                tip_msg(action + "礼品失败！", 2000);
+                            }
+                        });
+                        remove_loading();
+                    });
+
+                } else {
+                    tip_msg("批量操作失败！", 2000);
+                }
+            } else {
+                tip_msg("请选择数据！", 2000);
+            }
+
+        });
+
+        $('.status_switch').on('click', function () {
+            var obj = $(this);
+            var present_id = $(this).attr('oid');
+            var target_status = $(this).prop('checked') ? {{ STATUS_PRESENT_ACTIVE }} :{{ STATUS_PRESENT_INACTIVE }};
+            var action = $(this).prop('checked') ? '上架' : '下架';
+            if (present_id && target_status) {
+                var data = {
+                    'present_ids': [present_id],
+                    'target_status': target_status
+                };
+                var url = "{{ reverse_url('backoffice_present_status') }}";
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code != 1) {
+                        tip_msg(action + "礼品失败！", 2000, function () {
+                            if (target_status == {{ STATUS_PRESENT_ACTIVE }}) {
+                                obj.prop('checked', '')
+                            } else {
+                                obj.prop('checked', 'checked')
+                            }
+                        });
+
+                    } else {
+                        tip_msg(action + "礼品成功！", 2000);
+                    }
+                });
+                remove_loading();
+            } else {
+                tip_msg(action + "礼品失败！", 2000, function () {
+                    if (target_status == {{ STATUS_PRESENT_ACTIVE }}) {
+                        obj.prop('checked', '')
+                    } else {
+                        obj.prop('checked', 'checked')
+                    }
+                });
+
+            }
+        });
+
+        $('.delete_present').on('click', function () {
+            var present_id = $(this).attr('oid');
+            if (present_id) {
+                var data = {
+                    'present_ids': [present_id]
+                };
+                var url = "{{ reverse_url('backoffice_present_delete') }}";
+
+                confirm_dialog('警告', '确认删除礼品？', function () {
+                    display_loading();
+                    ajaxPost(url, data, function (ret) {
+                        if (ret.code == 1) {
+                            tip_msg("删除礼品成功！", 2000, function () {
+                                window.location.href = "{{ reverse_url('backoffice_present_list') }}";
+                            });
+                        } else {
+                            tip_msg("删除礼品失败！", 2000);
+                        }
+                    });
+                    remove_loading();
+                });
+            }
+        });
+
+        $('.search_data').on('click', function () {
+            var param_dict = {
+                'per_page_quantity': $('#per_page_quantity').val(),
+                'search_title': $('#search_title').val(),
+                'search_category': $('#search_category').val(),
+                'search_status': '{{ search_status }}'
+            };
+            window.location.href = "{{ reverse_url('backoffice_present_list') }}?" + dict_2_url_params(param_dict);
+        });
+
+    })
+
+</script>
+{% end %}

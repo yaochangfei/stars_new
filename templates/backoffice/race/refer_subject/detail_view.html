@@ -1,0 +1,82 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CODE_SUBJECT_DIFFICULTY_DICT, CATEGORY_SUBJECT_KNOWLEDGE_DICT %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="/backoffice/race/subject/list/?race_cid={{ race_cid }}"  class="pl10 ml10">题目管理</a>
+        <span>&gt; 题目详情</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div class="edit_info_detail">
+        <div class="subject_detail_box">
+            <table class="table_subject">
+                <tbody>
+                <tr>
+                    <th width="25%">题目描述</th>
+                    <td>{{ string_display(subject.title) }}</td>
+                </tr>
+                {% if subject.image_cid %}
+                <tr>
+                    <th>图片</th>
+                    <td>
+                        <div class="subject_img">
+                            {% if file_doc %}
+                            <img src="{{ static_url('files/%s' %file_doc.title) }}">
+                            {% end %}
+                        </div>
+                    </td>
+                </tr>
+                {% end %}
+                {% for index, option in enumerate(option_list) %}
+                <tr>
+                    <th>选项{{ index+1 }}</th>
+                    <td>{{ option.title if option else 'N/A' }}</td>
+                </tr>
+                {% end %}
+
+
+                </tbody>
+            </table>
+            <table class="table_subject mt20">
+                <tbody>
+                <tr>
+                    <th width="25%">正确答案</th>
+                    <td>
+                        {% for index, option in enumerate(option_list) %}
+                        {% if option.correct %}
+                        选项{{ index+1 }}
+                        {% end %}
+                        {% end %}
+                    </td>
+                </tr>
+                <tr>
+                    <th width="25%">题目难度</th>
+                    <td>{{difficulty}}</td>
+                </tr>
+                <tr>
+                    <th width="25%">题目类型</th>
+                    {% if category %}
+                    <td>{{ string_display(CATEGORY_SUBJECT_KNOWLEDGE_DICT[category]) }}</td>
+                    {% end %}
+                </tr>
+
+                </tbody>
+            </table>
+            <table class="table_subject mt20">
+                <tbody>
+                <tr class="subject_remark">
+                    <th width="25%">备注</th>
+                    <td>{{ string_display(subject.content) }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% end %}

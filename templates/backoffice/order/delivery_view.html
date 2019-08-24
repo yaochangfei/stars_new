@@ -1,0 +1,90 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CODE_CARRIER_DICT %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_order_list') }}" class="pl10 ml10">订单列表</a>
+        <span>&gt;订单发货</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">订单发货<i class="edit_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <table class="table_form">
+            <tr>
+                <th width="40%"><span class="necessary">*</span>配送方式:</th>
+                <td class="logistic_company">
+                    <select id="carrier_code">
+                        <option value="">请选择物流公司</option>
+                        {% for code, title in CODE_CARRIER_DICT.items() %}
+                        <option value="{{ code }}"
+                                {% if order.carrier_code == code %}selected{% end %}>{{ title }}</option>
+                        {% end %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="vt pt10"><span class="necessary">*</span>物流单号:</th>
+                <td><input class="input_text" type="text" id="shipped_code"
+                           value="{{ string_display(order.shipped_code, '') }}"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <span class="cl_danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><a href="#" class="btn btn_primary btn_lg mt10 submit_btn">提交</a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+
+    $(function () {
+
+        $('.submit_btn').on('click', function () {
+            var carrier_code = $('#carrier_code').val();
+            var shipped_code = $('#shipped_code').val();
+            var order_id = "{{ order.oid }}";
+
+            if (carrier_code && shipped_code) {
+                var url = "{{ reverse_url('backoffice_order_delivery') }}";
+                var data = {
+                    'order_id': order_id,
+                    'carrier_code': carrier_code,
+                    'shipped_code': shipped_code
+                };
+
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code == -1) {
+                        $('.cl_danger').html('请填写完整信息！');
+                    } else if (ret.code == 1) {
+                        tip_msg('订单发货成功！', 2000, function () {
+                            window.location.href = "{{ reverse_url('backoffice_order_list') }}";
+                        });
+                    } else {
+                        $('.cl_danger').html('系统错误！');
+                    }
+                });
+                remove_loading();
+
+            } else {
+                $('.cl_danger').html('请填写完整信息！');
+            }
+        });
+
+    })
+
+</script>
+{% end %}

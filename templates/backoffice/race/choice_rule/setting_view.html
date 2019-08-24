@@ -1,0 +1,303 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CATEGORY_SUBJECT_DIMENSION_NUMERICAL, STATUS_SUBJECT_CHOICE_RULE_ACTIVE, CATEGORY_SUBJECT_DIMENSION_OPTIONS %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_race_subject_choice_rule_list') }}?race_cid={{ race_cid }}" class="pl10 ml10">抽题管理</a>
+        <span>&gt; 抽题设置</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20">
+            <i class="back_i"></i>返回
+        </a>
+    </div>
+</div>
+<div class="filter_box clear">
+    <div class="filter_condition fl">
+        <span class="mr15">单局题目总数</span>
+        <input type="text" class="q_total only_num" value="{% if race_choice_rule %}{{ race_choice_rule.quantity }}{% end %}">
+    </div>
+</div>
+<div class="edit_info">
+    <div class="dimension_all">
+        {% for d_dict in subject_dimension_list %}
+        <div class="dimension_box">
+            <div class="clear add_manage" cid="{{ d_dict.get('cid') }}">
+                <h3 class="list_title pr fl">{{ d_dict.get('title') }}
+                    <i class="subject_choose_i"></i>
+                </h3>
+                <a href="#" class="fr delete_dimension"></a>
+            </div>
+            {% if not d_dict.get('type')==CATEGORY_SUBJECT_DIMENSION_OPTIONS %}
+            <div class="pl30 pr30 clear">
+                <div class="mt30 clear">
+                    {% if d_dict.get('sub') %}
+                    {% set sub_list = d_dict.get('sub') %}
+                    {% for sub in sub_list %}
+                    <div class="award_box fl diff_box">
+                        <div class="award_info">{{ sub.get('title') }}</div>
+                        <div>
+                            {% if d_dict.get('type')==CATEGORY_SUBJECT_DIMENSION_NUMERICAL %}
+                            <input type="text" class="only_num" cid="{{ sub.get('cid') }}"
+                                   value="
+
+
+                                           {% if sub and sub.get('cid') and  dimension_rules.get(d_dict.get('cid')) and (dimension_rules.get(d_dict.get('cid')).get(sub.get('cid')) or dimension_rules.get(d_dict.get('cid')).get(sub.get('cid'))==0) %}{{ int(dimension_rules.get(d_dict.get('cid')).get(sub.get('cid'))) }}{% else %}0{% end %}">
+                            <span class="ml5">题</span>
+                            {% else %}
+                            <input type="text" class="only_num" cid="{{ sub.get('cid') }}"
+                                   value="
+
+
+                                           {% if sub and sub.get('cid') and  dimension_rules.get(d_dict.get('cid')) and (dimension_rules.get(d_dict.get('cid')).get(sub.get('cid')) or dimension_rules.get(d_dict.get('cid')).get(sub.get('cid'))==0) %}{{ int(dimension_rules.get(d_dict.get('cid')).get(sub.get('cid'))) }}{% else %}1{% end %}">
+                            {% end %}
+                        </div>
+                    </div>
+                    {% end %}
+                    {% else %}
+                    <div class="award_info">没有设置子维度信息</div>
+                    {% end %}
+                </div>
+            </div>
+            {% else %}
+            <div class="pl30 pr30 clear mb20 table_role mt20">
+                {% if d_dict.get("sub") %}
+                {% set sub_list = d_dict.get('sub') %}
+                {% for sub in sub_list %}
+                <div class="subject_kind fl" cid="{{ sub.get('cid') }}">
+                    <i class="checkbox_i {% if sub and sub.get('cid') and  dimension_rules.get(d_dict.get('cid')) and dimension_rules.get(d_dict.get('cid')).get(sub.get('cid')) %}checked{% end %}"></i>{{ sub.get('title') }}
+                </div>
+                {% end %}
+                {% else %}
+                没有设置子维度信息
+                {% end %}
+            </div>
+            {% end %}
+        </div>
+        {% end %}
+    </div>
+    <div class="mb30 add_dimension_box tc{% if len(all_dimension_list) == len(cid_list) %} dis_none {% end %}">
+        <a href="#" class="btn btn_i btn_primary btn_lg pr add_dimension">增加自定义维度<i
+                class="subject_dimension_add_i"></i></a>
+    </div>
+    <div class="ml30" style="padding-bottom:5px;">
+        <span id="error_msg" class="cl_danger"></span>
+    </div>
+    <div class="ml30 pb50 setting_view_control dis_none">
+        <a href="#" class="btn btn_primary btn_lg submit_btn">提交</a>
+    </div>
+</div>
+<script>
+    function checkDimension() {
+        if ($(".dimension_all").find(".dimension_box").length != 0) {
+            $(".setting_view_control").removeClass("dis_none");
+            $(".add_dimension_box").removeClass("mb100 pt100");
+        }
+        else {
+            $(".setting_view_control").addClass("dis_none");
+            $("#error_msg").hide();
+            $(".add_dimension_box").addClass("mb100 pt100");
+        }
+    }
+
+    $(function () {
+        //点击去除警告：
+        $(document).on("click change", "input", function () {
+            $(this).removeClass("red_warning");
+        });
+        checkDimension();
+        //删除维度：
+        $(document).on("click", ".delete_dimension", function () {
+            $(".add_dimension_box").show();
+            $(this).parents(".dimension_box").remove();
+            $(".add_dimension_box").removeClass("dis_none");
+            checkDimension();
+        });
+
+        //新增自定义维度:
+        $(".add_dimension").on("click", function () {
+            var dimension_info = $(".add_manage");
+            var cid_list = [];
+            for (var n = 0; n < dimension_info.length; n++) {
+                if (dimension_info.eq(n).attr("cid") != "") {
+                    cid_list.push(dimension_info.eq(n).attr("cid"));
+                }
+            }
+            var data = {};
+            if (cid_list.length > 0) {
+                data['cid_list'] = cid_list
+            }
+            ajaxPost("{{ reverse_url('backoffice_race_subject_choice_rule_select_dimension') }}?race_cid={{race_cid}}", data, function (result) {
+                if (result.code > 0) {
+                    $("#error_msg").hide();
+                    layer.open({
+                        type: 1,
+                        title: '新增自定义纬度',
+                        area: ['500px', '300px'],
+                        btn: ["确认", "取消"],
+                        content: result.html,
+                        yes: function (index) {
+                            if (result.code === 2) {
+                                $(".add_dimension_box").hide();
+                            } else {
+                                $(".add_dimension_box").show();
+                            }
+                            var dimension_val = $(".choose_dimension").val();
+                            var data = {'cid': dimension_val};
+                            ajaxPost("{{ reverse_url('backoffice_race_subject_choice_rule_add_dimension',race_choice_rule.cid) }}?race_cid={{race_cid}}", data, function (ret) {
+                                if (ret.code === 1) {
+                                    $("#error_msg").hide();
+                                    $(".dimension_all").append(ret.html);
+                                } else {
+                                    $("#error_msg").html("增加自定义维度失败，请重试！").show();
+                                    $("#error_msg").show();
+                                }
+                                checkDimension();
+                            });
+                            layer.close(index);
+                            $(".save_delete").hide();
+                        }
+                    });
+                } else {
+                    $("#error_msg").html("增加自定义维度失败，请重试！").show();
+                    $("#error_msg").show();
+                }
+            });
+        });
+
+        $('.submit_btn').on("click", function () {
+            $(".dimension_box").find("input").removeClass("red_warning");
+            $(".dimension_box").find(".table_role").removeClass("red_bg");
+            var q_total = $(".q_total").val();
+            var re = /^\d{0,4}$/;
+            var re1 = /^[0-9]{1,2}$/;
+            var flag = 0;
+            var dimension_dict = {};
+            var dimension_box = $(".dimension_box");
+            var e_msg = '';
+            if (q_total === "" || !re1.test(q_total) || parseInt(q_total) === 0) {
+                flag = 1;
+                e_msg = "单局题目总数请填写1到99之间的整数！";
+                $(".q_total").addClass("red_warning");
+            } else {
+                if (dimension_box.length === 0) {
+                    flag = 1;
+                    e_msg = "当前没有维度信息，请确认！";
+                } else {
+                    q_total = parseInt(q_total);
+                    for (var i = 0; i < dimension_box.length; i++) {
+                        var p_cid = dimension_box.eq(i).find(".add_manage").attr("cid");
+                        var val = $.trim(dimension_box.eq(i).find(".list_title").text());
+                        var checkbox = dimension_box.eq(i).find(".checkbox_i");
+                        var checked = dimension_box.eq(i).find(".checked");
+                        var n_len = dimension_box.eq(i).find(".ml5").length;
+                        var input = dimension_box.eq(i).find(".only_num");
+                        var w_len = dimension_box.eq(i).find(".only_num").next().length;
+                        var val_dict = {};
+                        if (checkbox.length > 0) {
+                            if (checked.length < 1) {
+                                dimension_box.eq(i).find(".table_role").addClass("red_bg");
+                                flag = 1;
+                                e_msg = val + "请至少选择一个，请确认！";
+                                break;
+                            } else {
+                                for (var j = 0; j < checkbox.length; j++) {
+                                    var sub_cid = checkbox.eq(j).parent().attr("cid");
+                                    val_dict[sub_cid] = checkbox.eq(j).hasClass("checked");
+                                }
+                            }
+                        }
+                        if (input.length > 0 && n_len > 0) {
+                            var num = 0;
+                            for (var j = 0; j < input.length; j++) {
+                                var inp_val = input.eq(j).val();
+                                if (inp_val === "" || !re1.test(inp_val)) {
+                                    flag = 1;
+                                    input.eq(j).parents(".mt30").find("input").addClass("red_warning");
+                                    e_msg = val + "请填写0到" + q_total + "之间的整数！";
+                                    break;
+                                } else {
+                                    var sub_cid = input.eq(j).attr("cid");
+                                    val_dict[sub_cid] = parseInt(input.eq(j).val());
+                                    num += parseInt(input.eq(j).val());
+                                }
+                            }
+                            if (flag === 1) {
+                                break;
+                            }
+                            if (num !== q_total) {
+                                input.eq(0).parents(".mt30").find("input").addClass("red_warning");
+                                flag = 1;
+                                e_msg = val + "的子维度值加起来不等于" + q_total + "！";
+                                break;
+                            }
+                        }
+                        if (input.length > 0 && w_len < 1) {
+                            var inp_num = 0;
+                            for (var j = 0; j < input.length; j++) {
+                                var inp_val = input.eq(j).val();
+                                if (inp_val === "" || !re.test(inp_val)) {
+                                    input.eq(j).parents(".mt30").find("input").addClass("red_warning");
+                                    flag = 1;
+                                    e_msg = val + "请填写0到9999之间的整数！";
+                                    break;
+                                } else {
+                                    var sub_cid = input.eq(j).attr("cid");
+                                    val_dict[sub_cid] = parseInt(input.eq(j).val());
+                                    inp_num += parseInt(input.eq(j).val());
+                                }
+                            }
+                            if (flag === 1) {
+                                break;
+                            }
+                            if (inp_num < 1) {
+                                input.eq(0).parents(".mt30").find("input").addClass("red_warning");
+                                flag = 1;
+                                e_msg = val + "的子维度值加起来不能小于1，请确认！";
+                                break;
+                            }
+                        }
+                        if (flag === 1) {
+                            break;
+                        } else {
+                            dimension_dict[p_cid] = val_dict;
+                        }
+                    }
+                }
+            }
+
+            if (!flag) {
+                $("#error_msg").hide();
+                var dimension_json = JSON.stringify([dimension_dict]);
+                var data = {
+                    'q_total': q_total,
+                    'dimension_json': dimension_json
+                };
+                var url = "{{ reverse_url('backoffice_race_subject_choice_rule_setting',race_choice_rule.cid) }}?race_cid={{race_cid}}";
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    remove_loading();
+                    if (ret.code == 0) {
+                        $('#error_msg').html('提交失败，请重试！');
+                        $('#error_msg').show();
+                    } else if (ret.code == 2) {
+                        $('#error_msg').hide();
+                        fail_msg("没有符合抽题规则的题目！", 5000);
+                    }
+                    else if (ret.code == 1) {
+                        $('#error_msg').hide();
+                        tip_msg("提交成功！", 2000,function(){
+                            window.location.href = "{{ reverse_url('backoffice_race_subject_choice_rule_list') }}?race_cid={{ race_cid }}"
+                        });
+                    }
+                });
+
+            } else {
+                $("#error_msg").html(e_msg);
+                $("#error_msg").show();
+            }
+        });
+    });
+</script>
+{% end %}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>title</title>
+    <link rel="shortcut icon" href="{{ static_url('images/favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ static_url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/default/user_list.css') }}">
+
+    <script src="{{ static_url('js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+    <script src="{{ static_url('js/public.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+    <script src="{{ static_url('js/plugins/jquery.cookie.1.4.1.min.js') }}"></script>
+</head>
+<body>
+<div>
+    {% raw xsrf_form_html() %}
+    <div class="rounds_box ml25">
+        <span>执行轮次：</span>
+        <input class="only_num" id="rounds" name="rounds" type="text" placeholder="规则执行轮次" value="1" maxlength="6">
+        <span id="error_msg" style="color: red;"></span>
+    </div>
+</div>
+<div class="tr mr20">
+    <a href="javascript:;" class="btn btn_primary mr10" id="start">开始</a>
+    <a href="javascript:;" class="btn btn_primary" id="close">关闭</a>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    $("#close").on("click", function () {
+        window.parent.layer.closeAll(); //疯狂模式，关闭所有层
+    });
+
+    $(function () {
+        $("#start").on('click', function () {
+            var error_msg = $("#error_msg");
+            error_msg.html("");
+            var times = $("#rounds").val();
+            if ($.trim(times) === "") {
+                error_msg.html("请输入执行轮次");
+                return false;
+            }
+            var data = {
+                "times": times
+            };
+            ajaxPost("{{ reverse_url('backoffice_subject_choice_rule_extract', choice_rule_id) }} ", data, function (result) {
+                if (result.code === -1) {
+                    tip_msg('任务正在执行，请稍候再试！', 2000)
+                } else if (result.code === 1) {
+                    tip_msg('任务已提交，请耐心等待！', 2000);
+                    setTimeout(function () {
+                        window.parent.layer.closeAll(); //疯狂模式，关闭所有层
+                        window.parent.location.reload();
+                    }, 2000);
+                } else {
+                    tip_msg('操作失败，请重试！', 2000)
+                }
+            });
+        });
+    });
+</script>
+</body>

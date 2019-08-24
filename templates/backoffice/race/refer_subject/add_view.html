@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="keywords" content="中国科普研究所">
+    <meta name="description" content="中国科普研究所">
+    <title>中国科普研究所</title>
+    <link rel="shortcut icon" href="{{ static_url('images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ static_url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/public/public.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/default/user_list.css') }}">
+
+    <script src="{{ static_url('js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/jquery.cookie.1.4.1.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+    <script src="{{ static_url('js/plugins/laydate/laydate.js') }}"></script>
+    <script src="{{ static_url('js/public.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+
+    <script src="{{ static_url('js/echarts/echarts.js') }}"></script>
+    <script src="{{ static_url('js/echarts/map/js/china.js') }}"></script>
+    <script src="{{ static_url('js/echarts/map/js/all-province.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/chongqing.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/shanghai.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/taiwan.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/xizang.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/xinjiang.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/beijing.js') }}"></script>
+    {% block js %}
+    <script src="{{ static_url('js/ajaxfileupload.js') }}"></script>
+
+    {% end %}
+{% from db import CODE_SUBJECT_DIFFICULTY_LIST, CODE_SUBJECT_DIFFICULTY_DICT, CATEGORY_SUBJECT_KNOWLEDGE_LIST, CATEGORY_SUBJECT_KNOWLEDGE_DICT %}
+{% from db import CATEGORY_SUBJECT_KNOWLEDGE_DICT, STATUS_SUBJECT_ACTIVE, STATUS_SUBJECT_LIST, STATUS_SUBJECT_DICT, CATEGORY_SUBJECT_DICT %}
+<div class="filter_box clear pr">
+    <div class="filter_condition fl">
+        <div class="in_block filter_text">筛选条件：</div>
+        <div class="in_block filter_con" style="width: 660px;">
+            <input id="kw_name" name="kw_name" type="text" placeholder="题目ID/标题" value="{{ kw_name }}">
+            <select id="kw_difficulty" name="kw_difficulty">
+                <option value="">请选择难度</option>
+                {% for difficult in CODE_SUBJECT_DIFFICULTY_DICT %}
+                    {% if kw_difficulty %}
+                <option value="{{ difficult }}" {% if int(kw_difficulty)== difficult %}selected="selected" {% end %}>
+                    {{ CODE_SUBJECT_DIFFICULTY_DICT.get(difficult) }}
+                </option>
+                    {% else %}
+                    <option value="{{ difficult }}" {% if kw_difficulty== difficult %}selected="selected" {% end %}>
+                    {{ CODE_SUBJECT_DIFFICULTY_DICT.get(difficult) }}
+                </option>
+                    {% end %}
+                {% end %}
+            </select>
+            <select id="category_use" name="category_use">
+                <option value="">请选择部类</option>
+                {% for category in CATEGORY_SUBJECT_KNOWLEDGE_LIST %}
+                    {% if category_use %}
+                <option value="{{ category }}" {% if int(category_use)== category %}selected="selected" {% end %}>
+                    {{ CATEGORY_SUBJECT_KNOWLEDGE_DICT.get(category) }}
+                </option>
+                    {% else %}
+                    <option value="{{ category }}" {% if category_use== category %}selected="selected" {% end %}>
+                    {{ CATEGORY_SUBJECT_KNOWLEDGE_DICT.get(category) }}
+                </option>
+                    {% end %}
+                {% end %}
+            </select>
+        </div>
+    </div>
+    <div class="filter_btn fr">
+        <a href="javascript:;" class="btn btn_i btn_primary pr mr5" onclick="do_jump_2_page(event, 1);">
+            查询结果
+            <i class="btn_search"></i>
+        </a>
+        <a href="javascript:;" id="cancel_search" class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr mt5">
+            <a href="javascript:;" class="btn btn_i btn_primary pr mr5" id="refer_all"><i class="refer_all_i"></i>全部引用</a>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tbody>
+            <tr>
+                <th width="40"></th>
+                <th width="48">序号</th>
+                <th width="80">题目ID</th>
+                <th>题目</th>
+                <th width="60">难度</th>
+                <th width="123">学科部类</th>
+                <th width="130">操作</th>
+            </tr>
+            {% if paging.page_items %}
+            {% for index, subject in enumerate(paging.page_items) %}
+            {% set needless = subject.needless %}
+            <tr>
+                <td class="tc">
+                    <i class="checkbox_i" cid="{{ subject.cid }}"></i>
+                </td>
+                <td>{{ index + 1 }}</td>
+                <td>{{ string_display(subject.custom_code) }}</td>
+                <td>{{ string_display(subject.title) }}</td>
+                <td>{{ string_display(CODE_SUBJECT_DIFFICULTY_DICT.get(subject.difficulty)) }}</td>
+                <td>{{ string_display(CATEGORY_SUBJECT_KNOWLEDGE_DICT.get(subject.category)) }}</td>
+                <td class="tools">
+                    <a href="javascript:;" class="add_i fl tips" data-name="添加"
+                       cid="{{ str(subject.cid) }}"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="9" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+            </tbody>
+        </table>
+        {% if paging.page_items %}
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr25 ml10"></i>全选</div>
+        </div>
+        {% end %}
+    </div>
+</div>
+{% if paging.page_items %}
+<div class="fix_page clear" style="background:#fff;">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+{% end %}
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var subject_dimension_cid_list = [];
+                $('.subject_dimension').each(function () {
+                    var subject_dimension = $(this).val();
+                    if (subject_dimension) {
+                        subject_dimension_cid_list.push(subject_dimension);
+                    }
+                });
+
+                var kw_name = $.trim($("#kw_name").val());
+                var kw_difficulty = $("#kw_difficulty option:selected").val();
+                var params = {
+                    "subject_dimension_cid_list": subject_dimension_cid_list,
+                    "kw_name": kw_name,
+                    "kw_difficulty": kw_difficulty,
+                    "race_cid": "{{race_cid}}",
+                    "page": to_page_num,
+                    "category_use": $("#category_use option:selected").val(),
+                   "per_page_quantity": $('#per_page_quantity').val() || {{ per_page_quantity }},
+                };
+                window.location.href = "{{ reverse_url('backoffice_race_subject_refer_list') }}?" + dict_2_url_params(params);
+
+            }
+        }
+    }
+</script>
+<script>
+    $(function () {
+        $(".add_i").click(function (event) {
+            confirm_dialog("警告", "确认要引用该题目？", function () {
+                display_loading();
+                var subject_cid = ($(event.target).attr('cid'));
+                if (subject_cid) {
+                    ajaxPost("/backoffice/race/subject/refer/add/" + subject_cid + "/?race_cid={{race_cid}}" , {}, function (result) {
+                        if (result.code === 1) {
+                            tip_msg("题目引用成功！", 2000, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            tip_msg("题目引用失败！", 2000);
+                        }
+                        remove_loading()
+                    });
+                }
+            });
+        });
+
+        $(".refresh_btn").click(function () {
+            window.location.reload();
+        });
+
+        $("#cancel_search").click(function (event) {
+            $('.subject_dimension').each(function () {
+                $(this).val("");
+            });
+            $("#kw_name").val("");
+            $("#kw_difficulty").val("");
+            $('#category_use').val("");
+            do_jump_2_page(event, 1);
+        });
+    });
+    $("#subject_import").click(function () {
+        iframe_dialog('导入题目', "{{ reverse_url('backoffice_subject_import') }}")
+    });
+    $('#refer_all').click(function () {
+            var subject_cid_list = [];
+            $(".table_list .checkbox_i").each(function () {
+                subject_cid_list.push($(this).attr("cid"));
+            });
+            var kw_name = $.trim($("#kw_name").val());
+            var kw_difficulty = $("#kw_difficulty option:selected").val();
+            var category_use = $("#category_use option:selected").val();
+            data = {
+                'subject_cid_list': subject_cid_list,
+                'kw_name':kw_name,
+                'kw_difficulty': kw_difficulty,
+                'category_use' : category_use
+            };
+            ajaxPost("{{ reverse_url('backoffice_race_subject_all_import') }}?race_cid={{race_cid}}", data, function(res){
+                if (res.code == 1) {
+                    tip_msg('引用成功!', 2000, function () {
+                        window.parent.location.reload()
+                    })
+                } else if (res.code == -1) {
+                    tip_msg('没有题目可以被引用!', 2000, function () {
+                        window.parent.location.reload()
+                    })
+                } else {
+                    tip_msg('操作失败,请重试!')
+                }
+                remove_loading()
+            })
+        })
+</script>
+

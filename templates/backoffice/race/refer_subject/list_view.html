@@ -1,0 +1,351 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CODE_SUBJECT_DIFFICULTY_LIST, CODE_SUBJECT_DIFFICULTY_DICT, CATEGORY_SUBJECT_KNOWLEDGE_LIST, CATEGORY_SUBJECT_KNOWLEDGE_DICT %}
+{% from db import CATEGORY_SUBJECT_KNOWLEDGE_DICT, STATUS_SUBJECT_ACTIVE, STATUS_SUBJECT_LIST, STATUS_SUBJECT_DICT, CATEGORY_SUBJECT_DICT %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <a href="javascript:;" id="refer_subject" class="btn btn_i btn_primary btn_lg pr fl mr20">引用<i
+            class="subject_add_i"></i></a>
+    <a id="subject_import" href="javascript:;" class="btn btn_i btn_primary btn_lg pr fl mr20">题目ID引用<i
+            class="add_push_i"></i></a>
+    <a href="javascript:;" class="refresh_btn pl20 mr20 fr mt10"><i class="refresh_i"></i>刷新</a>
+    <a href="/backoffice/race/list/" class="back_btn pl20 mr20 fr mt10">
+        <i class="back_i"></i>返回
+    </a>
+</div>
+<div class="filter_box clear pr">
+    <div class="filter_condition fl">
+        <div class="in_block filter_text">筛选条件：</div>
+        <div class="in_block filter_con">
+            <input id="kw_name" name="kw_name" type="text" placeholder="题目ID/标题" value="{{ kw_name }}">
+            <select id="kw_difficulty" name="kw_difficulty">
+                <option value="">请选择难度</option>
+                {% for difficult in CODE_SUBJECT_DIFFICULTY_DICT %}
+                {% if kw_difficulty %}
+                <option value="{{ difficult }}" {% if int(kw_difficulty)== difficult %}selected="selected" {% end %}>
+                    {{ CODE_SUBJECT_DIFFICULTY_DICT.get(difficult) }}
+                </option>
+                {% else %}
+                <option value="{{ difficult }}" {% if kw_difficulty== difficult %}selected="selected" {% end %}>
+                    {{ CODE_SUBJECT_DIFFICULTY_DICT.get(difficult) }}
+                </option>
+                {% end %}
+                {% end %}
+            </select>
+            <select id="category_use" name="category_use">
+                <option value="">请选择部类</option>
+                {% for category in CATEGORY_SUBJECT_KNOWLEDGE_LIST %}
+                {% if category_use %}
+                <option value="{{ category }}" {% if int(category_use)== category %}selected="selected" {% end %}>
+                    {{ CATEGORY_SUBJECT_KNOWLEDGE_DICT.get(category) }}
+                </option>
+                {% else %}
+                <option value="{{ category }}" {% if category_use== category %}selected="selected" {% end %}>
+                    {{ CATEGORY_SUBJECT_KNOWLEDGE_DICT.get(category) }}
+                </option>
+                {% end %}
+                {% end %}
+            </select>
+        </div>
+    </div>
+    <div class="filter_btn fr">
+        <a href="javascript:;" class="btn btn_i btn_primary pr mr5" onclick="do_jump_2_page(event, 1);">
+            查询结果
+            <i class="btn_search"></i>
+        </a>
+        <a href="javascript:;" id="cancel_search" class="btn btn_default">取消筛选</a>
+    </div>
+    <div class="more_kw pa">
+        <span>展开更多筛选</span>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tbody>
+            <tr>
+                <th width="40"></th>
+                <th width="48">序号</th>
+                <th width="80">题目ID</th>
+                <th>题目</th>
+                <th width="60">难度</th>
+                <th width="123">学科部类</th>
+                <th width="80">状态</th>
+                <th width="130">操作</th>
+            </tr>
+            {% if paging.page_items %}
+            {% for index, refer_subject in enumerate(paging.page_items) %}
+            {% if refer_subject.subject_list %}
+            {% set subject = refer_subject.subject_list[0] %}
+            {% set needless = subject.needless %}
+            <tr>
+                <td class="tc">
+                    <i class="checkbox_i" cid="{{ subject.cid }}"></i>
+                </td>
+                <td>{{ index + 1 }}</td>
+                <td>{{ string_display(subject.custom_code) }}</td>
+                <td>{{ string_display(subject.title) }}</td>
+                <td>{{ string_display(CODE_SUBJECT_DIFFICULTY_DICT.get(subject.difficulty)) }}</td>
+                <td>{{ string_display(CATEGORY_SUBJECT_KNOWLEDGE_DICT.get(subject.category)) }}</td>
+                <td>
+                    <label class="table_switch">
+                        <input type="checkbox" class="subject_status"
+                               {% if refer_subject.status== STATUS_SUBJECT_ACTIVE %}checked="checked" {% end %}
+                               cid="{{ str(subject.cid) }}">
+                        <i></i>
+                    </label>
+                </td>
+                <td class="tools">
+                    <a href="{{ reverse_url('backoffice_race_subject_detail', str(subject.cid)) }}?race_cid={{race_cid}}"
+                       class="see_i fl tips" data-name="查看"></a>
+                    <a href="javascript:;" class="delete_i fl tips" data-name="删除"
+                       cid="{{ str(subject.cid) }}"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="9" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+            </tbody>
+        </table>
+        {% if paging.page_items %}
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr25 ml10"></i>全选</div>
+            <div class="fl ml20">
+                <select id="operate" name="operate">
+                    <option value="1">启用</option>
+                    <option value="0">停用</option>
+                    <option value="-1">删除</option>
+                </select>
+            </div>
+            <div class="fl">
+                <a href="javascript:;" id="btn_batch" class="btn btn_primary ml20 btn_sm">确定</a>
+            </div>
+        </div>
+        {% end %}
+    </div>
+</div>
+{% if paging.page_items %}
+<div class="fix_page clear">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+{% end %}
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var subject_dimension_cid_list = [];
+                $('.subject_dimension').each(function () {
+                    var subject_dimension = $(this).val();
+                    if (subject_dimension) {
+                        subject_dimension_cid_list.push(subject_dimension);
+                    }
+                });
+
+                var kw_name = $.trim($("#kw_name").val());
+                var kw_difficulty = $("#kw_difficulty option:selected").val();
+                var category_use = $("#category_use option:selected").val();
+                var params = {
+                    "subject_dimension_cid_list": subject_dimension_cid_list,
+                    "kw_name": kw_name,
+                    "race_cid": "{{race_cid}}",
+                    "kw_difficulty": kw_difficulty,
+                    "page": to_page_num,
+                    "category_use": category_use,
+                    "per_page_quantity": $('#per_page_quantity').val() || {{ per_page_quantity }},
+                };
+                window.location.href = "{{ reverse_url('backoffice_race_subject_list') }}?race_cid={{race_cid}}&" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+    $(function () {
+        $(".subject_status").click(function (event) {
+            display_loading();
+            var target = $(event.target);
+            var subject_cid = ($(event.target).attr('cid'));
+            var status = target.prop("checked");
+            ajaxPost("/backoffice/race/subject/status_switch/" + subject_cid + "/?race_cid={{race_cid}}", {"status": status}, function (result) {
+                if (result.code !== 1) {
+                    tip_msg("状态变更失败，请重试！", 2000);
+                    target.prop("checked", !status);
+                }
+                remove_loading()
+            })
+        });
+
+        $(".delete_i").click(function (event) {
+            confirm_dialog("警告", "确认要删除该题目？", function () {
+                display_loading();
+                var subject_cid = ($(event.target).attr('cid'));
+                if (subject_cid) {
+                    ajaxPost("/backoffice/race/subject/delete/" + subject_cid + "/?race_cid={{race_cid}}", {}, function (result) {
+                        if (result.code === 1) {
+                            tip_msg("题目删除成功！", 2000, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            tip_msg("题目删除失败！", 2000);
+                        }
+                        remove_loading()
+                    });
+                }
+            });
+        });
+
+        $("#btn_batch").click(function () {
+            display_loading();
+            var operate = $("#operate").val();
+            var subject_cid_list = [];
+            $(".table_list .checkbox_i").each(function () {
+                if ($(this).hasClass("checked")) {
+                    subject_cid_list.push($(this).attr("cid"));
+                }
+            });
+            if (subject_cid_list.length === 0) {
+                tip_msg("操作无法完成，请至少选择一笔题目信息！", 2000);
+                remove_loading();
+                return;
+            }
+            var msg = "";
+            if (operate === '0') {
+                msg = "确定【停用】选中的题目？";
+            } else if (operate === '-1') {
+                msg = "确定【删除】选中的题目？";
+            } else {
+                msg = "确定【启用】选中的题目？";
+            }
+            confirm_dialog("警告", msg, function () {
+                var data = {
+                    "operate": operate,
+                    "subject_cid_list": subject_cid_list
+                };
+                ajaxPost("{{ reverse_url('backoffice_race_subject_batch_operate') }}?race_cid={{race_cid}}", data, function (result) {
+                    if (result.code === 1) {
+                        tip_msg("操作完成！", 2000, function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        tip_msg("操作失败，请重试！", 2000);
+                    }
+                    remove_loading()
+                })
+            });
+
+        });
+
+
+        $(".refresh_btn").click(function () {
+            window.location.reload();
+        });
+
+        $("#cancel_search").click(function (event) {
+            $('.subject_dimension').each(function () {
+                $(this).val("");
+            });
+            $("#kw_name").val("");
+            $("#kw_difficulty").val("");
+            $('#category_use').val("");
+
+            do_jump_2_page(event, 1);
+        });
+    });
+    $("#subject_import").click(function () {
+        iframe_dialog('导入题目', "{{ reverse_url('backoffice_race_subject_import') }}?race_cid={{race_cid}}", "600px", "340px")
+    });
+    $("#refer_subject").click(function () {
+        frame_pop('导入题目', "{{ reverse_url('backoffice_race_subject_refer_list') }}?race_cid={{race_cid}}", "1000px", "500px", click_child_item, refresh)
+    });
+
+    function refresh() {
+        window.location.reload();
+    }
+
+    function click_child_item() {
+        let body = layer.getChildFrame("body", 0);
+        var subject_cid_list = [];
+        $(body).find(".table_list .checkbox_i").each(function () {
+            if ($(this).hasClass("checked")) {
+                subject_cid_list.push($(this).attr("cid"));
+            }
+        });
+        if (subject_cid_list.length === 0) {
+            tip_msg("操作无法完成，请至少选择一笔题目信息！", 2000);
+            remove_loading();
+            return;
+        }
+        var operate = '2';
+        var msg = "确定引用选中的题目？";
+        confirm_dialog("警告", msg, function () {
+            display_loading();
+            var data = {
+                "operate": operate,
+                "subject_cid_list": subject_cid_list
+            };
+            ajaxPost("{{ reverse_url('backoffice_race_subject_batch_operate') }}?race_cid={{race_cid}}", data, function (result) {
+                if (result.code === 1) {
+                    if (result.operate === '2') {
+                        tip_msg('操作完成', 2000, function () {
+                            window.parent.location.reload();
+                        })
+                    }
+                } else {
+                    tip_msg("操作失败，请重试！", 2000);
+                }
+                remove_loading();
+            })
+        });
+    }
+
+
+</script>
+{% end %}

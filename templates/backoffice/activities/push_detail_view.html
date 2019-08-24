@@ -1,0 +1,166 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_PULL_ACTION_PUSHED_SUCCESS %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <h3 class="pl10 ml10">推送详情</h3>
+    </div>
+    <div class="fr">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="filter_box clear">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <input type="text" placeholder="用户编号" id="search_member_code" value="{{ search_member_code }}">
+        <input type="text" placeholder="用户姓名" id="search_member_name" value="{{ search_member_name }}">
+        <select id="search_survey_status">
+            <option value="">请选择问卷状态</option>
+            <option value="1" {% if search_survey_status == '1' %}selected{% end %}>已提交</option>
+            <option value="0" {% if search_survey_status == '0' %}selected{% end %}>未提交</option>
+        </select>
+    </div>
+    <div class="filter_btn fr">
+        <a href="#" class="btn btn_i btn_primary pr mr5 search_data">查询<i class="btn_search"></i></a>
+        <a href="{{ reverse_url('backoffice_activity_push_detail') }}?activity_cid={{ activity_cid }}&push_cid={{ push_cid }}"
+           class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        {#            <div class="fr">#}
+        {#                <select>#}
+        {#                    <option value="排列方式">排列方式</option>#}
+        {#                </select>#}
+        {#            </div>#}
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th>用户ID</th>
+                <th>姓名</th>
+                <th>手机号</th>
+                {% if push.status != STATUS_PULL_ACTION_PUSHED_SUCCESS %}
+                <th>推送状态</th>
+                {% end %}
+                <th>问卷状态</th>
+            </tr>
+            {% set member_list = paging.page_items %}
+            {% if member_list %}
+            {% for member in member_list %}
+            {% set needless_dict = member.needless if member.needless else {} %}
+            <tr>
+                <td>{{ string_display(member.code) }}</td>
+                <td>{{ string_display(member.name) }}</td>
+                <td>{{ string_display(member.mobile) }}</td>
+                {% if all_member_cid_list and member.cid in all_member_cid_list %}
+                {% if push.status != STATUS_PULL_ACTION_PUSHED_SUCCESS %}
+                <td class="cl_success">推送成功</td>
+                {% end %}
+                {% if member.cid in survey_member_cid_list %}
+                <td class="cl_success">已提交</td>
+                {% else %}
+                <td class="cl_danger">未提交</td>
+                {% end %}
+                {% else %}
+                {% if push.status != STATUS_PULL_ACTION_PUSHED_SUCCESS %}
+                <td class="cl_danger">推送失败</td>
+                {% end %}
+                <td class="cl_danger">未提交</td>
+                {% end %}
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="6" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+    </div>
+</div>
+<div class="fix_page clear {% if not member_list %}dis_none{% end %}">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}
+            </option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            display_loading();
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                // 填充请求参数
+                var params = {
+                    'activity_cid': '{{ activity_cid }}',
+                    'push_cid': '{{ push_cid }}',
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val() || {{per_page_quantity}},
+                    'search_member_code': $('#search_member_code').val(),
+                    'search_member_name': $('#search_member_name').val(),
+                    'search_survey_status': $('#search_survey_status').val()
+                };
+                window.location.href = "{{ reverse_url('backoffice_activity_push_detail') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+
+    $(function () {
+
+        $('.search_data').on('click', function () {
+            var param_dict = {
+                'search_member_code': $('#search_member_code').val(),
+                'search_member_name': $('#search_member_name').val(),
+                'search_survey_status': $('#search_survey_status').val(),
+                'per_page_quantity': $('#per_page_quantity').val(),
+                'activity_cid': '{{ activity_cid }}',
+                'push_cid': '{{ push_cid }}'
+            };
+            window.location.href = "{{ reverse_url('backoffice_activity_push_detail') }}?" + dict_2_url_params(param_dict);
+        });
+
+    })
+
+</script>
+{% end %}

@@ -1,0 +1,153 @@
+{% autoescape None %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="keywords" content="中国科普研究所">
+    <meta name="description" content="中国科普研究所">
+    <title>中国科普研究所</title>
+    <link rel="shortcut icon" href="{{ static_url('images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ static_url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/public/public.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/default/user_list.css') }}">
+
+    <script src="{{ static_url('js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/jquery.cookie.1.4.1.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+    <script src="{{ static_url('js/plugins/laydate/laydate.js') }}"></script>
+    <script src="{{ static_url('js/public.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+
+    <script src="{{ static_url('js/echarts/echarts.js') }}"></script>
+    <script src="{{ static_url('js/echarts/map/js/china.js') }}"></script>
+    <script src="{{ static_url('js/echarts/map/js/all-province.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/chongqing.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/shanghai.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/taiwan.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/xizang.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/xinjiang.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/beijing.js') }}"></script>
+    {% block js %}
+    <script src="{{ static_url('js/ajaxfileupload.js') }}"></script>
+    {% end %}
+
+</head>
+<body>
+<div class="header clear">
+    <div class="fl header_logo">
+        <a href="javascript:void (0)">
+            <img src="{{ static_url('images/default/header_logo.png') }}" alt="">
+        </a>
+    </div>
+    <ul class="fl header_nav clear">
+        {% set race_cid = handler.get_argument('race_cid') %}
+        {% set s_menu_list = None %}
+        {% set f_menu_list = user_menu %}
+        {% if f_menu_list %}
+        {% for f_menu in f_menu_list %}
+
+        {% if not f_menu.disabled and f_menu.has_perm %}
+        <li class="fl {% if f_menu.is_active %}active{% end %}">
+            <a href="{% if not f_menu.is_active %}{{ f_menu.path }}?race_cid={{ race_cid }}{% else %}javascript:;{% end %}">
+                {{ f_menu.title }}
+            </a>
+        </li>
+        {% end %}
+
+        {% if f_menu.is_active and not s_menu_list %}
+        {% set s_menu_list = f_menu.sub_menu_list %}
+        {% for menu in s_menu_list %}
+        {% if 'race' in menu.flags %}
+        {% set menu.sub_menu_list = menu_list %}
+        {% end %}
+        {% end %}
+        {% end %}
+
+        {% end %}
+        {% end %}
+    </ul>
+    <div class="fr header_user clear">
+        <div class="user_info fl mr20 pr">
+            <div class="user_img pr clear">
+                <img class="fl mr10" src="{{ static_url('images/default/user_img.png') }}">
+                <div class="user_name ellipsis fl">{{ current_user.name }}</div>
+            </div>
+            <div class="outer_login pa"><i class="outer_i"></i>退出登录</div>
+        </div>
+    </div>
+</div>
+<div class="main clear">
+    <div class="left_area fl pr">
+        {% if s_menu_list %}
+        {% for s_menu in s_menu_list %}
+        {% if not s_menu.disabled and s_menu.has_perm %}
+        <ul class="left_menu {% if s_menu.is_active %} active {% end %}">
+            <li class="pr {% if s_menu.sub_menu_list %} first_menu {% else %} only_menu {% if s_menu.is_active %} active {% end %} {% end %}">
+                <a href="  {{ s_menu.path }} ">
+                    {{ s_menu.title }}
+                </a>
+                <i class="{% if s_menu.style_name_list %} {{ s_menu.style_name_list[0] }} {% end %}"></i>
+            </li>
+            {% for thr_menu in s_menu.sub_menu_list %}
+            {% if not thr_menu.disabled and thr_menu.has_perm %}
+            <li class="pr {% if thr_menu.is_active %}active{% end %}">
+                <a href="{% if not thr_menu.is_active %}{{ thr_menu.path }}?race_cid={{ race_cid }}{% else %}javascript:;{% end %}">
+                    {{ thr_menu.title }}
+                </a>
+                {% if thr_menu.style_name_list %}
+                <i class="{{ thr_menu.style_name_list[0] }}"></i>
+                {% end %}
+            </li>
+            {% end %}
+            {% end %}
+        </ul>
+        {% end %}
+        {% end %}
+        {% end %}
+    </div>
+    {% from enums import PERMISSION_TYPE_MINIAPP_SUBJECT_DRAW_MANAGEMENT %}
+    {% from commons.cache_utils import get_subject_extract_tip_show_status %}
+    {% from caches.redis_utils import RedisCache %}
+    {% set cached_extract_dict = RedisCache.hgetall(race_cid) %}
+    {% set is_change_list = list(cached_extract_dict.values()) %}
+    <div class="right_area">
+        {% if current_user.has_perm_sync(PERMISSION_TYPE_MINIAPP_SUBJECT_DRAW_MANAGEMENT) and get_subject_extract_tip_show_status() and b'1' in is_change_list %}
+        <div class="system_notice clear" style="display: none;">
+            <i class="fl system_notice_i"></i>
+            <div class="fl" style="margin-right: 8px;">
+                抽题元素有更新，为保证系统能抽到最新题目，您需要重新进行抽题
+            </div>
+            <a href="javascript:void (0)" class="close_notice fr">关闭</a>
+            {% if not handler.request.path == '/backoffice/race/subject/choice/rule/list/' %}
+            <a href="/backoffice/race/subject/choice/rule/list/?race_cid={{ race_cid }}" class="go_to_subject fr">去抽题</a>
+            {% end %}
+        </div>
+        {% end %}
+        {% block content %}
+        <h2>请在此填充内容</h2>
+        {% end %}
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".outer_login").click(function () {
+            var cookie_id = "38B9CFE3-5710-4B49-9124-3678481AEEF7";
+            $.removeCookie(cookie_id, {path: '/backoffice/login/'});
+            window.location.href = "{{ reverse_url('backoffice_logout') }}";
+        });
+
+        $(".user_img").on("click", function () {
+            window.location.href = "{{ reverse_url('backoffice_account') }}";
+        });
+
+        setTimeout(function () {
+            $(".system_notice").slideDown(320);
+        }, 300);
+        //关闭抽题更新提示：
+        $(document).on("click", ".close_notice", function () {
+            $(this).parents(".system_notice").hide();
+        });
+    });
+</script>
+</body>
+</html>

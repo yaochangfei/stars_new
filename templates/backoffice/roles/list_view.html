@@ -1,0 +1,172 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_ROLE_ACTIVE %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <a href="{{ reverse_url('backoffice_role_add') }}" class="btn btn_i btn_primary btn_lg pr">新增角色<i
+            class="add_role_i"></i>
+    </a>
+    <a href="javascript:;" class="pr refresh_btn pl20 mr20 fr mt10">
+        <i class="refresh_i"></i>刷新
+    </a>
+</div>
+<div class="data_list pr no_mt">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th width="48">序号</th>
+                <th>角色编码</th>
+                <th>角色名称</th>
+                <th>成员数量</th>
+                <th>添加时间</th>
+                <th>备注</th>
+                <th>是否启用</th>
+                <th>操作</th>
+            </tr>
+            {% set role_list = paging.page_items %}
+            {% if role_list %}
+            {% for index, role in enumerate(role_list) %}
+            <tr>
+                <td>{{ index + 1 }}</td>
+                <td>{{ string_display(role.code) }}</td>
+                <td>{{ string_display(role.title) }}</td>
+                {% set needless = role.needless if role.needless else {} %}
+                {% set user_amount = needless.get('user_amount', 0) %}
+                <td>{{ user_amount }}</td>
+                <td>{{ datetime_format(role.created_dt) }}</td>
+                <td>{{ string_display(role.content) }}</td>
+                <td>
+                    <label class="table_switch">
+                        <input class="role_status" type="checkbox"
+                               {% if role.status == STATUS_ROLE_ACTIVE %}checked="checked"{% end %}
+                               oid="{{ role.oid }}">
+                        <i></i>
+                    </label>
+                </td>
+                <td class="tools">
+                    <a href="{{ reverse_url('backoffice_role_perm_assign', role.oid) }}"
+                       class="setting_i fl tips" data-name="设置权限">
+                    </a>
+                    <a href="{{ reverse_url('backoffice_role_edit', role.oid) }}" class="edit_i fl tips"
+                       data-name="编辑">
+                    </a>
+                    <a href="javascript:;" class="delete_i fl tips" oid="{{ role.oid }}" data-name="删除">
+
+                    </a>
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="6" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+    </div>
+</div>
+{% if role_list %}
+<div class="fix_page clear">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num == 1 %}class="btn_disabled"{% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num == 1 %}class="btn_disabled"{% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num == paging.total_pages %}class="btn_disabled"{% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num == paging.total_pages %}class="btn_disabled"{% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity == num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val() || {{ per_page_quantity }}
+                };
+                window.location.href = "{{ reverse_url('backoffice_role_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+{% end %}
+<script>
+    $(function () {
+        $(".role_status").click(function (event) {
+            display_loading();
+            var target = $(event.target);
+            var role_id = ($(event.target).attr('oid'));
+            var status = target.prop("checked");
+            ajaxPost("/backoffice/role/status_switch/" + role_id + "/", {"status": status}, function (result) {
+                if (result.code !== 1) {
+                    tip_msg("角色状态变更失败，请重试！", 2000);
+                    target.prop("checked", !status);
+                } else {
+                    tip_msg("变更角色状态成功！", 2000);
+                }
+                remove_loading()
+            })
+        });
+
+        $(".delete_i").click(function (event) {
+            confirm_dialog("警告", "确认要删除该角色？", function () {
+                display_loading();
+                var role_id = ($(event.target).attr('oid'));
+                if (role_id) {
+                    ajaxPost("/backoffice/role/delete/" + role_id + "/", {}, function (result) {
+                        if (result.code === 1) {
+                            tip_msg("角色已被删除！", 2000, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            tip_msg("角色删除失败！", 2000);
+                        }
+                        remove_loading()
+                    });
+                }
+            });
+        });
+
+        $(".refresh_btn").click(function () {
+            window.location.reload();
+        });
+    });
+</script>
+{% end %}

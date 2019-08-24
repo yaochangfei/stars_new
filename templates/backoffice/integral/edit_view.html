@@ -1,0 +1,100 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_integral_list') }}" class="pl10 ml10">积分管理</a>
+        <span> &gt; 修改积分</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="pr back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">调整积分<i class="edit_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <table class="table_form">
+            <tr>
+                <th width="40%"><span class="necessary">*</span>调整积分</th>
+                <td class="integral_revise">
+                    <a href="javascript:void (0)" class="btn btn_i pr checked action" value="plus">增加<i
+                            class="radio_i"></i></a>
+                    <a href="javascript:void (0)" class="btn btn_i pr action" value="minus">减少<i
+                            class="radio_i"></i></a>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><input id="value" class="input_text only_num" type="text" placeholder="请输入大于0的整数"></td>
+            </tr>
+            <tr>
+                <th class="pt10 vt">备注</th>
+                <td><textarea class="textarea" id="content"></textarea></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <span class="cl_danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><a href="#" class="btn btn_primary btn_lg mt10 submit_btn">提交</a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+    $(function () {
+        //积分调整单选：
+        $(".integral_revise a").on("click", function () {
+            if ($(this).hasClass("checked")) {
+                $(this).siblings().removeClass("checked");
+            }
+            else {
+                $(this).siblings().removeClass("checked");
+                $(this).addClass("checked");
+            }
+        });
+
+
+        $('.submit_btn').on('click', function () {
+            var member_id = '{{ member_id }}';
+            var action = $('.action.checked').attr('value');
+            var value = $('#value').val();
+            var content = $('#content').val();
+            if (action && value) {
+                var url = "{{ reverse_url('backoffice_integral_edit') }}";
+                var data = {
+                    'action': action,
+                    'member_id': member_id,
+                    'value': value,
+                    'content': content
+                };
+
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+
+                    if (ret.code == 1) {
+                        tip_msg('积分调整成功！', 2000, function () {
+                            window.location.href = "{{ reverse_url('backoffice_integral_list') }}";
+                        })
+                    } else if (ret.code == -1) {
+                        $('.cl_danger').html('请填写完整信息！');
+                    } else {
+                        $('.cl_danger').html('系统错误！');
+                    }
+                });
+                remove_loading();
+
+            } else {
+                $('.cl_danger').html('请填写完整信息！');
+            }
+        });
+
+    })
+</script>
+{% end %}

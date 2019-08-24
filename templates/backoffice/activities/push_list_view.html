@@ -1,0 +1,370 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_PULL_ACTION_PUSHED_SUCCESS, PUSH_CATEGORY_DELAY, PUSH_RECEIVE_DICT, STATUS_PULL_ACTION_WAIT_PUSH, STATUS_PULL_ACTION_PUSHED, STATUS_PULL_ACTION_PUSHED_FAIL %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <a href="{{ reverse_url('backoffice_activity_push_add') }}?activity_cid={{ activity_cid }}"
+       class="btn btn_i btn_primary btn_lg pr fl">发起推送<i class="add_push_i"></i></a>
+    <a href="javascript:window.location.reload();" class="refresh_btn pl20 mr20 fr mt10"><i class="refresh_i"></i>刷新</a>
+    <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="back_btn pl20 mr20 fr mt10"><i
+            class="back_i"></i>返回</a>
+</div>
+<div class="integral_info clear p10 no_pt">
+    <div class="fl clear">
+        <div class="ph_num_img fl"></div>
+        <div class="ph_num_info">
+            <div class="f14">推送总人数</div>
+            <div>{{ push_member_amount }}</div>
+        </div>
+    </div>
+    <div class="fl clear">
+        <div class="ph_name_img fl"></div>
+        <div class="ph_name_info">
+            <div class="f14">样本回收数</div>
+            <div>{{ all_sample_amount }}</div>
+        </div>
+    </div>
+    <div class="fl no_mr clear">
+        <div class="ph_int_img fl"></div>
+        <div class="ph_int_info">
+            <div class="f14">样本回收率</div>
+            <div>{{ sample_rate }}%</div>
+        </div>
+    </div>
+</div>
+<div class="tabs pr">
+    <a href="{{ reverse_url('backoffice_activity_push_list') }}?activity_cid={{ activity_cid }}"
+       class="{% if not push_result %}active{% end %}">全部推送(<span>{{ all_push_amount }}</span>)</a>
+    <a href="{{ reverse_url('backoffice_activity_push_list') }}?activity_cid={{ activity_cid }}&push_result=3"
+       class="{% if push_result == '3' %}active{% end %}">推送成功(<span>{{ success_push_amount }}</span>)</a>
+    <a href="{{ reverse_url('backoffice_activity_push_list') }}?activity_cid={{ activity_cid }}&push_result=4"
+       class="{% if push_result == '4' %}active{% end %}">推送失败(<span>{{ fail_push_amount }}</span>)</a>
+    <hr class="tabs_line pa">
+</div>
+<div class="filter_box clear">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <span>
+                <input type="text" placeholder="推送时间" class="calendar_i" id="search_push_time"
+                       value="{{ datetime_format(search_push_time, default='') }}">
+            </span>
+    </div>
+    <div class="filter_btn fr">
+        <a href="#" class="btn btn_i btn_primary pr mr5 search_data">查询<i class="btn_search"></i></a>
+        <a href="{{ reverse_url('backoffice_activity_push_list') }}?activity_cid={{ activity_cid }}"
+           class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">推送列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr">
+            <select>
+                <option value="排列方式">排列方式</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th width="50"></th>
+                <th>车型</th>
+                <th class="tc">推送时间</th>
+                <th>问卷有效时间至</th>
+                <th>推送方式</th>
+                {% if not push_result or push_result not in ['3', '4'] %}
+                <th>推送人数</th>
+                <th>样本回收数</th>
+                {% end %}
+                {% if push_result == '3' %}
+                <th>成功人数</th>
+                {% end %}
+                {% if push_result == '4' %}
+                <th>失败人数</th>
+                {% end %}
+                <th>操作</th>
+            </tr>
+            {% set push_list = paging.page_items %}
+            {% if push_list %}
+            {% for push in push_list %}
+            <tr>
+                <td class="tc">
+                    <i class="checkbox_i" oid="{{ push.oid }}"></i>
+                </td>
+                {% set needless_dict = push.needless if push.needless else {} %}
+                {% set vehicle_display = '%s(%s)(%s%s%s)' % (needless_dict.get('vehicle_title', ''),
+                    push.vehicle_code, needless_dict.get('province_title', ''),
+                    needless_dict.get('city_title', ''), needless_dict.get('sex', '')) %}
+                <td>{{ vehicle_display }}</td>
+                <td class="tc">
+                    {{ datetime_format(push.push_datetime) }}
+                    {% if push.category == PUSH_CATEGORY_DELAY %}
+                    <span class="cl_warning dis_block tc">(延时)</span>
+                    {% end %}
+                </td>
+                <td>{{ datetime_format(push.end_datetime) }}</td>
+                <td>
+                    {% for pull_type in push.pull_types %}
+                    {{ string_display(PUSH_RECEIVE_DICT.get(pull_type)) }}
+                    {% end %}
+                </td>
+                {% set all_push_member_amount = len(push.all_member_cid_list) if push.all_member_cid_list else 0 %}
+                {% set pushed_member_amount = len(push.pushed_member_cid_list) if push.pushed_member_cid_list else 0 %}
+                {% if not push_result or push_result not in ['3', '4'] %}
+                <td>{{ all_push_member_amount }}</td>
+                <td>{{ push.sample_amount }}</td>
+                {% end %}
+                {% if push_result == '3' %}
+                <td>{{ pushed_member_amount }}</td>
+                {% end %}
+                {% if push_result == '4' %}
+                <td>{{ all_push_member_amount - pushed_member_amount }}</td>
+                {% end %}
+                <td class="tools">
+                    {% if push.status == STATUS_PULL_ACTION_WAIT_PUSH and push.category == PUSH_CATEGORY_DELAY %}
+                    <a href="{{ reverse_url('backoffice_activity_push_edit') }}?activity_cid={{ activity_cid }}&push_id={{ push.id }}"
+                       class="edit_i fl tips" data-name="编辑"></a>
+                    <a href="#" class="revoke_i fl tips revoke_push" oid="{{ push.oid }}" data-name="撤销"></a>
+                    {% elif push.status in [STATUS_PULL_ACTION_PUSHED, STATUS_PULL_ACTION_PUSHED_SUCCESS] %}
+                    <a href="{{ reverse_url('backoffice_activity_push_detail') }}?activity_cid={{ activity_cid }}&push_cid={{ push.cid }}"
+                       class="see_i fl tips" oid="{{ push.oid }}" data-name="查看"></a>
+                    <a href="#" class="delete_i fl tips delete_push" oid="{{ push.oid }}" data-name="删除"></a>
+                    {% elif push.status == STATUS_PULL_ACTION_PUSHED_FAIL %}
+                    <a href="{{ reverse_url('backoffice_activity_push_detail') }}?activity_cid={{ activity_cid }}&push_cid={{ push.cid }}"
+                       class="see_i fl tips" oid="{{ push.oid }}" data-name="查看"></a>
+                    <a href="#" class="re_push_i fl tips re_push" oid="{{ push.oid }}" data-name="重新推送"></a>
+                    <a href="#" class="delete_i fl tips delete_push" oid="{{ push.oid }}" data-name="删除"></a>
+                    {% else %}
+                    <a href="{{ reverse_url('backoffice_activity_push_detail') }}?activity_cid={{ activity_cid }}&push_cid={{ push.cid }}"
+                       class="see_i fl tips" oid="{{ push.oid }}" data-name="查看"></a>
+                    <a href="#" class="delete_i fl tips delete_push" oid="{{ push.oid }}" data-name="删除"></a>
+                    {% end %}
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="7" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+        {% if push_list %}
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr10 ml15"></i>全选</div>
+            <div class="fl ml20">
+                <select id="selected_operation">
+                    <option value="delete">删除</option>
+                </select>
+            </div>
+            <div class="fl">
+                <a href="#" class="btn btn_primary ml20 btn_sm selected_change">确定</a>
+            </div>
+        </div>
+        {% end %}
+    </div>
+</div>
+<div class="fix_page clear {% if not push_list %}dis_none{% end %}">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}
+            </option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            display_loading();
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                // 填充请求参数
+                var params = {
+                    'activity_cid': '{{ activity_cid }}',
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val() || {{per_page_quantity}},
+                    'search_push_time': $('#search_push_time').val(),
+                };
+                window.location.href = "{{ reverse_url('backoffice_activity_push_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+
+    $(function () {
+
+        laydate.render({
+            elem: '#search_push_time', //指定元素
+            trigger: 'click', //采用click弹出
+            format: 'yyyy-MM-dd',
+            type: 'date'
+        });
+
+        $('.selected_change').on('click', function () {
+            var operation = $('#selected_operation').val();
+            var selected_push_ids = [];
+            var obj_list = $('.table_list').find('.checkbox_i.checked');
+            for (var i = 0; i < obj_list.length; i++) {
+                var obj = obj_list[i];
+                if ($(obj).attr('oid')) {
+                    selected_push_ids.push($(obj).attr('oid'));
+                }
+            }
+            if (selected_push_ids.length > 0) {
+                var data = {
+                    'push_ids': selected_push_ids
+                };
+                if (operation === 'delete') {
+                    confirm_dialog('警告', '确认删除推送？', function () {
+                        display_loading();
+                        var url = "{{ reverse_url('backoffice_activity_push_delete') }}";
+                        ajaxPost(url, data, function (ret) {
+                            if (ret.code === 1) {
+                                tip_msg("删除推送成功！", 2000, function () {
+                                    var url = "{{ reverse_url('backoffice_activity_push_list') }}?activity_cid={{ activity_cid }}";
+                                    {% if push_result %}
+                                    url += "&push_result={{ push_result }}";
+                                    {% end %}
+                                    window.location.href = url;
+                                });
+                            } else {
+                                tip_msg("删除推送失败！", 2000);
+                            }
+                        });
+                        remove_loading();
+                    });
+
+                } else {
+                    tip_msg("批量操作失败！", 2000);
+                }
+            } else {
+                tip_msg("请选择数据！", 2000);
+            }
+
+        });
+
+        $('.delete_push').on('click', function () {
+            var push_id = $(this).attr('oid');
+            if (push_id) {
+                var data = {
+                    'push_ids': [push_id]
+                };
+                var url = "{{ reverse_url('backoffice_activity_push_delete') }}";
+
+                confirm_dialog('警告', '确认删除推送？', function () {
+                    display_loading();
+                    ajaxPost(url, data, function (ret) {
+                        if (ret.code === 1) {
+                            tip_msg("删除推送成功！", 2000, function () {
+                                var url = "{{ reverse_url('backoffice_activity_push_list') }}?activity_cid={{ activity_cid }}";
+                                {% if push_result %}
+                                url += "&push_result={{ push_result }}";
+                                {% end %}
+                                window.location.href = url;
+                            });
+                        } else {
+                            tip_msg("删除推送失败！", 2000);
+                        }
+                    });
+                    remove_loading();
+                });
+            }
+        });
+
+        $('.revoke_push').on('click', function () {
+            var push_id = $(this).attr('oid');
+            if (push_id) {
+                var data = {
+                    'push_ids': [push_id]
+                };
+                var url = "{{ reverse_url('backoffice_activity_push_delete') }}";
+
+                confirm_dialog('警告', '确认撤销推送？', function () {
+                    display_loading();
+                    ajaxPost(url, data, function (ret) {
+                        if (ret.code === 1) {
+                            tip_msg("撤销推送成功！", 2000, function () {
+                                window.location.href = "{{ reverse_url('backoffice_activity_push_list') }}?activity_cid={{ activity_cid }}&push_result={{ push_result }}";
+                            });
+                        } else {
+                            tip_msg("撤销推送失败！", 2000);
+                        }
+                    });
+                    remove_loading();
+                });
+            }
+        });
+
+        $('.search_data').on('click', function () {
+            var param_dict = {
+                'search_push_time': $('#search_push_time').val(),
+                'per_page_quantity': $('#per_page_quantity').val(),
+                'activity_cid': '{{ activity_cid }}',
+                'push_result': '{{ push_result }}'
+            };
+            window.location.href = "{{ reverse_url('backoffice_activity_push_list') }}?" + dict_2_url_params(param_dict);
+        });
+
+        $('.re_push').on('click', function () {
+            var push_id = $(this).attr('oid');
+            if (push_id) {
+                var data = {
+                    'push_id': push_id
+                };
+                var url = "{{ reverse_url('backoffice_activity_push_re_push') }}";
+
+                confirm_dialog('警告', '确认重新推送？', function () {
+                    display_loading();
+                    ajaxPost(url, data, function (ret) {
+                        if (ret.code === 1) {
+                            tip_msg("重新推送成功！", 2000, function () {
+                                {#window.location.href = "{{ reverse_url('backoffice_activity_push_list') }}?activity_cid={{ activity_cid }}&push_result={{ push_result }}";#}
+                                window.location.reload();
+                            });
+                        } else {
+                            tip_msg("重新推送失败！", 2000);
+                        }
+                    });
+                    remove_loading();
+                });
+            }
+        });
+
+    })
+
+</script>
+{% end %}

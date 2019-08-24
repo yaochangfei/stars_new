@@ -1,0 +1,292 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+<style>
+    {% if red_packet_item_list %}
+    .disabled {
+        pointer-events: none;
+        cursor: default;
+        opacity: 0.6;
+    }
+    {% end %}
+</style>
+<div class="main clear">
+    <div class="right_area">
+        <div class="edit_info m20 pl10 pr10">
+            <a href="{{ reverse_url('backoffice_race_redpkt_rule_list') }}?race_cid={{ race_cid }}"  class="back_btn pl20 mr20 fr mt10"><i class="back_i"></i>返回</a>
+            <div class="atlas_tabs clear mb10">
+                <a href="/backoffice/race/lottery/draw/list/?race_cid={{race_cid}}" class="active">抽奖设置</a>
+            </div>
+            <div class="lottery_info_box clear">
+                <div class="fl lottery_info">
+                    <div class="price_setup">
+                        <div class="setup_title">奖项设置</div>
+                        <table class="base_table title_table">
+                            <tr>
+                                <td>奖项数</td>
+                                <td class="setup_prize disabled">
+                                    {% for reward_num in range(1, 7) %}
+                                        {% set setting_num = len(red_packet_item_list) if red_packet_item_list else 1 %}
+                                        <div {% if setting_num == reward_num %} class="active" {% end %}>{{reward_num}}</div>
+                                    {% end %}
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="price_table">
+                            <tr>
+                                <td width="150">奖品名称</td>
+                                <td width="100">红包金额</td>
+                                <td width="100">奖品数量</td>
+                                <td>设置提示语</td>
+                            </tr>
+                            {% if red_packet_item_list %}
+                                {% for red_packet_item in red_packet_item_list %}
+                                <tr class="red_item">
+                                    <td><input type="text" class="title award_name" readonly="readonly" maxlength="32" value="{{red_packet_item.title}}"></td>
+                                    <td><input type="text" class="only_decials award_amount" readonly="readonly" maxlength="16" value="{{red_packet_item.amount}}"></td>
+                                    <td><input type="text" class="only_num award_quantity" readonly="readonly" maxlength="16" value="{{red_packet_item.quantity}}"></td>
+                                    <td><input type="text" class="message award_msg" readonly="readonly" maxlength="64" value="{{red_packet_item.message}}"></td>
+                                </tr>
+                                {% end %}
+                            {% else %}
+                            <tr class="red_item">
+                                <td>
+                                    <input type="text" value="" class="title award_name">
+                                </td>
+                                <td>
+                                    <input type="text" class="only_decials award_amount" value="">
+                                </td>
+                                <td>
+                                    <input type="text" class="only_num award_quantity" value="">
+                                </td>
+                                <td>
+                                    <input type="text" value="" class="message award_msg">
+                                </td>
+                            </tr>
+                            {% end %}
+                            <tr>
+                                <td>
+                                    <span id="err_item" class="cl_danger"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    {% if not red_packet_item_list %}
+                    <a href="javascript:void(0)" class="btn btn_primary btn_lg ml10 submit_item">提交</a>
+                    {% end %}
+                    <div class="base_setup">
+
+                    </div>
+                    <div class="base_setup">
+                        <div class="setup_title">基础设置</div>
+                        <table class="base_table">
+                            <tr>
+                                <td width="130">预计抽奖人数</td>
+                                <td>
+                                    <input type="text" placeholder="请输入" class="only_num expect_num" maxlength="16" value="{{string_display(basic_set.expect_num)}}" >
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>每天中奖上限</td>
+                                <td>
+                                    <input type="text" placeholder="请输入" class="only_num top_limit" maxlength="16" value="{{string_display(basic_set.top_limit)}}" >
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="setup_title">提示语设置</div>
+                        <table class="base_table title_table">
+                            <tr>
+                                <td width="130">未中奖</td>
+                                <td>
+                                    <input type="text" id="fail_msg" value="{{string_display(basic_set.fail_msg)}}" placeholder="请输入提示语内容">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>已达到每日上限</td>
+                                <td>
+                                    <input type="text" id="over_limit" value="{{string_display(basic_set.over_msg)}}" placeholder="请输入提示语内容">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>抽奖说明</td>
+                                <td>
+                                    <input type="text" id="content" value="{{string_display(basic_set.guide)}}" placeholder="请输入提示语内容">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <span id="error_msg" class="cl_danger"></span>
+                                </td>
+                            </tr>
+                        </table>
+                        <a href="javascript:void(0)" class="btn btn_primary btn_lg ml10 submit_basic">提交</a>
+                    </div>
+
+                </div>
+                {% if red_packet_item_list %}
+                    {% set length = len(red_packet_item_list) %}
+                    <div class="fr lottery_preview price_{{length}}" id="{{length}}">
+                        {% for red_packet_item in red_packet_item_list %}
+                            <div>{{red_packet_item.title}}</div>
+                        {% end %}
+                    </div>
+                {% else %}
+                    <div class="fr lottery_preview">
+                    {% for i in range(6) %}
+                        <div></div>
+                    {% end %}
+                    </div>
+                {% end %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        var reward_num;
+        $(".setup_prize div").on("click",function () {
+            reward_num = parseInt($(this).html());
+            var tr = $(".price_table tr"),num = tr.length - 1;
+            $(this).addClass("active").siblings().removeClass("active");
+            if(reward_num<num){
+                tr.eq(reward_num).nextAll().remove();
+            }
+            else if(reward_num>num){
+                for(var i=0;i<reward_num-num;i++){
+                    $(".price_table").append('<tr class="red_item"> <td > ' +
+                        '<input type="text" class="title award_name" value=""> </td> <td> ' +
+                        '<input type="text" class="only_decials award_amount" value=""> </td> <td> ' +
+                        '<input type="text" class="only_num award_quantity" value=""> </td> <td> ' +
+                        '<input type="text" class="message award_msg"> </td> </tr>');
+                }
+            }
+        });
+
+        $(".submit_basic").on("click", function () {
+            var expect_num = $(".expect_num").val();
+            var top_limit = $(".top_limit").val();
+            var fail_mesg = $("#fail_msg").val();
+            var over_limit = $("#over_limit").val();
+            var content = $("#content").val();
+            var err_obj = $("#err_msg");
+
+            err_obj.html('');
+
+            if (expect_num === '') {
+                err_obj.html('请填写预计抽奖人数');
+                return false
+            }
+
+            if (top_limit === '') {
+                err_obj.html('请填写每日中奖上限');
+                return false
+            }
+
+            if (fail_mesg === '') {
+                err_obj.html('请填写未中奖提示信息');
+                return false
+            }
+
+            if (over_limit === '') {
+                err_obj.html('请填写到达中奖上线提示信息');
+                return false
+            }
+
+            if (content === '') {
+                err_obj.html('请填写活动说明');
+                return false
+            }
+
+            var data = {
+                'race_cid': '{{ race_cid }}',
+                'rule_cid': '{{ rule_cid }}',
+                'expect_num': expect_num,
+                'top_limit': top_limit,
+                'fail_msg': fail_mesg,
+                'over_limit': over_limit,
+                'content': content
+            };
+
+            display_loading();
+            ajaxPost('{{ reverse_url('backoffice_race_lottery_basic_submit') }}', data, function (ret) {
+                if (ret.code === 1) {
+                    success_msg('保存基础信息成功', 1000)
+                } else if (ret.code === -1) {
+                    fail_msg('错误的活动id或规则id')
+                } else if (ret.code === -2) {
+                    fail_msg('预计抽奖人数不能小于已经发放红包的数量')
+                } else if (ret.code === -3) {
+                    fail_msg('请先设置奖项', 1000)
+                } else {
+                    fail_msg('服务器错误', 1000)
+                }
+                remove_loading();
+            })
+        });
+
+        $(".submit_item").on("click", function () {
+            var award_name_list = [];
+            var award_amount_list = [];
+            var award_quantity_list = [];
+            var award_msg_list = [];
+            var err_obj = $("#err_item");
+
+            $(".award_name").each(function () {
+                var v = $(this).val();
+                if (v === '') {
+                    err_obj.html('请填写奖品名称');
+                    throw Error()
+                }
+                award_name_list.push(v)
+            });
+
+            $(".award_amount").each(function () {
+                var v = $(this).val();
+                if (v === '') {
+                    err_obj.html('请填写奖品金额');
+                    throw Error()
+                }
+                award_amount_list.push(v)
+            });
+
+            $(".award_quantity").each(function () {
+                var v = $(this).val();
+                if (v === '') {
+                    err_obj.html('请填写奖品数量');
+                    throw Error()
+                }
+                award_quantity_list.push(v)
+            });
+
+            $(".award_msg").each(function () {
+                var v = $(this).val();
+                if (v === '') {
+                    err_obj.html('请填写奖品中奖提示信息');
+                    throw Error()
+                }
+                award_msg_list.push(v)
+            });
+
+            data = {
+                'race_cid': '{{ race_cid }}',
+                'rule_cid': '{{ rule_cid }}',
+                'award_name_list': award_name_list,
+                'award_amount_list': award_amount_list,
+                'award_quantity_list': award_quantity_list,
+                'award_msg_list': award_msg_list
+            };
+
+            ajaxPost("{{ reverse_url('backoffice_race_lottery_award_submit') }}", data, function (ret) {
+                if (ret.code === 1) {
+                    success_msg('设置奖项成功', 1000)
+                } else {
+                    fail_msg('服务器错误')
+                }
+
+            })
+
+        })
+    })
+</script>
+{% end %}

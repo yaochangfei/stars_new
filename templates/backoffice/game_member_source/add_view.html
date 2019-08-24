@@ -1,0 +1,113 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_MEMBER_SOURCE_ACTIVE, STATUS_MEMBER_SOURCE_INACTIVE %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_source_list') }}" class="pl10 ml10">来源列表</a>
+        <span> &gt; 新增来源</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">新增来源<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <table class="table_form">
+            <tr>
+                <th width="40%"><span class="necessary">*</span>来源编号</th>
+                <td><input class="input_text" type="text" name="code" id="code"></td>
+            </tr>
+            <tr>
+                <th><span class="necessary">*</span>来源名称</th>
+                <td><input class="input_text" type="text" name="name" id="name"></td>
+            </tr>
+            <tr>
+                <th class="vt pt10">备注</th>
+                <td>
+                    <textarea class="textarea" id="comment" title="备注"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>账户启用状态</th>
+                <td>
+                    <label class="table_switch">
+                        <input type="checkbox" checked="checked" name="source_status" id="source_status">
+                        <i></i>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <th>是否生成二维码</th>
+                <td>
+                    <label class="table_switch">
+                        <input type="checkbox" checked="checked" name="qr_status" id="qr_status">
+                        <i></i>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><span class="cl_danger"></span></td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><a href="#" class="btn btn_primary mt15 btn_lg submit_btn">提交</a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+    $(function () {
+
+        // 提交表单
+        $('.submit_btn').on('click', function () {
+            $('.cl_danger').html('');
+            var name = $('#name').val();
+            var code = $('#code').val();
+            var comment = $('#comment').val();
+            var source_status = $('#source_status').prop('checked') ? {{ STATUS_MEMBER_SOURCE_ACTIVE }} : {{ STATUS_MEMBER_SOURCE_INACTIVE }};
+            var qr_status = $('#qr_status').prop('checked');
+
+            if (!(name && code)) {
+                $('.cl_danger').html('请填写必填信息！');
+                return false;
+            }
+
+            if (name.length > 16) {
+                $('.cl_danger').html('来源名称须小于16个字符!');
+                return false;
+            }
+
+            var url = "{{ reverse_url('backoffice_source_add') }}";
+            var data = {
+                'name': name,
+                'code': code,
+                'comment': comment,
+                'source_status': source_status,
+                'qr_status': qr_status
+            };
+
+            display_loading();
+            ajaxPost(url, data, function (ret) {
+                if (ret.code === 1) {
+                    tip_msg("添加来源成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_source_list') }}";
+                    });
+                } else if (ret.code === 0) {
+                    $('.cl_danger').html('系统错误！');
+                } else if (ret.code === -1) {
+                    $('.cl_danger').html('请填写必填信息！');
+                } else if (ret.code === -2) {
+                    $('.cl_danger').html('该来源编号或名称已经存在！');
+                }
+            });
+            remove_loading();
+        });
+    })
+</script>
+{% end %}

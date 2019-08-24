@@ -1,0 +1,153 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="data_list pr pb10 mb15">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">题库维度透视图<i class="list_title_i"></i></h3>
+        </div>
+    </div>
+    <div>
+        <div class="per_table_box">
+        <table class="per_table">
+            <tr>
+                <th width="12%"></th>
+                {% for category_dimension in category_dimension_list %}
+                <th>{{ category_dimension.title }}[{{ category_dimension.code }}]</th>
+                {% end %}
+                <th width="140">总计</th>
+            </tr>
+            {% set total_count_list = [0 for category_dimension in category_dimension_list] %}
+            {% set d_data_list = sorted([element for element in data.values()], key=lambda element: element['ordered']) %}
+            {% for d_data in d_data_list %}
+            {% if d_data %}
+            {% set category_total = 0 %}
+            {% set k_data = d_data.get('knowledge', {}) %}
+            <tr class="dark_bg">
+                <td class="tr_fold">
+                    <div class="pr pl40">
+                        <i class="tr_open"></i>
+                        {{ d_data.get('title', '-') }}[{{ d_data.get('code', '-') }}]
+                    </div>
+                </td>
+                {% set difficulty_total = 0 %}
+                {% for index, category_dimension in enumerate(category_dimension_list) %}
+                {% set d_category_total = 0 %}
+                {% for k_sub_data in k_data.values() %}
+                {% set count = k_sub_data['category'].get(category_dimension.cid, {}).get('count', 0) %}
+                {% set d_category_total = d_category_total + count %}
+                {% end %}
+                <td class="can_click" style="font-weight: bold;" difficulty_cid="{{ d_data.get('cid') }}"
+                    category_cid="{{ category_dimension.cid }}">
+                    {{ d_category_total }}
+                    {% set difficulty_total = difficulty_total + d_category_total %}
+                    {% set category_total = category_total + difficulty_total %}
+                    {% set total_count_list[index] = total_count_list[index] + d_category_total %}
+                </td>
+                {% end %}
+                <td class="can_click" style="font-weight: bold;" difficulty_cid="{{ d_data.get('cid') }}">
+                    {{ difficulty_total }}
+                </td>
+            </tr>
+            {% for knowledge_dimension in knowledge_dimension_list %}
+            {% if knowledge_dimension.cid in k_data.keys() %}
+            <tr>
+                {% set knowledge_count = 0 %}
+                <td class="no_hover">
+                    <div class="pl40">{{ knowledge_dimension.title }}[{{ knowledge_dimension.code }}]</div>
+                </td>
+                {% set c_data = k_data.get(knowledge_dimension.cid, {}).get('category', {}) %}
+                {% for category_dimension in category_dimension_list %}
+                {% if category_dimension.cid in c_data.keys() %}
+                <td class="can_click" difficulty_cid="{{ d_data.get('cid') }}"
+                    knowledge_cid="{{ knowledge_dimension.cid }}"
+                    category_cid="{{ category_dimension.cid }}">
+                    {% set count = c_data[category_dimension.cid].get('count') %}
+                    {% set knowledge_count = knowledge_count + count %}
+                    {{ count }}
+                </td>
+                {% else %}
+                <td style="font-weight: bold;">-</td>
+                {% end %}
+                {% end %}
+                <td class="can_click" style="font-weight: bold;" knowledge_cid="{{ knowledge_dimension.cid }}">
+                    {{ knowledge_count }}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td class="no_hover">
+                    <div class="pl40">{{ knowledge_dimension.title }}[{{ knowledge_dimension.code }}]</div>
+                </td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            {% end %}
+            {% end %}
+            {% end %}
+            {% end %}
+            <tr class="dark_bg">
+                <td class="tr_fold">
+                    <div class="pl40">总计</div>
+                </td>
+                {% set total = 0 %}
+                {% for index, category_dimension in enumerate(category_dimension_list) %}
+                <td class="can_click" style="font-weight: bold;" category_cid="{{ category_dimension.cid }}">
+                    {{ total_count_list[index] }}
+                    {% set total = total + total_count_list[index] %}
+                </td>
+                {% end %}
+                <td class="can_click" style="font-weight: bold; font-size: 15px;">{{ total }}</td>
+            </tr>
+        </table>
+        </div>
+    </div>
+</div>
+<script>
+    var dimension_mapping = {{ dimension_mapping }};
+
+    $(function () {
+        $(".tr_fold").click(function () {
+            $(this).find("i").toggleClass("tr_open");
+            if ($(this).find("i").hasClass("tr_open")) {
+                $(this).parents(".dark_bg").nextUntil(".dark_bg").slideDown(50);
+            }
+            else {
+                $(this).parents(".dark_bg").nextUntil(".dark_bg").slideUp(50);
+            }
+        });
+
+        $(".can_click").click(function () {
+            display_loading();
+            var difficulty_cid = $(this).attr('difficulty_cid');
+            var knowledge_cid = $(this).attr('knowledge_cid');
+            var category_cid = $(this).attr('category_cid');
+            var data = {};
+            if (difficulty_cid) {
+                data[dimension_mapping[difficulty_cid]] = difficulty_cid;
+            }
+            if (knowledge_cid) {
+                data[dimension_mapping[knowledge_cid]] = knowledge_cid;
+            }
+            if (category_cid) {
+                data[dimension_mapping[category_cid]] = category_cid;
+            }
+            var params = "";
+            for (var key in data) {
+                params = params + key + "=" + data[key] + "&"
+            }
+            if (params) {
+                params = '?' + params
+            }
+            window.location.href = "{{ reverse_url('backoffice_reports_subject_analysis_list') }}" + params;
+        });
+    });
+</script>
+{% end %}

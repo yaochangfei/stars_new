@@ -1,0 +1,225 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_dan_grade_list') }}" class="pl10 ml10">段位管理</a>
+        <span>&gt; 新增段位</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20">
+            <i class="back_i"></i>返回
+        </a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">新增段位<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="form_add" name="form_add" method="post" action="{{ reverse_url('backoffice_dan_grade_add') }}">
+            {% raw xsrf_form_html() %}
+            <table class="table_form">
+                <tbody>
+                <tr>
+                    <th width="40%"><span class="necessary ">*</span>序号</th>
+                    <td><input id="index" name="index" class="input_text only_num" type="text" maxlength="4"></td>
+                </tr>
+                <tr>
+                    <th width="40%"><span class="necessary">*</span>段位名称</th>
+                    <td><input id="title" name="title" class="input_text " type="text" maxlength="256"></td>
+                </tr>
+                <tr>
+                    <th><span class="necessary only_num">*</span>解锁所需星星数</th>
+                    <td class="pr">
+                        <input id="unlock_stars" name="unlock_stars" class="input_text only_num" type="text"
+                               maxlength="4">
+                    </td>
+                </tr>
+                {#                    <tr>#}
+                {#                        <th><span class="necessary only_num">*</span>当前段位题目数</th>#}
+                {#                        <td class="pr">#}
+                {#                            <input id="quantity" name="quantity" class="input_text only_num" type="text"#}
+                {#                                   maxlength="4">#}
+                {#                        </td>#}
+                {#                    </tr>#}
+                <tr>
+                    <th class="pt10 vt">图片</th>
+                    <td class="clear">
+                        <div class="pic_show fl mr10">
+                            <img src="{{ static_url('images/default/upload_def.png') }}">
+                        </div>
+                        <div class="pic_upload_box fl">
+                            <div class="mt10">
+                                <a href="javascript:;" class="btn btn_warning_empty delete_pic_btn">删除图片</a>
+                            </div>
+                            <div class="pr mt10">
+                                <input name="image" type="file" id="upload_pic_btn" class="pa"
+                                       accept="image/jpeg,image/png,image/gif,image/jpg">
+                                <a href="javascript:;" class="btn btn_primary_empty upload_pic_btn">上传图片</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class="necessary">*</span>抽题规则</th>
+                    <td class="subject_diff">
+                        <select id="rule_cid" name="rule_cid">
+                            <option value="">--请选择--</option>
+                            {% for subject_choice_rules in subject_choice_rules_list %}
+                            <option value="{{ subject_choice_rules.cid }}">{{ subject_choice_rules.title }}({{ subject_choice_rules.code }})</option>
+                            {% end %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="vt pt10">备注</th>
+                    <td>
+                        <textarea id="content" name="content" class="textarea">
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>段位启用状态</th>
+                    <td>
+                        <label class="table_switch">
+                            <input id="status" name="status" type="checkbox" checked="checked">
+                            <i></i>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <span id="error_msg" class="cl_danger"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <a href="javascript:;" id="submit" class="btn btn_primary btn_lg mt10">提交</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    $(function () {
+        img_review();
+
+        $("#form_add").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("添加段位失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("段位添加成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_dan_grade_list') }}";
+                    });
+                } else if (data.code === -1) {
+                    $("#error_msg").html("请输入序号！");
+                } else if (data.code === -2) {
+                    $("#error_msg").html("请输入段位名称！");
+                } else if (data.code === -3) {
+                    $("#error_msg").html("请输入解锁所需星星数！");
+                }
+                    {#                else if (data.code === -4) {#}
+                    {#                    $("#error_msg").html("请输入当前段位题目数！");#}
+                    {#                } #}
+                else if (data.code === -5) {
+                    $("#error_msg").html("请选择抽题规则！");
+                } else if (data.code === -6) {
+                    $("#error_msg").html("序号已存在，请换一个！");
+                } else if (data.code === -7) {
+                    $("#error_msg").html("段位名称已存在，请换一个！");
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+
+        $("#submit").click(function () {
+            $("#form_add").submit();
+        });
+
+        $(".radio_i").on("click", function () {
+            $(this).parents(".table_form").find(".radio_i").removeClass("checked").parent().find(".hide_f").val("");
+            $(this).addClass("checked").parent().find(".hide_f").val("1");
+        });
+    });
+
+    function check_form() {
+        var index = $.trim($("#index").val());
+        var title = $.trim($("#title").val());
+        var unlock_stars = $.trim($("#unlock_stars").val());
+        {#        var quantity = $.trim($("#quantity").val());#}
+        var rule_cid = $.trim($("#rule_cid").val());
+        if (index === "") {
+            $("#error_msg").html("请输入序号！");
+            return false;
+        }
+        if (title === "") {
+            $("#error_msg").html("请输入段位名称！");
+            return false;
+        }
+        if (unlock_stars === "") {
+            $("#error_msg").html("请输入解锁所需星星数！");
+            return false;
+        }
+        {#        if (quantity === "") {#}
+        {#            $("#error_msg").html("请输入当前段位题目数！");#}
+        {#            return false;#}
+        {#        }#}
+        if (rule_cid === "") {
+            $("#error_msg").html("请选择抽题规则！");
+            return false;
+        }
+        return true;
+    }
+
+    function img_review() {
+        var uploadPicBtn = $("#upload_pic_btn");
+        uploadPicBtn.on("mouseover", function () {
+            $(this).addClass("current");
+        });
+        uploadPicBtn.on("mouseup", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("mouseout", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("change", function () {
+            var file = this.files[0];
+            single_reads(file);
+        });
+        $(".delete_pic_btn").on("click", function () {
+            $("#upload_pic_btn").val("");
+            $(".pic_show img").attr("src", "{{ static_url('images/default/upload_def.png') }}");
+        })
+    }
+
+    function single_reads(file) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            $(".pic_show img").attr("src", reader.result);
+        };
+    }
+
+</script>
+{% end %}

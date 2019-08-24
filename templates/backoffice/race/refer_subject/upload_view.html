@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>title</title>
+    <link rel="shortcut icon" href="{{ static_url('images/favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ static_url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/default/user_list.css') }}">
+
+    <script src="{{ static_url('js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+    <script src="{{ static_url('js/public.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+</head>
+<body class="file_body">
+<div>
+    <form id="form_import" name="form_import" method="post" action="{{ reverse_url('backoffice_race_subject_import') }}?race_cid={{race_cid}}">
+        {% raw xsrf_form_html() %}
+        <textarea name="subject_code" id="subject_code" placeholder="每个ID一行,可多行" value="" style="width: 540px;height: 210px;margin: 0 auto 10px;padding: 10px;"></textarea>
+    </form>
+</div>
+<div class="files_name"></div>
+<div class="tr">
+    <a href="javascript:;" class="btn btn_primary" id="save">确定</a>
+    <a href="javascript:;" class="btn btn_primary" id="close">取消</a>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    //按钮闪烁bug：
+    var uploadPicBtn = $("#upload_file_btn");
+    uploadPicBtn.on("mouseover", function () {
+        $(this).addClass("current");
+    });
+    uploadPicBtn.on("mouseup", function () {
+        $(this).removeClass("current");
+    });
+    uploadPicBtn.on("mouseout", function () {
+        $(this).removeClass("current");
+    });
+
+
+    $("#close").on("click", function () {
+        window.parent.layer.closeAll(); //疯狂模式，关闭所有层
+    });
+
+
+    $(function () {
+        $("#form_import").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("导入题目失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    var success_import_count = data.success_import_count;
+                    tip_msg("题目导入成功了" + success_import_count + "条!", 2000, function () {
+                        window.parent.layer.closeAll();
+                        window.parent.window.location.reload();
+                    });
+                }else if (data.code === -1){
+                    tip_msg("成功插入了0条！", 2000, function () {
+                        window.parent.layer.closeAll();
+                    });
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+
+        $("#save").click(function () {
+            $("#form_import").submit();
+        });
+    });
+</script>
+</body>

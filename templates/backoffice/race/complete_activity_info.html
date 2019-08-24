@@ -1,0 +1,122 @@
+<style>
+    .layui-layer-content {
+        overflow: visible !important;
+    }
+</style>
+<div class="layui-layer-title">复制【{{ race.title }}】</div>
+{% raw xsrf_form_html() %}
+<table class="table_form mt30">
+    <tr>
+        <th width="25%"><span class="necessary">*</span>活动编号</th>
+        <td>
+            <input id="copy_activity_code" name="code" class="input_text" type="text" maxlength="16" title="活动编号"
+                   value="{{ race.code }}">
+        </td>
+    </tr>
+    <tr>
+        <th><span class="necessary">*</span>活动标题</th>
+        <td>
+            <input id="copy_activity_title" name="title" class="input_text" type="text" minlength="4" maxlength="32" title="活动标题"
+                   value="{{ race.title }}">
+        </td>
+    </tr>
+    <tr>
+        <th><span class="necessary">*</span>活动周期</th>
+        <td class="clear">
+            <span class="pr fl">
+                <input id="copy_start_dt" type="text" name="start_dt" readonly class="input_text time_i pointer w180"
+                       placeholder="请选择时间">
+            </span>
+            <span class="ml10 mr10 fl mt5">至</span>
+            <span class="pr fl">
+                <input id="copy_end_dt" type="text" name="end_dt" readonly class="input_text time_i pointer w180"
+                       placeholder="请选择时间">
+            </span>
+        </td>
+    </tr>
+</table>
+<div class="tr mt20 mr30">
+    <div id="err_msg" style="color: #FF0000; display: inline-block;"></div>
+    <a href="javascript:void(0);" class="btn btn_default mr10">取消</a>
+    <a href="javascript:void(0);" class="btn btn_primary start_copy">确定</a>
+</div>
+<script>
+    // 问卷有效时间
+    laydate.render({
+        elem: '#copy_start_dt', //指定元素
+        trigger: 'click', //采用click弹出
+        type: 'datetime',
+        done: function (value, date, endDate) {
+            end.config.min = {
+                year: date.year,
+                month: date.month - 1,
+                date: date.date,
+                hours: date.hours,
+                minutes: date.minutes
+            };
+        }
+    });
+
+    var end = laydate.render({
+        elem: '#copy_end_dt', //指定元素
+        trigger: 'click', //采用click弹出
+        type: 'datetime'
+    });
+
+    $('.start_copy').on('click', function () {
+        var div_err_msg = $("#err_msg");
+        div_err_msg.html("");
+        var code = $("#copy_activity_code").val();
+        var title = $("#copy_activity_title").val();
+        var start_dt = $("#copy_start_dt").val();
+        var end_dt = $("#copy_end_dt").val();
+        var re = /^[a-zA-Z0-9_]*$/;
+        if ($.trim(code) === "") {
+            div_err_msg.html('请输入活动编号！');
+            return
+        } else if ($.trim(title) === "") {
+            div_err_msg.html('请输入活动标题！');
+            return
+        } else if ($.trim(start_dt) === "" || $.trim(end_dt) === "") {
+            div_err_msg.html('请完整输入活动周期！');
+            return
+        }else if(!re.test(code)){
+             div_err_msg.html('活动编号请输入字母、数字和下划线');
+             return
+        }
+
+        display_loading();
+        var data = {
+            "race_cid": "{{ race.cid }}",
+            "code": code,
+            "title": title,
+            "start_dt": start_dt,
+            "end_dt": end_dt
+        };
+
+        ajaxPost("/backoffice/race/copy/", data, function (result) {
+            if (result.code === 1) {
+                success_msg("项目复制成功！", 2000, function () {
+                    window.location.reload(true);
+                });
+            } else if (result.code === -1) {
+                div_err_msg.html('请输入活动编号！');
+            } else if (result.code === -2) {
+                div_err_msg.html('请输入活动标题！');
+            } else if (result.code === -3) {
+                div_err_msg.html('请完整输入活动周期！');
+            } else if (result.code === -4) {
+                div_err_msg.html('请完整输入活动周期！');
+            } else if (result.code === -5) {
+                div_err_msg.html('活动编号已存在！');
+            } else if (result.code === -6) {
+                div_err_msg.html('活动标题已存在！');
+            } else {
+                fail_msg("项目复制失败，请重试！", 2000, function () {
+                    window.location.reload(true);
+                });
+            }
+            remove_loading();
+        });
+    });
+</script>

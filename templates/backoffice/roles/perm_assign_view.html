@@ -1,0 +1,92 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from enums import ALL_BACKOFFICE_ASSIGNABLE_PERMISSION_TYPE_DICT as PERM_TYPE_DICT %}
+{% from enums import ALL_PERMISSION_TYPE_DICT as ALL_PERM_TYPE_DICT %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_role_list') }}" class="pl10 ml20">角色列表</a><span> &gt; 权限设置</span>
+    </div>
+    <div class="fr clear">
+
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="back_btn pl20 mr20 fr mt10">
+            <i class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info m20">
+    <div class="pl10 pr10">
+        <div class="list_title pr">
+            <i class="current_company_i"></i><span>权限分配</span>
+        </div>
+    </div>
+    {% for perm_code in sort_perm_list %}
+    {% set perm_title = ALL_PERM_TYPE_DICT.get(perm_code) %}
+    {% if perm_title %}
+    <div class="user_manage">
+        <table class="manage_table">
+            <thead class="table_control">
+            <tr>
+                <th colspan="6">
+                    <i class="checkbox_i choose_all"></i>
+                    {{ perm_title }}
+                </th>
+            </tr>
+            </thead>
+            <tbody class="table_list">
+            {% set child_perm_code_list = PERM_TYPE_DICT.get(perm_code) %}
+            {% if child_perm_code_list %}
+            {% set row_len = len(child_perm_code_list) / 6 if len(child_perm_code_list)%6==0 else len(child_perm_code_list) / 6 + 1 %}
+            {% for row_index in range(int(row_len)) %}
+            <tr>
+                {% for i in range(6) %}
+                {% if row_index * 6 + i < len(child_perm_code_list) %}
+                <td width="16.6%">
+                    {% set child_perm_code = child_perm_code_list[row_index * 6 + i] %}
+                    <i class="checkbox_i {% if child_perm_code in role.permission_code_list %}checked{% end %}"
+                       perm_code="{{ child_perm_code }}">
+                    </i>
+                    {{ ALL_PERM_TYPE_DICT.get(child_perm_code) }}
+                </td>
+                {% else %}
+                <td width="16.6%">
+                </td>
+                {% end %}
+                {% end %}
+            </tr>
+            {% end %}
+            {% end %}
+            </tbody>
+        </table>
+    </div>
+    {% end %}
+    {% end %}
+    <div class="pb20 pl20">
+        <a href="javascript:;" id="submit" class="btn btn_primary">保存</a>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#submit").click(function () {
+            confirm_dialog("提示", "确定修改该角色权限信息？", function () {
+                display_loading();
+                var perm_code_list = [];
+                $(".table_list .checkbox_i").each(function () {
+                    if ($(this).hasClass("checked") && $(this).attr("perm_code")) {
+                        perm_code_list.push($(this).attr("perm_code"))
+                    }
+                });
+                ajaxPost("{{ reverse_url('backoffice_role_perm_assign', role_id) }}", {"perm_code_list": perm_code_list}, function (result) {
+                    if (result.code === 1) {
+                        tip_msg("权限分配成功！", 2000, function () {
+                            window.location.href = "{{ reverse_url('backoffice_role_list') }}";
+                        });
+                    } else {
+                        tip_msg("权限分配失败，请重试！", 2000);
+                    }
+                    remove_loading();
+                });
+            });
+        });
+    });
+</script>
+{% end %}

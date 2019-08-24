@@ -1,0 +1,522 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db.enums import CATEGORY_RACE_COMPANY_DICT %}
+<div class="right_area clear">
+    <div class="main_header pt10 pb10 clear fl w100 pr">
+        <div class="fl bread_nav pt5">
+            <a href="#" class="pl10 ml10">活动区域统计</a>
+        </div>
+    <a href="/backoffice/race/list/"  class="back_btn pl20 mr20 fr mt10">
+            <i class="back_i"></i>返回
+        </a>
+    </div>
+
+    {% set x_names = {1: '公司', 2: '公司', 3: '公司'} %}
+
+    {% for chart_category, chart_name in CATEGORY_RACE_COMPANY_DICT.items() %}
+    <div class="edit_info_box fl chart3 mb10">
+        <input type="hidden" class="chart_category" value="{{chart_category}}">
+        <div class="edit_info pr no_m">
+            <div class="clear add_manage">
+                <div class="fl">
+                    <h3 class="list_title pr">{{ chart_name }}<i class="chart_i chart_2"></i></h3>
+                </div>
+                <div class="fr chart_control clear" id="control_head">
+                    <a href="javascript:void (0)" class="export_data tips fl" data-name="导出数据"
+                       chart_id="chart{{ chart_category }}" category="{{ chart_category }}"><i
+                            class="export_data_i"></i>导出数据</a>
+                    <a href="javascript:void (0)" class="add_entry fl" chart_id="chart{{ chart_category }}"
+                       category="{{ chart_category }}"><i></i>新增条目</a>
+                </div>
+            </div>
+            <div class="echart_box">
+                <div class="screen_box clear">
+                    <div class="checkbox fl" data-name="全部" data-id="chart{{ chart_category }}"><i
+                            class="checkbox_i checked"></i>全部
+                    </div>
+                    <div class="opens fr on">收起</div>
+                </div>
+                <div class="more_screen_box clear"></div>
+                <div class="echart3 chart" id="chart{{ chart_category }}" data-category="{{ chart_category }}"
+                     data-x="{{ x_names.get(chart_category, '')}}" data-excel="活动公司统计-{{ chart_name }}">
+                    <!--echart-->
+                </div>
+            </div>
+        </div>
+    </div>
+    {% end %}
+</div>
+<script src="{{ static_url('js/city2.js') }}"></script>
+<script src="{{ static_url('js/report_charts/line_chart.js') }}"></script>
+<script>
+    var temp_list = [];
+    var dimension_str = '';
+    {% for subject_dimension in  subject_dimension_list  %}
+    var sub_str = '';
+    {% for sub_subject_dimension in subject_dimension.sub_subject_dimension_list %}
+    sub_str = '<div class="checkbox fl ellipsis" cid="{{ sub_subject_dimension.cid }}" title="{{sub_subject_dimension.title  }}"><i class="checkbox_i"></i>{{sub_subject_dimension.title  }}</div>' + sub_str;
+    {% end %}
+    dimension_str = dimension_str + ' <tr> <td class="vt">{{ subject_dimension.title }}：</td> <td> <div class="knowledge_kind clear" cid="{{subject_dimension.cid  }}">' + sub_str + ' </div>  </td>  </tr>';
+    {% end %}
+    let city_checked = [];
+    let pro_checked = [];
+    let power_area = {{ manage_region_code_list }};
+    const url = "{{ reverse_url('backoffice_race_execute_report_company_analysis') }}";
+    $(function () {
+        opensShow($(".more_screen_box"));
+        init_chart(url, true);
+
+        $(".export_data").on('click', function () {
+            var category = $(this).attr('category');
+            if (category === '2') {
+                export_chart("{{ reverse_url('backoffice_reports_line_chart_export_excel') }}", $(this).attr('chart_id'), '公司-筛选条件', true)
+            } else {
+                export_chart("{{ reverse_url('backoffice_reports_line_chart_export_excel') }}", $(this).attr('chart_id'), '公司-筛选条件', false)
+            }
+
+        });
+
+        //新增单个条目：
+
+        $(document).on("click", ".add_entry", pop_condition_window);
+        $(document).on("click", ".edit_i", pop_condition_window);
+        $(document).on("click", ".delete_i", delete_condition);
+        $(document).on("click", ".opens", function () {
+            if ($(this).hasClass("on")) {
+                $(this).removeClass("on").html("展开");
+                $(this).parents(".echart_box").find(".more_screen_box").slideUp();
+            }
+            else {
+                $(this).addClass("on").html("收起");
+                $(this).parents(".echart_box").find(".more_screen_box").slideDown();
+            }
+        });
+        $(".echart_box").on("click", ".checkbox", function () {
+            let name = $(this).attr('data-name');
+            let chart_id = $(this).attr('data-id');
+            toggle_legend(chart_id, name);
+            $(this).find(".checkbox_i").toggleClass("checked");
+        });
+    });
+
+    function opensShow(obj) {
+        if (obj.parents(".edit_info").find(".more_screen_box").children().length > 0) {
+            obj.parents(".edit_info").find(".opens").show();
+        }
+        else {
+            obj.parents(".edit_info").find(".opens").hide();
+        }
+    }
+
+    function pop_condition_window() {
+        var category = $(this).attr('category');
+        let _this = $(this);
+        CONDITION = _this.attr('data-condition');
+        DATA_STR = _this.attr('data-str');
+
+        let title_msg = null;
+        if (CONDITION !== undefined && CONDITION !== null) {
+            title_msg = "编辑条目"
+        } else {
+            title_msg = "新增条目"
+        }
+        if (category !== "2") {
+            var content = '<table class="pop_table"> ' +
+                '<tr> ' +
+                '<td width="20%">年龄段：</td> ' +
+                '<td> <select name="age_group_list" class="age_group_list"> ' +
+                '<option value="请选择">请选择</option> ' +
+                '<option value="1">青年</option> ' +
+                '<option value="2">中年</option> ' +
+                '<option value="3">老年</option>' +
+                '</select> </td> </tr> ' +
+                '<tr> <td width="20%">性别：</td> ' +
+                '<td> <select name="gender_list" class="gender_list"> ' +
+                '<option value="请选择">请选择</option> ' +
+                '<option value="0">未设置性别</option>' +
+                '<option value="1">男</option>' +
+                '<option value="2">女</option>' +
+                '</select> </td> </tr> <tr> <td width="20%">受教育程度：</td> ' +
+                '<td> <select name="education_list" class="education_list"> ' +
+                '<option value="请选择">请选择</option> ' +
+                '<option value="1">初中及以下</option> ' +
+                '<option value="2">高中/中专/技校</option> ' +
+                '<option value="3">大专</option> ' +
+                '<option value="4">本科/学士</option> ' +
+                '<option value="5">硕士及以上</option> ' +
+                '</select> </td> </tr> <tr> ' +
+                    '<tr> <td width="20%">重点人群：</td> ' +
+                '<td> <select name="important_people" class="important_people"> ' +
+                '<option value="请选择">请选择</option> ' +
+                '<option value="1">领导干部及公务员</option>' +
+                '<option value="2">城镇劳动者</option>' +
+                '<option value="3">农民</option>' +
+                '<option value="4">青少年</option>' +
+                '<option value="5">社区居民</option>' +
+                '</select> </td> </tr>' +
+                '</tr></table>';
+            var size = ["400px", "auto"]
+        }
+        else {
+            var content = '<table class="pop_table"> ' +
+                '<tr> ' +
+                '<td width="20%">年龄段：</td> ' +
+                '<td> <select name="age_group_list" class="age_group_list"> ' +
+                '<option value="请选择">请选择</option> ' +
+                '<option value="1">青年</option> ' +
+                '<option value="2">中年</option> ' +
+                '<option value="3">老年</option>' +
+                '</select> </td> </tr> ' +
+                '<tr> <td width="20%">性别：</td> ' +
+                '<td> <select name="gender_list" class="gender_list"> ' +
+                '<option value="请选择">请选择</option> ' +
+                '<option value="0">未设置性别</option>' +
+                '<option value="1">男</option>' +
+                '<option value="2">女</option>' +
+                '</select> </td> </tr> <tr> <td width="20%">受教育程度：</td> ' +
+                '<td> <select name="education_list" class="education_list"> ' +
+                '<option value="请选择">请选择</option> ' +
+                '<option value="1">初中及以下</option> ' +
+                '<option value="2">高中/中专/技校</option> ' +
+                '<option value="3">大专</option> ' +
+                '<option value="4">本科/学士</option> ' +
+                '<option value="5">硕士及以上</option> ' +
+                '</select> </td> </tr>' +
+                 '<tr> <td width="20%">重点人群：</td> ' +
+                '<td> <select name="important_people" class="important_people"> ' +
+                '<option value="请选择">请选择</option> ' +
+                '<option value="1">领导干部及公务员</option>' +
+                '<option value="2">城镇劳动者</option>' +
+                '<option value="3">农民</option>' +
+                '<option value="4">青少年</option>' +
+                '<option value="5">社区居民</option>' +
+                '</select> </td> </tr>' +
+                '</table>';
+            var size = ["740px", "auto"]
+        }
+        layer.open({
+            type: 1,
+            title: title_msg,
+            area: size,
+            btn: ["确认", "取消"],
+            content: content,
+            success: success,
+            yes: function () {
+                let arr = [], city = [];
+                let data = {};
+                let province_code_list = [];
+                let city_code_list = [];
+                let text = _this.parents(".edit_info_box").find(".checkbox");
+                let repeat = false;
+                $(".pop_table select").each(function () {
+                    if ($(this).find("option:selected").text() !== "请选择") {
+                        arr.push($(this).find("option:selected").text());
+                        data[$(this).attr('name')] = $(this).val();
+                    }
+                });
+                var subject_dimension = $('.pop_table').find('.knowledge_kind').find('i.checked');
+                subject_dimension.each(function () {
+                    var temp = {};
+                    var parent = $(this).parent();
+                    var title = parent.attr('title');
+                    var cid = parent.attr('cid');
+                    var grandpa = parent.parent();
+                    var g_cid = grandpa.attr('cid');
+                    temp[g_cid] = {'title': title, 'cid': cid};
+                    temp_list.push(temp)
+                });
+                for (let i = 0; i < pro_checked.length; i++) {
+                    city.push(pro_checked[i].p_name);
+                    for (let j = 0; j < pro_checked[i].sub.length; j++) {
+                        city.push(pro_checked[i].sub[j].c_name);
+                        if (pro_checked[i].p_code != pro_checked[i].sub[j].c_code) {
+                            city_code_list.push(pro_checked[i].sub[j].c_code)
+                        } else {
+                            province_code_list.push(pro_checked[i].p_code);
+                        }
+                    }
+                }
+                city = city.removeRepeat();
+                arr = arr.concat(city);
+                arr = arr.concat(temp_list);
+                text.each(function () {
+                    if ($(this).text() == arr.join()) {
+                        repeat = true;
+                        return false;
+                    }
+                });
+
+                if (arr.join() === "" && temp_list === []) {
+                    tip_msg("请至少选择一个筛选条件", 1000);
+                }
+                else if (repeat) {
+                    tip_msg("筛选条件已存在，请修改该条目", 2000);
+                }
+                else {
+                    let box_count = 3;
+                    if (CONDITION !== undefined && CONDITION !== null) {
+                        box_count = 4
+                    }
+                    let flag = true;
+                    let moreScreen_box = _this.parents(".edit_info").find(".more_screen_box");
+                    if (moreScreen_box.children().length > box_count) {
+                        tip_msg("最多生成5个图表");
+                        flag = false;
+                        return flag;
+                    }
+
+                    if (province_code_list) {
+                        data['province_code_list'] = province_code_list;
+                    }
+                    if (city_code_list) {
+                        data['city_code_list'] = city_code_list;
+                    }
+                    data = format_data(data);
+                    let data_str = JSON.stringify(data);
+                    let pro_checked_str = JSON.stringify(pro_checked);
+                    let chart = "cl" + (moreScreen_box.children().length + 1).toString();
+                    let chart_id = $(_this).attr('chart_id');
+
+                    if (CONDITION !== undefined && CONDITION !== null) {
+                        $(_this).parent().prev().find('span').html(arr.join());
+                        $(_this).attr('data-condition', pro_checked_str);
+                        $(_this).attr('data-str', data_str);
+
+                        let edit_index = moreScreen_box.find('i.edit_i').index(_this);
+                        update_chart(chart_id, data_str, $(_this).parent().prev().find('span').html(), url, true, edit_index)
+                    } else {
+                        let moreScreen = '<div class="more_screen clear fl mr20"> ' +
+                            '<div class="checkbox fl" data-name="' + arr.join() + '" data-id=' + chart_id + '>' +
+                            '<i class="checkbox_i ' + chart + ' checked"></i>' +
+                            '<span>' + arr.join() + '</span></div> ' +
+                            '<div class="screen_control fl"> ' +
+                            '<i class="edit_i" data-edit="true" data-condition=' + pro_checked_str + ' chart_id=' + chart_id + ' data-str=' + data_str + '></i> ' +
+                            '<i class="delete_i"' + ' chart_id=' + chart_id + '></i> </div> </div>';
+                        moreScreen_box.append(moreScreen);
+                        opensShow(moreScreen_box);
+                        update_chart(chart_id, data_str, arr.join(), url, true);
+                    }
+                    layer.closeAll();
+                }
+            },
+            end: end
+        })
+    }
+
+    function colReset(obj) {
+        var that = obj.find(".checkbox_i");
+        that.removeClass("cl1 cl2 cl3 cl4");
+        that.each(function (i) {
+            $(this).addClass("cl" + (i + 1));
+        })
+    }
+
+    function delete_condition() {
+        let that = this;
+        confirm_dialog("删除条目", "确认删除吗？", function () {
+            let more_screen_box = $(that).parent().parent().parent();
+            let index = more_screen_box.find('.delete_i').index(that);
+            $(that).parent().parent().remove();
+            delete_chart($(that).attr('chart_id'), index)
+            colReset(more_screen_box)
+        })
+    }
+
+    function checkedNum() {
+        let checked_num = $(".city_box .checkbox_i.checked");
+        if (checked_num.length > 0) {
+            $(".province_box li.active").find(".city_num").removeClass("dis_none").html(checked_num.length);
+        }
+        else {
+            $(".province_box li.active").find(".city_num").addClass("dis_none");
+        }
+    }
+
+    function success() {
+        //加载省份信息：
+        let provinceBox = $(".province_box");
+        let cityBox = $(".city_box");
+        for (let i = 0; i < city_data.length; i++) {
+            provinceBox.append('<li title="' + city_data[i].name + '" data-code="' + city_data[i].code + '">' + city_data[i].name + '<div class="city_num pa dis_none"></li>')
+        }
+        // 权限-省份：
+        if (power_area.length !== 0) {
+            provinceBox.find("li").addClass("dis_none");
+            for (let a = 0; a < power_area.length; a++) {
+                provinceBox.find("li[data-code='" + power_area[a].substring(0, 2) + "0000']").removeClass("dis_none");
+            }
+        }
+
+        if (CONDITION !== undefined && CONDITION !== null) {
+            // 编辑时,初始化条件选择框
+            let condition_dict = $.parseJSON(DATA_STR);
+            if (condition_dict.age_group_list) {
+                $(".age_group_list").find("option").eq(condition_dict.age_group_list[0]).prop("selected", true);
+            }
+            if (condition_dict.gender_list) {
+                $(".gender_list").find("option").eq(condition_dict.gender_list[0] + 1).prop("selected", true);
+            }
+            if (condition_dict.education_list) {
+                $(".education_list").find("option").eq(condition_dict.education_list[0]).prop("selected", true);
+            }
+            if (condition_dict.important_people) {
+                $(".important_people").find("option").eq(condition_dict.important_people[0]).prop("selected", true);
+            }
+            pro_checked = $.parseJSON(CONDITION);
+            let p_box = $(".province_box");
+            for (let i = 0; i < pro_checked.length; i++) {
+                let city_list = pro_checked[i].sub;
+                for (let j = 0; j < city_list.length; j++) {
+                    city_checked.push(city_list[j].c_name);
+                    let obj = p_box.find("li[data-code='" + city_list[j].c_code.substring(0, 2) + "0000']").find(".city_num");
+                    obj.removeClass("dis_none");
+                    obj.html(parseInt(obj.html() === "" ? 0 : obj.html()) + 1);
+                }
+            }
+        }
+
+        //请求城市信息：
+        $(".area_box").on("click", ".province_box li", function () {
+            if ($(this).hasClass("active")) {
+                return false;
+            } else {
+                $(".province_box li").removeClass("active");
+                $(this).addClass("active");
+                // 筛选城市并渲染：
+                let p_code = $(this).attr("data-code");
+                let p_name = $(this).attr("title");
+                let p_obj = city_data.filter(function (e) {
+                    return e.code == p_code;
+                })[0].sub;
+
+                if (p_obj.length > 1) {
+                    cityBox.empty().append('<li class="whole_province clear"><div class="checkbox_all fl ellipsis" title="' + p_name + '" data-code="' + p_code + '"><i class="checkbox_i"></i>全省</div></li><li class="city_choose clear"></li>');
+                }
+                else {
+                    cityBox.empty().append('<li class="whole_province clear dis_none"><div class="checkbox_all fl ellipsis" title="' + p_name + '" data-code="' + p_code + '"><i class="checkbox_i"></i>全省</div></li><li class="city_choose clear"></li>');
+                }
+                for (let i = 0; i < p_obj.length; i++) {
+                    $(".city_box .city_choose").append('<div class="checkbox fl ellipsis" title="' + p_obj[i].name + '" data-code="' + p_obj[i].code + '"><i class="checkbox_i"></i>' + p_obj[i].name + '</div>');
+                }
+                // 权限-城市：
+                if (power_area.length !== 0) {
+                    let city_choose_box = $(".city_choose");
+                    city_choose_box.children().addClass("dis_none");
+                    for (let b = 0; b < power_area.length; b++) {
+                        city_choose_box.find("div[data-code='" + power_area[b] + "']").removeClass("dis_none");
+                    }
+                    let city_choose_length = city_choose_box.children().not(".dis_none").length;
+                    if (city_choose_length < p_obj.length && city_choose_length !== 0) {
+                        $(".whole_province").addClass("dis_none");
+                    }
+                    else if (city_choose_length === 0) {
+                        city_choose_box.children().removeClass("dis_none");
+                    }
+                    else {
+                        return;
+                    }
+                }
+                for (let j = 0; j < city_checked.length; j++) {
+                    cityBox.find("div[title='" + city_checked[j] + "']").find(".checkbox_i").addClass("checked");
+                }
+            }
+        });
+        //城市最多选5个
+        $(".pop_table").on("click", ".checkbox", function () {
+            if (city_checked.length >= 5 && $(this).attr("data-code") && !$(this).find(".checkbox_i").hasClass("checked") && !$(this).parent().siblings().find(".checkbox_i").hasClass("checked")) {
+                tip_msg("最多选五个", 1000);
+                return false
+            } else {
+                //城市信息才有data-code属性,进行勾选操作：
+                if ($(this).attr("data-code")) {
+                    let c_data = $(this).attr("title");
+                    let c_code = $(this).attr("data-code");
+                    let p_data = $(this).parents(".city_box").find(".checkbox_all").attr("title");
+                    let p_code = $(this).parents(".city_box").find(".checkbox_all").attr("data-code");
+                    let checked = false;
+                    if (!$(this).find(".checkbox_i").hasClass("checked")) {
+                        $(this).parents(".city_box").find(".checkbox_all .checkbox_i").removeClass("checked");
+                        $(this).find(".checkbox_i").addClass("checked");
+                        city_checked.remove(p_data);
+                        city_checked.push(c_data);
+                        pro_checked.removeObj(p_data);
+                        if (pro_checked.length > 0) {
+                            for (let n = 0; n < pro_checked.length; n++) {
+                                if (pro_checked[n].p_name == p_data) {
+                                    pro_checked[n].sub.push({'c_name': c_data, 'c_code': c_code});
+                                    checked = true;
+                                    break;
+                                }
+                            }
+                            if (!checked) {
+                                pro_checked.push({
+                                    'p_name': p_data,
+                                    'p_code': p_code,
+                                    'sub': [{'c_name': c_data, 'c_code': c_code}]
+                                });
+                            }
+                        }
+                        else {
+                            pro_checked.push({
+                                'p_name': p_data,
+                                'p_code': p_code,
+                                'sub': [{'c_name': c_data, 'c_code': c_code}]
+                            });
+                        }
+                        pro_checked.deleteObj();
+                    }
+                    else {
+                        $(this).find(".checkbox_i").removeClass("checked");
+                        city_checked.remove(c_data);
+                        pro_checked.removeObj(c_data);
+                        pro_checked.deleteObj();
+                    }
+                    checkedNum();
+                }
+                else {
+                    $(this).find(".checkbox_i").toggleClass("checked");
+                }
+            }
+        });
+        // 全市互斥：
+        cityBox.on("click", ".checkbox_all", function () {
+            if (city_checked.length >= 5 && !$(this).parents(".city_box").find(".city_choose .checkbox_i").hasClass("checked")) {
+                tip_msg("最多选五个", 1000);
+                return false
+            }
+            else if (!$(this).find(".checkbox_i").hasClass("checked")) {
+                $(this).find(".checkbox_i").addClass("checked");
+                $(this).parent().siblings(".city_choose").find(".checkbox").each(function () {
+                    if ($(this).find(".checked")) {
+                        city_checked.remove($(this).attr("title"));
+                        pro_checked.removeObj($(this).attr("title"));
+                    }
+                });
+                pro_checked.deleteObj();
+                city_checked.push($(this).attr("title"));
+                pro_checked.push({
+                    'p_name': $(this).attr("title"),
+                    'p_code': $(this).attr("data-code"),
+                    'sub': [{'c_name': $(this).attr("title"), 'c_code': $(this).attr("data-code")}]
+                });
+                $(this).parents(".city_box").find(".city_choose .checkbox_i").removeClass("checked");
+            }
+            else {
+                $(this).find(".checkbox_i").removeClass("checked");
+                city_checked.remove($(this).attr("title"));
+                pro_checked.removeObj($(this).attr("title"));
+                pro_checked.deleteObj();
+            }
+            checkedNum();
+        });
+    }
+
+    function end() {
+        // 销毁已选城市数组对象：
+        city_checked = [];
+        pro_checked = [];
+    }
+
+</script>
+{% end %}

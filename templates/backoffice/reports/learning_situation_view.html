@@ -1,0 +1,1749 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db.enums import MODULE_SEARCH_CONDITION_SITUATION_MEMBER_TIMES,MODULE_SEARCH_CONDITION_SITUATION_MEMBER_ACTIVE %}
+{% from enums.variables import CHART_COLOR_LIST %}
+{% raw xsrf_form_html() %}
+<style>
+    .echart1{
+        max-width: calc(100% - 200px);
+        overflow-x: auto;
+    }
+    .echart2{
+        min-width: 200px;
+        overflow-x: auto;
+    }
+</style>
+<div class="right_area clear">
+    <div class="main_header pt10 pb10 clear w100 fl">
+        <div class="fl bread_nav">
+            <a href="#" class="pl10 ml10">学习状况统计</a>
+        </div>
+        {# <a href="javascript:void (0)" order="1" id="study_situation" class="export_data tips fl" data-name="导出数据"><i class="export_data_i"></i>导出数据</a> #}
+    </div>
+    <div class="edit_info_box fl chart4">
+        <div class="edit_info pr no_m">
+            <div class="clear add_manage">
+                <div class="fl">
+                    <h3 class="list_title pr" id="science_study">公民参与科学素质学习状况<i class="chart_i chart_1"></i></h3>
+                </div>
+                <div class="fr chart_control clear">
+                    <div class="switch_chart fl">
+                        <span class="pr fl">
+                        {# <input id="start_dt" type="text" name="start_dt" readonly class="input_text time_i pointer w180"
+                            placeholder="请选择时间"> #}
+                        </span>
+                        <a href="javascript:void(0)" id="switch_people">人数</a>
+                        <a href="javascript:void(0)" id="switch_times" class="active">次数</a>
+                        <a href="javascript:void(0)" id="switch_correct">正确率</a>
+                    </div>
+
+                    <a href="javascript:void (0)" class="back_chart map_back fl dis_none"><i></i>返回</a>
+                    {#                    <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>#}
+                </div>
+            </div>
+            <div class="echart_box clear">
+                <div class="echart1 fl" id="map_statistics"></div>
+                <div class="echart2 fl">
+                    <div class="province_statistics_title tc">参与答题次数一览表</div>
+                    <div class="province_statistics" id="province_statistics"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="edit_info_box fl chart1 mb10">
+        <div class="edit_info pr no_m">
+            <div class="clear add_manage" id="answer_choice_checkbox">
+                <div class="fl">
+                    <h3 class="list_title pr">公民科学素质学习答题趋势统计<i class="chart_i chart_2"></i></h3>
+                </div>
+                <div class="fr chart_control" id="control_head">
+                    <div class="switch_chart fl">
+                        <a href="javascript:void(0)" id="switch_daily_times" class="active">次数</a>
+                        <a href="javascript:void(0)" id="switch_daily_quantity">人数</a>
+                    </div>
+                    <a href="javascript:void (0)" class="add_entry fl"><i></i>新增条目</a>
+                    {# <a href="javascript:void (0)" order="2" id="answer_tendency" class="export_data tips fl" data-name="导出数据"><i class="export_data_i"></i>导出数据</a> #}
+                    {#                    <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>#}
+                </div>
+                <div class="fr chart_control" hidden id="control_back">
+                    <a href="javascript:void (0)" class="back_chart member_times_back fl"><i></i>返回</a>
+                </div>
+            </div>
+            <div class="echart_box">
+                <div class="screen_box clear">
+                    <div class="checkbox fl"><i class="checkbox_i checked"></i><span>总体答题次数</span></div>
+                    <div class="fl"><span><!--   （点击当日数据可进入每日新增Top5图表） --></span></div>
+                    <div class="opens on fr">收起</div>
+                </div>
+                <div class="more_screen_box clear"
+                     condition_module="{{ MODULE_SEARCH_CONDITION_SITUATION_MEMBER_TIMES }}"></div>
+                <div class="echart3 common_echart" id="tendency_member_times_chart">
+                    <!--echart-->
+                </div>
+                <div class="echart3" id="tendency_member_times_bar_chart" hidden>
+                    <!--echart-->
+                    <div class="no_data dis_none"></div>
+                </div>
+                <div class="set_time_box clear">
+                    <div class="set_time fr">
+                        <ul class="clear">
+                            <li><a href="javascript:void(0)" class="active" time_range="1M">1月</a></li>
+                            <li><a href="javascript:void(0)" time_range="3M">3月</a></li>
+                            <li><a href="javascript:void(0)" time_range="6M">6月</a></li>
+                            <li><a href="javascript:void(0)" time_range="1Y">1年</a></li>
+                            <li><a href="javascript:void(0)" time_range="3Y">3年</a></li>
+                            <li><a href="javascript:void(0)" time_range="5Y">5年</a></li>
+                        </ul>
+                    </div>
+                    <div class="fr set_time_info">选择时间</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="edit_info_box fl chart2 mb10 no_pl">
+        <div class="edit_info pr no_m" style="height: 498px;">
+            <div class="clear add_manage">
+                <div class="fl">
+                    <h3 class="list_title pr">公民科学素质学习答题活跃度<i class="chart_i chart_2"></i></h3>
+
+                </div>
+                <div class="fr chart_control">
+                    <a href="javascript:void (0)" class="add_entry fl"><i></i>新增条目</a>
+                    {# <a href="javascript:void (0)"  id="active_answer" order="3" class="export_data tips fl" data-name="导出数据"><i class="export_data_i"></i>导出数据</a> #}
+                    {#                    <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>#}
+                </div>
+            </div>
+            <div class="echart_box">
+                <div class="screen_box clear">
+                    <div class="checkbox fl"><i class="checkbox_i checked"></i>总体活跃度</div>
+                    <div class="opens fr on">收起</div>
+                </div>
+                <div class="more_screen_box clear"
+                     condition_module="{{ MODULE_SEARCH_CONDITION_SITUATION_MEMBER_ACTIVE }}"></div>
+                <div class="echart3 common_echart" id="member_active_chart">
+                    <!--echart-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="edit_info_box fl chart4 mb10">
+        <div class="edit_info pr no_m">
+            <div class="clear add_manage">
+                <div class="fl">
+                    <h3 class="list_title pr">每日参与TOP 5<i class="chart_i chart_2"></i></h3>
+                </div>
+                <div class="fr chart_control">
+                    <div class="switch_chart fl">
+                        <a href="javascript:void(0)" id="top_switch_quantity">人数</a>
+                        <a href="javascript:void(0)" id="top_switch_times" class="active">次数</a>
+                    </div>
+                    <div class="switch_chart fl">
+                        <a href="javascript:void(0)" id="switch_city" class="active">城市</a>
+                        {% if not region_name %}
+                        <a href="javascript:void(0)" id="switch_province">省份</a>
+                        {% end %}
+                    </div>
+                    {# <a href="javascript:void (0)" order="4" id="partake_everyday_top5" class="export_data tips fl" data-name="导出数据"><i class="export_data_i"></i>导出数据</a> #}
+                    {#                    <a href="javascript:void (0)" class="upload_file tips" data-name="下载"></a>#}
+                </div>
+            </div>
+            <div class="echart_box">
+                <div class="screen_box clear">
+                    <div class="checkbox fl" style="pointer-events: none"><i class="checkbox_i checked" style="pointer-events: none"></i>每日城市新会员Top 5 </div>
+                </div>
+                {#                <div class="more_screen_box clear"></div>#}
+                <div class="echart3 common_echart" id="daily_city_member_topn_chart">
+                    <!--echart-->
+                </div>
+                <div class="set_time_box clear">
+                    <div class="set_time fr">
+                        <ul class="clear">
+                            <li><a href="javascript:void(0)" class="active" time_range="1M">1月</a></li>
+                            <li><a href="javascript:void(0)" time_range="3M">3月</a></li>
+                            <li><a href="javascript:void(0)" time_range="6M">6月</a></li>
+                            <li><a href="javascript:void(0)" time_range="1Y">1年</a></li>
+                            <li><a href="javascript:void(0)" time_range="3Y">3年</a></li>
+                            <li><a href="javascript:void(0)" time_range="5Y">5年</a></li>
+                        </ul>
+                    </div>
+                    <div class="fr set_time_info">选择时间</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<form id="export">
+{% raw xsrf_form_html() %}
+    <input id="data" name="data" type="hidden">
+    <input id="chart_name" name="chart_name" type="hidden">
+    <input id="chart_type" name="chart_type" type="hidden">
+    <input id="order" name="order" type="hidden">
+    <input id="total_active" name="total_active" type="hidden">
+    <input id="date" name="date" type="hidden">
+    <input id="top_five_data" name="top_five_data" type="hidden">
+    <input id="stat_category" name="stat_category" type="hidden">
+    <input id="answer_tendency_date" name="answer_tendency_date" type="hidden">
+    <input id="answer_tendency_data" name="answer_tendency_data" type="hidden">
+    <input id="accuracy_data_list" name="accuracy_data_list" type="hidden">
+</form>
+<script src="{{ static_url('js/report_charts/tendency_member_times_chart.js') }}"></script>
+<script src="{{ static_url('js/report_charts/statistics_map_chart.js') }}"></script>
+<script src="{{ static_url('js/report_charts/member_active.js') }}"></script>
+<script src="{{ static_url('js/report_charts/reports_learning_situation_daily_member_quantity_top.js') }}"></script>
+<script src="{{ static_url('js/echarts/echarts.js') }}"></script>
+<script src="{{ static_url('js/echarts/map/js/china.js') }}"></script>
+<script src="{{ static_url('js/echarts/map/js/all-province.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/chongqing.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/shanghai.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/taiwan.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/xizang.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/xinjiang.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/beijing.js') }}"></script>
+<script src="{{ static_url('js/city2.js') }}"></script>
+<script>
+    var flag = "";
+    var data = "";
+    var cumulative_url = "{{ reverse_url('backoffice_reports_learning_situation_cumulative') }}";
+    var quantity_url = "{{ reverse_url('backoffice_reports_learning_situation_member_quantity') }}";
+    var accuracy_url = "{{ reverse_url('backoffice_reports_learning_situation_accuracy') }}";
+    var cumulative_choice_time_data = "";
+    var quantity_choice_time_data = "";
+    var accuracy_choice_time_data = "";
+    laydate.render({
+        elem: '#start_dt', //指定元素
+        trigger: 'click', //采用click弹出
+        type: 'datetime',
+        done: function (value) {
+            // 发起请求，去后台拿到次数，人数，正确率的数据
+            data = {'choice_time': value};
+            var label_name = $('.switch_chart .active').html();
+            if (label_name === "次数"){
+                get_choice_time_cumulative()
+            }
+            else if(label_name === "人数"){
+                //  人数的数据
+                get_choice_time_quantity()
+            }
+            else if(label_name === "正确率"){
+                // 正确率数据
+                get_choice_time_accuracy()
+            }
+        }
+    });
+    // 轮询， 拿到学习近况的筛选时间的数据
+    // function loop_choice_time_data(url, data, label_name){
+    //     ajaxPost(url, data, function (ret) {
+    //             if (ret.code === 1){
+    //                 if(label_name === "次数"){
+    //                     cumulative_choice_time_data = ret.data;
+    //                 }else if(label_name === "人数"){
+    //                     quantity_choice_time_data = ret.data
+    //                 }else{
+    //                     accuracy_choice_time_data = ret.data
+    //                 }
+    //                 // 数据准备完毕，准备填充到地图和柱状图中
+    //                 show_map_statistics(ret.data, city_name, label_name);
+    //                 if(flag){
+    //                     clearInterval(flag)
+    //                 }
+    //             }
+    //         });
+    // }
+    // 拿到筛选时间次数的数据
+    // function get_choice_time_cumulative() {
+    //     // 次数的数据
+    //     ajaxPost(cumulative_url, data, function (ret) {
+    //         if (ret.code === 2) {
+    //             flag = setInterval("loop_choice_time_data(cumulative_url,data,'次数')", 2000)
+    //         } else if (ret.code === 1) {
+    //             show_map_statistics(ret.data, city_name, '次数');
+    //         } else {
+    //             tip_msg('系统繁忙，请重新尝试!', 3000)
+    //         }
+    //     });
+    // }
+    // function get_choice_time_quantity(){
+    //     ajaxPost(quantity_url, data, function (ret) {
+    //                 if (ret.code === 2){
+    //                     flag = setInterval("loop_choice_time_data(quantity_url,data,'人数')", 2000)
+    //                 }else if(ret.code === 1){
+    //                     show_map_statistics(ret.data, city_name, '人数');
+    //                 }else{
+    //                     tip_msg('系统繁忙，请重新尝试!', 3000)
+    //                 }
+    //             });
+    // }
+    // function get_choice_time_accuracy(){
+    //     ajaxPost(accuracy_url, data, function (ret) {
+    //                 if (ret.code === 2){
+    //                     flag = setInterval("loop_choice_time_data(accuracy_url,data,'正确率')", 2000)
+    //                 }else if(ret.code === 1){
+    //                     show_map_statistics(ret.data, city_name, '正确率');
+    //                 }else{
+    //                     tip_msg('系统繁忙，请重新尝试!', 3000)
+    //                 }
+    //             });
+    // }
+    var chart_color_list = {{ CHART_COLOR_LIST }};
+    var city_name = '{{ region_name if region_name else 'china' }}';
+
+    var backgroundColor = ''; //'#fff'
+    var areaColor = ''; // '#EAF3FF'
+    var d_info = [
+        {"size": 10, "color": "#e83232"},
+        {"size": 8, "color": "#FF5858"},
+        {"size": 6, "color": "#FF7878"},
+        {"size": 6, "color": "#FFB8B8"},
+        {"size": 6, "color": "#FFD3D3"},
+        {"size": 6, "color": "#FFD3D3"},
+        {"size": 6, "color": "#FFD3D3"},
+        {"size": 6, "color": "#FFD3D3"}
+    ];
+    var legend_data = [
+        {
+            name: '1',
+            icon: 'image://../../../../static/images/echarts/icons_rd1.png'
+        },
+        {
+            name: '2',
+            icon: 'image://../../../../static/images/echarts/icons_rd2.png'
+        },
+        {
+            name: '3',
+            icon: 'image://../../../../static/images/echarts/icons_rd3.png'
+        },
+        {
+            name: '4',
+            icon: 'image://../../../../static/images/echarts/icons_rd4.png'
+        },
+        {
+            name: '5',
+            icon: 'image://../../../../static/images/echarts/icons_rd5.png'
+        }
+    ];
+    var color_offset = ['#91C8FF', '#1F90FF'];
+    var emphasis_colors = ['#000', '#C0C0C0'];
+    var item_color = '#eee';
+    var geoCoordMap = {};
+    $.getJSON("../../../../static/js/echarts/map/json/china_city.json", function (data) {
+        $.each(data, function (i, item) {
+            if (item[3] === "上海") {
+                geoCoordMap["上海市"] = [item[1], item[2]];
+            } else if (item[3] === "北京") {
+                geoCoordMap["北京市"] = [item[1], item[2]];
+            } else if (item[3] === "天津") {
+                geoCoordMap["天津市"] = [item[1], item[2]];
+            } else if (item[3] === "重庆") {
+                geoCoordMap["重庆市"] = [item[1], item[2]];
+            } else {
+                geoCoordMap[item[0]] = [item[1], item[2]]
+            }
+        });
+    });
+
+    var member_quantity_data = null;
+    ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_member_quantity') }}", {}, function (result) {
+        if (result.code === 0) {
+            tip_msg("获取数据失败！", 2000);
+        } else if (result.code === 2) {
+            get_cachekey_data(result.cache_key, function (data) {
+                member_quantity_data = data
+            });
+        } else {
+            member_quantity_data = result.data
+        }
+    });
+
+    var accuracy_data = null;
+    ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_accuracy') }}", {}, function (result) {
+        if (result.code === 0) {
+            tip_msg("获取数据失败！", 2000);
+        } else if (result.code === 2) {
+            get_cachekey_data(result.cache_key, function (data) {
+                accuracy_data = data
+            })
+        } else {
+            accuracy_data = result.data
+        }
+    });
+
+    var cumulative_data = null;
+    ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_cumulative') }}", {}, function (result) {
+        if (result.code === 0) {
+            tip_msg("获取数据失败！", 2000);
+        } else if(result.code === 2){
+            get_cachekey_data(result.cache_key, function (data) {
+                cumulative_data = data
+            });
+        } else {
+            cumulative_data = result.data
+        }
+    });
+
+    function get_data_loop() {
+        /*
+        * 轮询次数数据
+        * */
+        var [call_back, ...args] = arguments;
+        if (cumulative_data == null) {
+            setTimeout(get_data_loop, 100, call_back, ...args)
+        } else {
+            call_back(cumulative_data, ...args)
+        }
+    }
+
+    // 下载报表
+    function downloadFileByForm() {
+        var url = "/backoffice/reports/learning/situation/export/excel/";
+        var fileName = "学习效果excel.xlsx";
+        var form = $("#export").attr("action", url).attr("method", "post");
+        form.append($("<input></input>").attr("type", "hidden").attr("name", "fileName").attr("value", fileName));
+        form.submit();
+    }
+
+    // 学习近况的导出数据
+    $('#study_situation').click(function () {
+       var chart_name = $('#science_study').html().split('<')[0];
+       var order = $(this).attr('order');
+       $('#order').val(order);
+       $('#chart_name').val(chart_name);
+       downloadFileByForm();
+    });
+    $('#active_answer').click(function () {
+       var order = $(this).attr('order');
+       var chart_name = $('#active_answer').parents('.fl').find('h3').html().split('<')[0];
+       member_active_chart = echarts.init(document.getElementById('member_active_chart'));
+       option = member_active_chart.getOption();
+       var chart_dict = {};
+       for(let i = 0; i < option.series.length; i ++){
+           chart_dict[option.series[i].name] = option.series[i].data
+       }
+       data_list = JSON.stringify(chart_dict);
+       $('#data').val(data_list) ;
+       $('#order').val(order);
+       $('#chart_name').val(chart_name);
+       downloadFileByForm()
+    });
+    $('#partake_everyday_top5').click(function () {
+        var order = $(this).attr('order');
+        var chart_name = $('#partake_everyday_top5').parents('.fl').find('h3').html().split('<')[0];
+        daily_city_member_topn_chart = echarts.init(document.getElementById('daily_city_member_topn_chart'));
+        option = daily_city_member_topn_chart.getOption();
+        date = option.xAxis[0].data;
+        date = JSON.stringify(date);
+        var data_list = [];
+        for(let i = 0; i < option.series.length; i ++){
+            data_list.push(option.series[i].data)
+        }
+        var stat_category = $('#partake_everyday_top5').parent('.chart_control').find('a.active').html();
+        data_list = JSON.stringify(data_list);
+        $('#chart_name').val(chart_name);
+        $('#order').val(order);
+        $('#date').val(date);
+        $('#top_five_data').val(data_list) ;
+        $('#stat_category').val(stat_category);
+        downloadFileByForm()
+    });
+    $("#answer_tendency").click(function () {
+        let tendency_member_times_chart = echarts.init(document.getElementById('tendency_member_times_chart'));
+        option = tendency_member_times_chart.getOption();
+        var order = $(this).attr('order');
+        var chart_name = $('#answer_tendency').parents('.fl').find('h3').html().split('<')[0];
+        let answer_tendency_date = option.xAxis[0].data;
+        var chart_dict = {};
+        for (let i = 0; i < option.series.length; i++) {
+            chart_dict[option.series[i].name] = option.series[i].data
+        }
+        let answer_tendency_data = JSON.stringify(chart_dict);
+        answer_tendency_date = JSON.stringify(answer_tendency_date);
+        $('#chart_name').val(chart_name);
+        $('#order').val(order);
+        $('#answer_tendency_data').val(answer_tendency_data);
+        $('#answer_tendency_date').val(answer_tendency_date);
+        downloadFileByForm()
+    });
+    // 点击人数，次数，正确切换，保持住上一次下钻的状态
+    function change_keep_drill_status(){
+        myChart = echarts.init(document.getElementById('map_statistics'));
+            var option = myChart.getOption();
+            var map_name = "";
+            if (option){
+                map_name = option.geo[0].map;
+                if(map_name){
+                    city_name = map_name
+                }
+            }
+            return city_name
+    }
+    $(function () {
+        {% if dark_skin %}
+        dark_skin();
+        {% else %}
+        light_skin();
+        {% end %}
+
+        $('#map_statistics').ready(function () {
+            get_data_loop(show_map_statistics, city_name, '次数');
+        });
+
+        if (city_name === 'china') {
+            $('.map_back').addClass('dis_none');
+        }
+        //切换人数
+        $("#switch_people").on("click", function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $(".province_statistics_title").html("参与人数一览表");
+            city_name = change_keep_drill_status();
+            // if(quantity_choice_time_data !== "" && $('#start_dt').val() !== ""){
+            //     show_map_statistics(quantity_choice_time_data, city_name, '人数')
+            // }else if(quantity_choice_time_data === "" && $('#start_dt').val() !== ""){
+            //     // get_choice_time_quantity()
+            // }
+            // else{
+            //     show_map_statistics(member_quantity_data, city_name, '人数');
+            // }
+            show_map_statistics(member_quantity_data, city_name, '人数');
+        });
+        //切换次数
+        $("#switch_times").on("click", function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $(".province_statistics_title").html("参与答题次数一览表");
+            city_name = change_keep_drill_status();
+            // if(cumulative_choice_time_data !== "" && $('#start_dt').val() !== ""){
+            //     show_map_statistics(cumulative_choice_time_data, city_name, '次数')
+            // }else if(cumulative_choice_time_data === "" && $('#start_dt').val() !== ""){
+            //     // get_choice_time_cumulative()
+            // }
+            // else{
+            //     show_map_statistics(cumulative_data, city_name, '次数');
+            // }
+            show_map_statistics(cumulative_data, city_name, '次数');
+        });
+        // 切换正确率
+        $("#switch_correct").on("click", function () {
+            var that = $(this);
+            that.addClass("active").siblings().removeClass("active");
+            $(".province_statistics_title").html("正确率一览表（%）");
+            city_name = change_keep_drill_status();
+            // if(accuracy_choice_time_data !== "" && $('#start_dt').val() !== ""){
+            //     show_map_statistics(accuracy_choice_time_data, city_name, '正确率')
+            // }else if(accuracy_choice_time_data === "" && $('#start_dt').val() !== ""){
+            //     // get_choice_time_accuracy()
+            // }
+            // else{
+            //     show_map_statistics(accuracy_data, city_name, '正确率');
+            // }
+            show_map_statistics(accuracy_data, city_name, '正确率')
+        });
+        //返回
+        $('.map_back').on("click", function () {
+            var label_type_name = $('.switch_chart .active').html();
+            city_name = 'china';
+
+            var data = null;
+            if (label_type_name === '人数') {
+                data = member_quantity_data
+            } else if (label_type_name === '次数') {
+                data = cumulative_data
+            } else {
+                data = accuracy_data
+            }
+
+            show_map_statistics(data, city_name, label_type_name);
+            $('.map_back').addClass('dis_none');
+        });
+        // 人次趋势返回
+        $('.member_times_back').on("click", function () {
+            $("#tendency_member_times_bar_chart").hide();
+            $("#tendency_member_times_chart").show();
+            if (!$(".no_data").hasClass("dis_none")) {
+                $(".no_data").addClass("dis_none");
+            }
+            $("#control_head").show();
+            $("#control_back").hide();
+            $("#tendency_member_times_bar_chart").siblings(".set_time_box").css('visibility', 'visible');
+            $("#tendency_member_times_bar_chart").siblings(".screen_box").css('visibility', 'visible');
+            $("#tendency_member_times_bar_chart").siblings(".more_screen_box").css('visibility', 'visible');
+
+        });
+    });
+
+    function get_not_checked_name() {
+        // 没有勾选条件的条件名字
+        var not_checked_name_list = [];
+        $('#answer_choice_checkbox').siblings('.echart_box').find('.checkbox').each(function () {
+            if (!$(this).find('.checkbox_i').hasClass('checked')) {
+                not_checked_name_list.push($(this).find('span').html());
+            }
+        });
+        return not_checked_name_list
+    }
+
+    //人数,正确率,次数
+    function show_map_statistics(data, city_name, label_type_name) {
+        if (data !== null) {
+            showMap(data, geoCoordMap, city_name, label_type_name);
+            showProvinceChart(data, city_name, label_type_name);
+        }
+    }
+
+    //选择时间
+    $(".set_time a").click(function () {
+        var not_checked_name_list = get_not_checked_name();
+        $(this).parents(".set_time").find("a").removeClass("active");
+        $(this).toggleClass("active");
+        var time_range = $(this).attr("time_range");
+        var dom_id = $(this).parents(".echart_box").find(".common_echart").attr("id");
+        var more_screen = $(this).parents(".echart_box").find(".more_screen");
+        if (dom_id === "tendency_member_times_chart") {
+            var myChart = echarts.getInstanceByDom(document.getElementById("tendency_member_times_chart"));
+            if (myChart) {
+                var option = myChart.getOption();
+                option.series = [];
+                option.legend[0].data = [];
+                myChart.dispose();
+            }
+            if ($("#switch_daily_quantity").hasClass("active")) {
+                show_tendency_member_quantity_chart({"time_range": time_range}, "总体答题人数");
+                more_screen.each(function () {
+                    var condition_dict = $.parseJSON($(this).find(".checkbox").attr("data-condition"));
+                    var chart_color = $(this).find(".checkbox").attr("data-color");
+                    var series_name = $(this).find(".checkbox").find("span").text();
+                    if (condition_dict) {
+                        condition_dict['time_range'] = time_range;
+                        show_tendency_member_quantity_chart(condition_dict, series_name, chart_color, not_checked_name_list)
+                    }
+
+                });
+            } else if ($("#switch_daily_times").hasClass("active")) {
+                show_tendency_member_times_chart({"time_range": time_range}, "总体答题次数");
+                more_screen.each(function () {
+                    var condition_dict = $.parseJSON($(this).find(".checkbox").attr("data-condition"));
+                    var chart_color = $(this).find(".checkbox").attr("data-color");
+                    var series_name = $(this).find(".checkbox").find("span").text();
+                    if (condition_dict) {
+                        condition_dict['time_range'] = time_range;
+                        show_tendency_member_times_chart(condition_dict, series_name, chart_color, not_checked_name_list)
+                    }
+
+                });
+            }
+
+        } else if (dom_id === "daily_city_member_topn_chart") {
+            var myChart = echarts.getInstanceByDom(document.getElementById("daily_city_member_topn_chart"));
+            if (myChart) {
+                var option = myChart.getOption();
+                option.series = [];
+                option.legend[0].data = [];
+                myChart.dispose();
+            }
+            if ($("#switch_city").hasClass("active")) {
+                show_daily_member_quantuty_top_chart({"time_range": time_range, "stat_type": 2})
+            } else if ($("#switch_province").hasClass("active")) {
+                show_daily_member_quantuty_top_chart({"time_range": time_range, "stat_type": 1})
+            }
+        }
+    });
+
+
+    //人次趋势 (默认次数)
+    $('#tendency_member_times_chart').ready(function () {
+        ajaxGet("{{ reverse_url('backoffice_reports_search_condition_setup') }}?module={{  MODULE_SEARCH_CONDITION_SITUATION_MEMBER_TIMES}}", {}, function (result) {
+            show_tendency_member_times_chart({}, '总体答题次数');
+            if (result.code == 0) {
+                {#tip_msg("获取条件失败！", 2000);#}
+            } else if (result.code == -1) {
+                tip_msg("条件缺少参数！", 2000);
+            } else {
+                if (result.conditions) {
+                    var moreScreenBox = $("#tendency_member_times_chart").siblings(".more_screen_box");
+                    for (var key in result.conditions) {
+                        var value = result.conditions[key];
+                        var condition = value.condition;
+                        var name = value.name;
+                        var chart_color = value.color;
+                        var condition_str = JSON.stringify(condition);
+                        var province_str = JSON.stringify(value.province_dict);
+                        var chart = "cl" + (moreScreenBox.children().length + 1).toString();
+                        var moreScreen = '<div class="more_screen clear fl mr20"> <div class="checkbox fl" data-province =  ' + province_str + ' data-condition=' + condition_str + ' data-color=' + chart_color + '><i class="checkbox_i ' + chart + ' checked"></i><span>' + name + '</span></div> <div class="screen_control fl"> <i class="edit_i"></i> <i class="delete_i"></i> </div> </div>';
+                        moreScreenBox.append(moreScreen);
+                        show_tendency_member_times_chart(condition, name, chart_color);
+                    }
+                    opensShow(moreScreenBox);
+                } else {
+                    $(".opens").hide();
+                }
+            }
+        });
+
+    });
+
+    function show_tendency_member_times_chart(data, series_name, chart_color, not_checked_name_list) {
+        var time_range = $("#tendency_member_times_chart").siblings(".set_time_box").find(".active").attr("time_range");
+        data["time_range"] = time_range;
+        ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_daily_member_times') }}", data, function (result) {
+            if (result.code === 0) {
+                tip_msg("获取数据失败！", 2000);
+            } else if (result.code === 2) {
+                get_cachekey_data(result.cache_key, showTendencyMemberTimesChart, series_name, chart_color, not_checked_name_list)
+            } else {
+                showTendencyMemberTimesChart(result.data, series_name, chart_color, not_checked_name_list);
+            }
+        });
+    }
+
+    //答题趋势统计切换 到人数
+    $("#switch_daily_quantity").on('click', function () {
+        var not_checked_name_list = get_not_checked_name();
+        if ($(this).hasClass("active")) return;
+        $(this).addClass("active").siblings().removeClass("active");
+        var myChart = echarts.getInstanceByDom(document.getElementById('tendency_member_times_chart'));
+        if (myChart) {
+            myChart.dispose();
+        }
+        if ($.inArray("总体答题次数", not_checked_name_list) !== -1) {
+            not_checked_name_list.remove("总体答题次数");
+            not_checked_name_list.push("总体答题人数")
+        }
+        show_tendency_member_quantity_chart({}, '总体答题人数');
+        $(this).parents(".add_manage").siblings(".echart_box").find(".screen_box .checkbox").find("span").text("总体答题人数");
+        var more_screen = $(this).parents(".add_manage").siblings(".echart_box").find(".more_screen ");
+        more_screen.each(function () {
+            //查询条件
+            var data_condition = $.parseJSON($(this).find(".checkbox").attr("data-condition"));
+            var chart_color = $(this).find(".checkbox").attr("data-color");
+            var data_name = $(this).find(".checkbox").find('span').text();
+            show_tendency_member_quantity_chart(data_condition, data_name, chart_color, not_checked_name_list);
+        });
+    });
+
+    //答题趋势统计切换 到次数
+    $("#switch_daily_times").on('click', function () {
+        var not_checked_name_list = get_not_checked_name();
+        if ($(this).hasClass("active")) return;
+        $(this).addClass("active").siblings().removeClass("active");
+        var myChart = echarts.getInstanceByDom(document.getElementById('tendency_member_times_chart'));
+        if (myChart) {
+            myChart.dispose();
+        }
+        if ($.inArray("总体答题人数", not_checked_name_list) !== -1) {
+            not_checked_name_list.remove("总体答题人数");
+            not_checked_name_list.push("总体答题次数")
+        }
+        show_tendency_member_times_chart({}, '总体答题次数');
+        $(this).parents(".add_manage").siblings(".echart_box").find(".screen_box .checkbox").find("span").text("总体答题次数");
+        var more_screen = $(this).parents(".add_manage").siblings(".echart_box").find(".more_screen ");
+        more_screen.each(function () {
+            //查询条件
+            var data_condition = $.parseJSON($(this).find(".checkbox").attr("data-condition"));
+            var chart_color = $(this).find(".checkbox").attr("data-color");
+            var data_name = $(this).find(".checkbox").find('span').text();
+            show_tendency_member_times_chart(data_condition, data_name, chart_color, not_checked_name_list, "次数");
+        });
+    });
+
+    function show_tendency_member_quantity_chart(data, series_name, chart_color, not_checked_name_list) {
+        var time_range = $("#tendency_member_times_chart").siblings(".set_time_box").find(".active").attr("time_range");
+        data["time_range"] = time_range;
+        ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_daily_member_quantity') }}", data, function (result) {
+            if (result.code === 0) {
+                tip_msg("获取数据失败！", 2000);
+            } else if(result.code === 2) {
+                get_cachekey_data(result.cache_key, showTendencyMemberTimesChart, series_name, chart_color, not_checked_name_list)
+            } else {
+                showTendencyMemberTimesChart(result.data, series_name, chart_color, not_checked_name_list, "人数");
+            }
+        });
+    }
+
+    //公民活跃度
+    $('#member_active_chart').ready(function () {
+        ajaxGet("{{ reverse_url('backoffice_reports_search_condition_setup') }}?module={{  MODULE_SEARCH_CONDITION_SITUATION_MEMBER_ACTIVE}}", {}, function (result) {
+            show_member_active_chart({}, '总体活跃度');
+            if (result.code == 0) {
+                {#tip_msg("获取条件失败！", 2000);#}
+            } else if (result.code == -1) {
+                tip_msg("条件缺少参数！", 2000);
+            } else {
+                if (result.conditions) {
+                    var moreScreenBox = $("#member_active_chart").siblings(".more_screen_box");
+                    for (var key in result.conditions) {
+                        var value = result.conditions[key];
+                        var condition = value.condition;
+                        var name = value.name;
+                        var chart_color = value.color;
+                        var condition_str = JSON.stringify(condition);
+                        var province_str = JSON.stringify(value.province_dict);
+                        var chart = "cl" + (moreScreenBox.children().length + 1).toString();
+                        var moreScreen = '<div class="more_screen clear fl mr20"> <div class="checkbox fl" data-province = ' + province_str + ' data-condition=' + condition_str + ' data-color=' + chart_color + '><i class="checkbox_i ' + chart + ' checked"></i><span>' + name + '</span></div> <div class="screen_control fl"> <i class="edit_i"></i> <i class="delete_i"></i> </div> </div>';
+                        moreScreenBox.append(moreScreen);
+                        show_member_active_chart(condition, name, chart_color);
+                    }
+                    opensShow(moreScreenBox);
+                } else {
+                    $(".opens").hide();
+                }
+            }
+        });
+
+
+    });
+
+    function show_member_active_chart(data, series_name, chart_color) {
+        ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_member_active') }}", data, function (result) {
+            if (result.code === 0) {
+                tip_msg("获取数据失败！", 2000);
+            } else if (result.code === 2) {
+                get_cachekey_data(result.cache_key, showMemberActiveChart, series_name, chart_color)
+            } else {
+                showMemberActiveChart(result.data, series_name, chart_color);
+            }
+        });
+    }
+
+    //日参与会员排行
+    $('#daily_city_member_topn_chart').ready(function () {
+        // 城市(默认)
+        show_daily_member_quantuty_top_chart({"stat_type": 2});
+    });
+    
+    function show_daily_member_quantuty_top_chart(data) {
+        var time_range = $("#daily_city_member_topn_chart").siblings(".set_time_box").find(".active").attr("time_range");
+        data["time_range"] = time_range;
+        var stat_type = null;
+        if ($("#top_switch_quantity").hasClass("active")) {
+            stat_type = 1
+        } else if ($("#top_switch_times").hasClass("active")) {
+            stat_type = 2
+        }
+        ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_daily_member_quantity_top') }}", data, function (result) {
+            if (result.code === 0) {
+                tip_msg("获取数据失败！", 2000);
+            } else if (result.code === 2) {
+                get_cachekey_data(result.cache_key, showSituationDailyMemberQuantityTopChart, stat_type)
+            } else {
+                showSituationDailyMemberQuantityTopChart(result.data, stat_type);
+            }
+        });
+    }
+
+    //切换城市
+    $("#switch_city").on("click", function () {
+        if ($(this).hasClass("active")) return;
+        $(this).addClass("active").siblings().removeClass("active");
+        show_daily_member_quantuty_top_chart({"stat_type": 2});
+    });
+    //切换省份
+    $("#switch_province").on("click", function () {
+        if ($(this).hasClass("active")) return;
+        $(this).addClass("active").siblings().removeClass("active");
+        show_daily_member_quantuty_top_chart({"stat_type": 1});
+    });
+    //切换人数
+    $("#top_switch_quantity").on("click", function () {
+        if ($(this).hasClass("active")) return;
+        $(this).addClass("active").siblings().removeClass("active");
+        var myChart = echarts.getInstanceByDom(document.getElementById("daily_city_member_topn_chart"));
+        myChart.clear();
+        show_daily_member_quantuty_top_chart({"stat_category": 1})
+    });
+    //切换次数
+    $("#top_switch_times").on("click", function () {
+        if ($(this).hasClass("active")) return;
+        $(this).addClass("active").siblings().removeClass("active");
+        var myChart = echarts.getInstanceByDom(document.getElementById("daily_city_member_topn_chart"));
+        myChart.clear();
+        show_daily_member_quantuty_top_chart({"stat_category": 2})
+    });
+    /*
+        //每日城市新会员Top N
+        $('#daily_city_member_topn_chart').ready(function () {
+            show_daily_city_member_topn_chart({});
+        });
+
+        function show_daily_city_member_topn_chart(data) {
+            var time_range = $("#daily_city_member_topn_chart").siblings(".set_time_box").find(".active").attr("time_range");
+            data["time_range"] = time_range;
+            ajaxPost("{{ reverse_url('backoffice_reports_learning_tendency_daily_city_member_top_n') }}", data, function (result) {
+            if (result.code == 0) {
+                tip_msg("获取数据失败！", 2000);
+            } else {
+                showTendencyDailyCityMemberTopNChart(result.data);
+            }
+        });
+    }
+*/
+    //删除条目颜色重排：
+    function colReset(obj) {
+        var that = obj.find(".checkbox_i");
+        that.removeClass("cl1 cl2 cl3 cl4");
+        that.each(function (i) {
+            $(this).addClass("cl" + (i + 1));
+        })
+    }
+
+    function opensShow(obj) {
+        if (obj.parents(".edit_info").find(".more_screen_box").children().length > 0) {
+            obj.parents(".edit_info").find(".opens").show();
+        } else {
+            obj.parents(".edit_info").find(".opens").hide();
+        }
+    }
+
+    function checkedNum() {
+        var checked_num = $(".city_box .checkbox_i.checked");
+        if (checked_num.length > 0) {
+            $(".province_box li.active").find(".city_num").removeClass("dis_none").html(checked_num.length);
+        } else {
+            $(".province_box li.active").find(".city_num").addClass("dis_none");
+        }
+    }
+
+    // 已选城市初始化：
+    var city_checked = [];
+    var pro_checked = [];
+    var power_area = {{ manage_region_code_list }};
+
+    function success() {
+        //加载省份信息：
+        var provinceBox = $(".province_box");
+        var cityBox = $(".city_box");
+        for (var i = 0; i < city_data.length; i++) {
+            provinceBox.append('<li title="' + city_data[i].name + '" data-code="' + city_data[i].code + '">' + city_data[i].name + '<div class="city_num pa dis_none"></li>')
+        }
+//        权限-省份：
+        if (power_area.length !== 0) {
+            provinceBox.find("li").addClass("dis_none");
+            for (var a = 0; a < power_area.length; a++) {
+                provinceBox.find("li[data-code='" + power_area[a].substring(0, 2) + "0000']").removeClass("dis_none");
+            }
+        }
+        //请求城市信息：
+        $(".area_box").on("click", ".province_box li", function () {
+            if ($(this).hasClass("active")) {
+                return false;
+            } else {
+                $(".province_box li").removeClass("active");
+                $(this).addClass("active");
+                // 筛选城市并渲染：
+                var p_code = $(this).attr("data-code");
+                var p_name = $(this).attr("title");
+                var p_obj = city_data.filter(function (e) {
+                    return e.code == p_code;
+                })[0].sub;
+                if (p_obj.length > 1) {
+                    cityBox.empty().append('<li class="whole_province clear"><div class="checkbox_all fl ellipsis" title="' + p_name + '" data-code="' + p_code + '"><i class="checkbox_i"></i>全省</div></li><li class="city_choose clear"></li>');
+                } else {
+                    cityBox.empty().append('<li class="whole_province clear dis_none"><div class="checkbox_all fl ellipsis" title="' + p_name + '" data-code="' + p_code + '"><i class="checkbox_i"></i>全省</div></li><li class="city_choose clear"></li>');
+                }
+                for (var i = 0; i < p_obj.length; i++) {
+                    $(".city_box .city_choose").append('<div class="checkbox fl ellipsis" title="' + p_obj[i].name + '" data-code="' + p_obj[i].code + '"><i class="checkbox_i"></i>' + p_obj[i].name + '</div>');
+                }
+                // 权限-城市：
+                if (power_area.length !== 0) {
+                    var city_choose_box = $(".city_choose");
+                    city_choose_box.children().addClass("dis_none");
+                    for (var b = 0; b < power_area.length; b++) {
+                        city_choose_box.find("div[data-code='" + power_area[b] + "']").removeClass("dis_none");
+                    }
+                    var city_choose_length = city_choose_box.children().not(".dis_none").length;
+                    if (city_choose_length < p_obj.length && city_choose_length !== 0) {
+                        $(".whole_province").addClass("dis_none");
+                    } else if (city_choose_length === 0) {
+                        city_choose_box.children().removeClass("dis_none");
+                    } else {
+                        return;
+                    }
+                }
+                for (var j = 0; j < city_checked.length; j++) {
+                    cityBox.find("div[title='" + city_checked[j] + "']").find(".checkbox_i").addClass("checked");
+                }
+            }
+        });
+        //城市最多选5个，部类最多选3个：
+        $(".pop_table").on("click", ".checkbox", function () {
+            if (city_checked.length >= 5 && $(this).attr("data-code") && !$(this).find(".checkbox_i").hasClass("checked") && !$(this).parent().siblings().find(".checkbox_i").hasClass("checked")) {
+                tip_msg("最多选五个", 1000);
+                return false
+            } else if ($(this).parents(".knowledge_kind").find(".checkbox_i.checked").length >= 3 && !$(this).find(".checkbox_i").hasClass("checked")) {
+                tip_msg("最多选三个", 1000);
+                return false
+            } else {
+                //城市信息才有data-code属性,进行勾选操作：
+                if ($(this).attr("data-code")) {
+                    var c_data = $(this).attr("title");
+                    var c_code = $(this).attr("data-code");
+                    var p_data = $(this).parents(".city_box").find(".checkbox_all").attr("title");
+                    var p_code = $(this).parents(".city_box").find(".checkbox_all").attr("data-code");
+                    var checked = false;
+                    if (!$(this).find(".checkbox_i").hasClass("checked")) {
+                        $(this).parents(".city_box").find(".checkbox_all .checkbox_i").removeClass("checked");
+                        $(this).find(".checkbox_i").addClass("checked");
+                        city_checked.remove(p_data);
+                        city_checked.push(c_data);
+                        pro_checked.removeObj(p_data);
+                        if (pro_checked.length > 0) {
+                            for (var n = 0; n < pro_checked.length; n++) {
+                                if (pro_checked[n].p_name == p_data) {
+                                    pro_checked[n].sub.push({'c_name': c_data, 'c_code': c_code});
+                                    checked = true;
+                                    break;
+                                }
+                            }
+                            if (!checked) {
+                                pro_checked.push({
+                                    'p_name': p_data,
+                                    'p_code': p_code,
+                                    'sub': [{'c_name': c_data, 'c_code': c_code}]
+                                });
+                            }
+                        } else {
+                            pro_checked.push({
+                                'p_name': p_data,
+                                'p_code': p_code,
+                                'sub': [{'c_name': c_data, 'c_code': c_code}]
+                            });
+                        }
+                        pro_checked.deleteObj();
+                    } else {
+                        $(this).find(".checkbox_i").removeClass("checked");
+                        city_checked.remove(c_data);
+                        pro_checked.removeObj(c_data);
+                        pro_checked.deleteObj();
+                    }
+                    checkedNum();
+                } else {
+                    $(this).find(".checkbox_i").toggleClass("checked");
+                }
+            }
+        });
+        // 全市互斥：
+        cityBox.on("click", ".checkbox_all", function () {
+            if (city_checked.length >= 5 && !$(this).parents(".city_box").find(".city_choose .checkbox_i").hasClass("checked")) {
+                tip_msg("最多选五个", 1000);
+                return false
+            } else if (!$(this).find(".checkbox_i").hasClass("checked")) {
+                $(this).find(".checkbox_i").addClass("checked");
+                $(this).parent().siblings(".city_choose").find(".checkbox").each(function () {
+                    if ($(this).find(".checked")) {
+                        city_checked.remove($(this).attr("title"));
+                        pro_checked.removeObj($(this).attr("title"));
+                    }
+                });
+                pro_checked.deleteObj();
+                city_checked.push($(this).attr("title"));
+                pro_checked.push({
+                    'p_name': $(this).attr("title"),
+                    'p_code': $(this).attr("data-code"),
+                    'sub': [{'c_name': $(this).attr("title"), 'c_code': $(this).attr("data-code")}]
+                });
+                $(this).parents(".city_box").find(".city_choose .checkbox_i").removeClass("checked");
+            } else {
+                $(this).find(".checkbox_i").removeClass("checked");
+                city_checked.remove($(this).attr("title"));
+                pro_checked.removeObj($(this).attr("title"));
+                pro_checked.deleteObj();
+            }
+            checkedNum();
+        });
+    }
+
+    function end() {
+        // 销毁已选城市数组对象：
+        city_checked = [];
+        pro_checked = [];
+    }
+
+    $(function () {
+        //检查是否隐藏展开收起：
+        opensShow($(".more_screen_box"));
+        //新增条目：
+        $(document).on("click", ".add_entry", function () {
+            var _this = $(this);
+            var content = '<table class="pop_table"> <tr> <td width="20%">年龄段：</td> <td> <select name="age_group_list"> <option value="请选择">请选择</option> <option value="1">青年</option> <option value="2">中年</option> <option value="3">老年</option></select> </td> </tr> <tr> <td width="20%">性别：</td> <td> <select name="gender_list" > <option value="请选择">请选择</option> <option value="1">男</option> <option value="2">女</option></select> </td> </tr> <tr> <td width="20%">受教育程度：</td> <td> <select name="education_list"> <option value="请选择">请选择</option> <option value="1">初中及以下</option> <option value="2">高中/中专/技校</option> <option value="3">大专</option> <option value="4">本科/学士</option> <option value="5">硕士及以上</option> </select> </td> </tr> <tr> <td class="vt">地区：</td><td> <div class="area_box clear"><ul class="province_box fl mr10"></ul><ul class="city_box fl"></ul> </div> </td> </tr></table>';
+            layer.open({
+                type: 1,
+                title: "新增条目",
+                area: ["740px", "auto"],
+                btn: ["确认", "取消"],
+                content: content,
+                success: function () {
+                    success();
+                },
+                yes: function () {
+                    var arr = [], city = [];
+                    var data = {};
+                    var province_code_list = [];
+                    var city_code_list = [];
+                    var text = _this.parents(".edit_info_box").find(".checkbox");
+                    var repeat = false;
+                    $(".pop_table select").each(function () {
+                        if ($(this).find("option:selected").text() !== "请选择") {
+                            arr.push($(this).find("option:selected").text());
+                            data[$(this).attr('name')] = $(this).val();
+                        }
+                    });
+                    for (var i = 0; i < pro_checked.length; i++) {
+                        city.push(pro_checked[i].p_name);
+                        province_code_list.push(pro_checked[i].p_code);
+                        for (var j = 0; j < pro_checked[i].sub.length; j++) {
+                            city.push(pro_checked[i].sub[j].c_name);
+                            if (pro_checked[i].p_code != pro_checked[i].sub[j].c_code) {
+                                city_code_list.push(pro_checked[i].sub[j].c_code)
+                            }
+
+                        }
+                    }
+                    city = city.removeRepeat();
+                    arr = arr.concat(city);
+                    $(".knowledge_kind .checkbox_i.checked").each(function () {
+                        arr.push($(this).parent().text())
+                    });
+                    text.each(function () {
+                        if ($(this).text() == arr.join()) {
+                            repeat = true;
+                            return false;
+                        }
+                    });
+                    if (arr == "") {
+                        tip_msg("请至少选择一个筛选条件", 1000);
+                    } else if (repeat) {
+                        tip_msg("筛选条件已存在，请修改该条目", 2000);
+                    } else {
+                        var flag = true;
+                        var moreScreen_box = _this.parents(".edit_info").find(".more_screen_box");
+                        if (moreScreen_box.children().length > 3) {
+                            tip_msg("最多生成5个图表");
+                            flag = false;
+                            return false;
+                        }
+                        if (flag) {
+                            if (province_code_list) {
+                                data['province_code_list'] = province_code_list;
+                            }
+                            if (city_code_list) {
+                                data['city_code_list'] = city_code_list;
+                            }
+                            data = format_data(data);
+
+                            var data_str = JSON.stringify(data);
+                            var pro_checked_str = JSON.stringify(pro_checked);
+                            var chart = "cl" + (moreScreen_box.children().length + 1).toString();
+                            var chart_color = chart_color_list[moreScreen_box.children().length];
+                            var moreScreen = '<div class="more_screen clear fl mr20"> <div class="checkbox fl" data-province = ' + pro_checked_str + ' data-condition=' + data_str + ' data-color=' + chart_color + '><i class="checkbox_i ' + chart + ' checked"></i><span>' + arr.join() + '</span></div> <div class="screen_control fl"> <i class="edit_i"></i> <i class="delete_i"></i> </div> </div>';
+                            moreScreen_box.append(moreScreen);
+                            var condition_dict = {};
+                            var module = moreScreen_box.attr('condition_module');
+                            moreScreen_box.find(".more_screen").each(function (i) {
+                                var data_condition = $.parseJSON($(this).find(".checkbox").attr("data-condition"));
+                                var data_name = $(this).find(".checkbox").find("span").text();
+                                var province_str = $(this).find(".checkbox").attr("data-province");
+                                var data_province = [];
+                                if (province_str !== "undefined" && province_str !== undefined) {
+                                    data_province = $.parseJSON($(this).find(".checkbox").attr("data-province"));
+                                }
+                                condition_dict[i] = {
+                                    'name': data_name,
+                                    'condition': data_condition,
+                                    'province_dict': data_province
+                                };
+                            });
+                            var condition_str = JSON.stringify(condition_dict);
+                            var b_data = {
+                                'module': module,
+                                'conditions': condition_str
+                            };
+                            ajaxPost("{{ reverse_url("backoffice_reports_search_condition_setup") }}", b_data, function (result) {
+                                if (result.code == -2) {
+                                    tip_msg("条件格式错误！", 2000);
+                                } else if (result.code == -1) {
+                                    tip_msg("缺少参数！", 2000);
+                                }
+
+                            });
+                            opensShow(moreScreen_box);
+                            var echart_div = _this.parents(".edit_info").find(".common_echart");
+                            var dom_id = echart_div.attr("id");
+                            if (dom_id === "tendency_member_times_chart") {
+                                var time_range = $("#tendency_member_times_chart").siblings(".set_time_box").find(".active").attr("time_range");
+                                data["time_range"] = time_range;
+                                var r_url = "{{ reverse_url( "backoffice_reports_learning_situation_daily_member_times") }}";
+                                if ($("#switch_daily_times").hasClass("active")) {
+                                    r_url = "{{ reverse_url( "backoffice_reports_learning_situation_daily_member_times") }}";
+                                } else if ($("#switch_daily_quantity").hasClass("active")) {
+                                    r_url = "{{ reverse_url( "backoffice_reports_learning_situation_daily_member_quantity") }}";
+                                }
+                                ajaxPost(r_url, data, function (result) {
+                                    if (result.code === 0) {
+                                        tip_msg("获取数据失败！", 2000);
+                                    } else if (result.code === 2) {
+                                        get_cachekey_data(result.cache_key, showTendencyMemberTimesChart, arr.join(), chart_color)
+                                    } else {
+                                        showTendencyMemberTimesChart(result.data, arr.join(), chart_color);
+                                    }
+                                });
+                            } else {
+                                ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_member_active') }}", data, function (result) {
+                                    if (result.code == 0) {
+                                        tip_msg("获取数据失败！", 2000);
+                                    } else if (result.code === 2) {
+                                        get_cachekey_data(result.cache_key, showMemberActiveChart, arr.join(), chart_color);
+                                    } else {
+                                        showMemberActiveChart(result, arr.join(), chart_color);
+                                    }
+                                })
+                            }
+                            layer.closeAll();
+                        }
+                    }
+                },
+                end: function () {
+                    end();
+                }
+            })
+        });
+        $(".set_time a").click(function () {
+            $(this).parents(".set_time").find("a").removeClass("active");
+            $(this).toggleClass("active");
+        });
+        //编辑条目
+        $(document).on("click", ".edit_i", function () {
+            var _this = $(this);
+            var data_province = $(this).parents(".more_screen ").find(".checkbox").attr("data-province");
+            var data_condition = $(this).parents(".more_screen ").find(".checkbox").attr("data-condition");
+            var content = '<table class="pop_table"> <tr> <td width="20%">年龄段：</td> <td> <select class="age_group_list" name="age_group_list"> <option value="请选择">请选择</option> <option value="1">青年</option> <option value="2">中年</option> <option value="3">老年</option></select> </td> </tr> <tr> <td width="20%">性别：</td> <td> <select class="gender_list"  name="gender_list"> <option value="请选择">请选择</option> <option value="1">男</option> <option value="2">女</option></select> </td> </tr> <tr> <td width="20%">受教育程度：</td> <td> <select class="education_list" name="education_list"> <option value="请选择">请选择</option> <option value="1">初中及以下</option> <option value="2">高中/中专/技校</option> <option value="3">大专</option> <option value="4">本科/学士</option> <option value="5">硕士及以上</option> </select> </td> </tr> <tr> <td class="vt">地区：</td><td> <div class="area_box clear"><ul class="province_box fl mr10"></ul><ul class="city_box fl"></ul> </div> </td> </tr></table>';
+            layer.open({
+                type: 1,
+                title: "编辑条目",
+                area: ["740px", "auto"],
+                btn: ["确认", "取消"],
+                content: content,
+                success: function () {
+                    var condition_dict = $.parseJSON(data_condition);
+                    var province_dict = $.parseJSON(data_province);
+                    pro_checked = pro_checked.concat(province_dict);
+                    // 已选城市初始化：
+                    for (var m = 0; m < province_dict.length; m++) {
+                        for (var n = 0; n < province_dict[m].sub.length; n++) {
+                            city_checked.push(province_dict[m].sub[n].c_name);
+                        }
+                    }
+                    //初始化数值：
+                    if (condition_dict.age_group_list) {
+                        $(".age_group_list").find("option").eq(condition_dict.age_group_list[0]).prop("selected", true);
+                    }
+                    if (condition_dict.gender_list) {
+                        $(".gender_list").find("option").eq(condition_dict.gender_list[0]).prop("selected", true);
+                    }
+                    if (condition_dict.education_list) {
+                        $(".education_list").find("option").eq(condition_dict.education_list[0]).prop("selected", true);
+                    }
+                    //加载省份信息：
+                    var provinceBox = $(".province_box");
+                    var cityBox = $(".city_box");
+                    for (var i = 0; i < city_data.length; i++) {
+                        provinceBox.append('<li title="' + city_data[i].name + '" data-code="' + city_data[i].code + '">' + city_data[i].name + '<div class="city_num pa dis_none"></li>')
+                    }
+                    //        权限-省份：
+                    if (power_area.length !== 0) {
+                        provinceBox.find("li").addClass("dis_none");
+                        for (var a = 0; a < power_area.length; a++) {
+                            provinceBox.find("li[data-code='" + power_area[a].substring(0, 2) + "0000']").removeClass("dis_none");
+                        }
+                    }
+                    if (condition_dict.city_code_list.length != 0) {
+                        initNum(condition_dict.city_code_list);
+                    } else {
+                        initNum(condition_dict.province_code_list);
+                    }
+                    //请求城市信息：
+                    $(".area_box").on("click", ".province_box li", function () {
+                        if ($(this).hasClass("active")) {
+                            return false;
+                        } else {
+                            $(".province_box li").removeClass("active");
+                            $(this).addClass("active");
+                            //筛选城市并渲染：
+                            var p_code = $(this).attr("data-code");
+                            var p_name = $(this).attr("title");
+                            var p_obj = city_data.filter(function (e) {
+                                return e.code == p_code;
+                            })[0].sub;
+                            if (p_obj.length > 1) {
+                                cityBox.empty().append('<li class="whole_province clear"><div class="checkbox_all fl ellipsis" title="' + p_name + '" data-code="' + p_code + '"><i class="checkbox_i"></i>全省</div></li><li class="city_choose clear"></li>');
+                            } else {
+                                cityBox.empty().append('<li class="whole_province clear dis_none"><div class="checkbox_all fl ellipsis" title="' + p_name + '" data-code="' + p_code + '"><i class="checkbox_i"></i>全省</div></li><li class="city_choose clear"></li>');
+                            }
+                            for (var i = 0; i < p_obj.length; i++) {
+                                $(".city_box .city_choose").append('<div class="checkbox fl ellipsis" title="' + p_obj[i].name + '" data-code="' + p_obj[i].code + '"><i class="checkbox_i"></i>' + p_obj[i].name + '</div>')
+                            }
+                            // 权限-城市：
+                            if (power_area.length !== 0) {
+                                var city_choose_box = $(".city_choose");
+                                city_choose_box.children().addClass("dis_none");
+                                for (var b = 0; b < power_area.length; b++) {
+                                    city_choose_box.find("div[data-code='" + power_area[b] + "']").removeClass("dis_none");
+                                }
+                                var city_choose_length = city_choose_box.children().not(".dis_none").length;
+                                if (city_choose_length < p_obj.length && city_choose_length !== 0) {
+                                    $(".whole_province").addClass("dis_none");
+                                } else if (city_choose_length === 0) {
+                                    city_choose_box.children().removeClass("dis_none");
+                                } else {
+                                    return;
+                                }
+                            }
+                            for (var j = 0; j < city_checked.length; j++) {
+                                cityBox.find("div[title='" + city_checked[j] + "']").find(".checkbox_i").addClass("checked");
+                            }
+                        }
+                    });
+                    //城市最多选5个，部类最多选3个：
+                    $(".pop_table").on("click", ".checkbox", function () {
+                        if (city_checked.length >= 5 && $(this).attr("data-code") && !$(this).find(".checkbox_i").hasClass("checked") && !$(this).parent().siblings().find(".checkbox_i").hasClass("checked")) {
+                            tip_msg("最多选五个", 1000);
+                            return false
+                        } else if ($(this).parents(".knowledge_kind").find(".checkbox_i.checked").length >= 3 && !$(this).find(".checkbox_i").hasClass("checked")) {
+                            tip_msg("最多选三个", 1000);
+                            return false
+                        } else {
+                            //城市信息才有data-code属性,进行勾选操作：
+                            if ($(this).attr("data-code")) {
+                                var c_data = $(this).attr("title");
+                                var c_code = $(this).attr("data-code");
+                                var p_data = $(this).parents(".city_box").find(".checkbox_all").attr("title");
+                                var p_code = $(this).parents(".city_box").find(".checkbox_all").attr("data-code");
+                                var checked = false;
+                                if (!$(this).find(".checkbox_i").hasClass("checked")) {
+                                    $(this).parents(".city_box").find(".checkbox_all .checkbox_i").removeClass("checked");
+                                    $(this).find(".checkbox_i").addClass("checked");
+                                    city_checked.remove(p_data);
+                                    city_checked.push(c_data);
+                                    pro_checked.removeObj(p_data);
+                                    if (pro_checked.length > 0) {
+                                        for (var n = 0; n < pro_checked.length; n++) {
+                                            if (pro_checked[n].p_name == p_data) {
+                                                pro_checked[n].sub.push({'c_name': c_data, 'c_code': c_code});
+                                                checked = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!checked) {
+                                            pro_checked.push({
+                                                'p_name': p_data,
+                                                'p_code': p_code,
+                                                'sub': [{'c_name': c_data, 'c_code': c_code}]
+                                            });
+                                        }
+                                    } else {
+                                        pro_checked.push({
+                                            'p_name': p_data,
+                                            'p_code': p_code,
+                                            'sub': [{'c_name': c_data, 'c_code': c_code}]
+                                        });
+                                    }
+                                    pro_checked.deleteObj();
+                                } else {
+                                    $(this).find(".checkbox_i").removeClass("checked");
+                                    city_checked.remove(c_data);
+                                    pro_checked.removeObj(c_data);
+                                    pro_checked.deleteObj();
+                                }
+                                checkedNum();
+                            } else {
+                                $(this).find(".checkbox_i").toggleClass("checked");
+                            }
+                        }
+                    });
+                    // 全市互斥：
+                    cityBox.on("click", ".checkbox_all", function () {
+                        if (city_checked.length >= 5 && !$(this).parents(".city_box").find(".city_choose .checkbox_i").hasClass("checked")) {
+                            tip_msg("最多选五个", 1000);
+                            return false
+                        } else if (!$(this).find(".checkbox_i").hasClass("checked")) {
+                            $(this).find(".checkbox_i").addClass("checked");
+                            $(this).parent().siblings(".city_choose").find(".checkbox").each(function () {
+                                if ($(this).find(".checked")) {
+                                    city_checked.remove($(this).attr("title"));
+                                    pro_checked.removeObj($(this).attr("title"));
+                                }
+                            });
+                            pro_checked.deleteObj();
+                            city_checked.push($(this).attr("title"));
+                            pro_checked.push({
+                                'p_name': $(this).attr("title"),
+                                'p_code': $(this).attr("data-code"),
+                                'sub': [{'c_name': $(this).attr("title"), 'c_code': $(this).attr("data-code")}]
+                            });
+                            $(this).parents(".city_box").find(".city_choose .checkbox_i").removeClass("checked");
+                        } else {
+                            $(this).find(".checkbox_i").removeClass("checked");
+                            city_checked.remove($(this).attr("title"));
+                            pro_checked.removeObj($(this).attr("title"));
+                            pro_checked.deleteObj();
+                        }
+                        checkedNum();
+                    });
+                },
+                yes: function () {
+                    var arr = [], city = [];
+                    var data = {};
+                    var province_code_list = [];
+                    var city_code_list = [];
+                    var text = _this.parents(".edit_info_box").find(".more_screen .checkbox");
+                    var repeat = false;
+                    $(".pop_table select").each(function () {
+                        if ($(this).find("option:selected").text() !== "请选择") {
+                            arr.push($(this).find("option:selected").text());
+                            data[$(this).attr('name')] = $(this).val();
+                        }
+                    });
+                    for (var i = 0; i < pro_checked.length; i++) {
+                        city.push(pro_checked[i].p_name);
+                        province_code_list.push(pro_checked[i].p_code);
+                        for (var j = 0; j < pro_checked[i].sub.length; j++) {
+                            city.push(pro_checked[i].sub[j].c_name);
+                            if (pro_checked[i].p_code != pro_checked[i].sub[j].c_code) {
+                                if (pro_checked[i].p_code != pro_checked[i].sub[j].c_code) {
+                                    city_code_list.push(pro_checked[i].sub[j].c_code)
+                                }
+                            }
+                        }
+                    }
+                    city = city.removeRepeat();
+                    arr = arr.concat(city);
+                    $(".knowledge_kind .checkbox_i.checked").each(function () {
+                        arr.push($(this).parent().text())
+                    });
+                    text.each(function () {
+                        if ($(this).text() == arr.join()) {
+                            repeat = true;
+                            return false;
+                        }
+                    });
+                    if (arr == "") {
+                        tip_msg("请至少选择一个筛选条件", 1000);
+                    } else if (repeat) {
+                        tip_msg("筛选条件已存在，请修改该条目", 2000);
+                    } else {
+                        var old_name = _this.parents(".more_screen").find(".checkbox").find("span").text();
+                        var flag = true;
+                        var moreScreen_box = _this.parents(".edit_info").find(".more_screen_box");
+                        if (flag) {
+                            if (province_code_list) {
+                                data['province_code_list'] = province_code_list;
+                            }
+                            if (city_code_list) {
+                                data['city_code_list'] = city_code_list;
+                            }
+                            data = format_data(data);
+                            var pro_checked_str = JSON.stringify(pro_checked);
+                            _this.parents(".more_screen").find(".checkbox").attr("data-province", pro_checked_str);
+                            var data_str = JSON.stringify(data);
+                            _this.parents(".more_screen").find(".checkbox").attr("data-condition", data_str);
+                            _this.parents(".more_screen").find(".checkbox").find("span").html(arr.join());
+                            var condition_dict = {};
+                            var module = moreScreen_box.attr('condition_module');
+                            moreScreen_box.find(".more_screen").each(function (i) {
+                                var data_condition = $.parseJSON($(this).find(".checkbox").attr("data-condition"));
+                                var data_name = $(this).find(".checkbox").find("span").text();
+                                var province_str = $(this).find(".checkbox").attr("data-province");
+                                var data_province = [];
+                                if (province_str !== "undefined" && province_str !== undefined) {
+                                    data_province = $.parseJSON($(this).find(".checkbox").attr("data-province"));
+                                }
+
+                                condition_dict[i] = {
+                                    'name': data_name,
+                                    'condition': data_condition,
+                                    'province_dict': data_province
+                                };
+                            });
+                            var condition_str = JSON.stringify(condition_dict);
+                            var b_data = {
+                                'module': module,
+                                'conditions': condition_str
+                            };
+                            ajaxPost("{{ reverse_url("backoffice_reports_search_condition_setup") }}", b_data, function (result) {
+                                if (result.code == -2) {
+                                    tip_msg("条件格式错误！", 2000);
+                                } else if (result.code == -1) {
+                                    tip_msg("缺少参数！", 2000);
+                                }
+
+                            });
+
+                            opensShow(moreScreen_box);
+
+                            var echart_div = _this.parents(".more_screen_box").siblings(".common_echart");
+                            var dom_id = echart_div.attr("id");
+                            var myChart = echarts.getInstanceByDom(document.getElementById(dom_id));
+                            if (myChart) {
+
+                                var chart_color = _this.parents(".more_screen").find(".checkbox").attr("data-color");
+                                var option = myChart.getOption();
+                                var legend_data_list = option.legend[0].data;
+                                var index = legend_data_list.indexOf(old_name);
+                                if (dom_id === "tendency_member_times_chart") {
+                                    var time_range = $("#tendency_member_times_chart").siblings(".set_time_box").find(".active").attr("time_range");
+                                    data["time_range"] = time_range;
+                                    ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_daily_member_times') }}", data, function (result) {
+                                        if (result.code == 0) {
+                                            tip_msg("获取数据失败！", 2000);
+                                        } else {
+                                            var deal_data = deal_result_data(result.data, arr.join(), chart_color);
+                                            var series_dict = deal_data[1];
+                                            option.series[index] = series_dict;
+                                            option.legend[0].data[index] = arr.join();
+                                            myChart.clear();
+                                            myChart.setOption(option);
+                                        }
+                                    });
+                                } else {
+                                    ajaxPost("{{ reverse_url('backoffice_reports_learning_situation_member_active') }}", data, function (result) {
+                                        if (result.code == 0) {
+                                            tip_msg("获取数据失败！", 2000);
+                                        } else {
+                                            var data = result.data;
+                                            var result_data = data.data_list;
+                                            var all_members = data.all_members;
+                                            var init_data_list = deal_result_data_member_active(result_data, all_members, arr.join(), chart_color);
+                                            var series_dict = init_data_list[1];
+                                            option.series[index] = series_dict;
+                                            option.legend[0].data[index] = arr.join();
+                                            myChart.clear();
+                                            myChart.setOption(option);
+                                        }
+                                    })
+                                }
+                            }
+                            layer.closeAll();
+                        }
+                    }
+                },
+                end: function () {
+                    city_checked = [];
+                    pro_checked = [];
+                }
+            });
+
+        });
+        //删除新增的条目：
+        $(document).on("click", ".delete_i", function () {
+            var _this = $(this);
+            confirm_dialog("删除条目", "确认删除吗？", function () {
+                var common_chart = _this.parents('.echart_box').children(".common_echart");
+                var dom_id = common_chart.attr('id');
+                var name = _this.parent().siblings(".checkbox").find('span').text();
+                var myChart = echarts.getInstanceByDom(document.getElementById(dom_id));
+                if (myChart) {
+                    myChart.dispose();
+
+                }
+                var this_screen_box = _this.parents(".more_screen_box");
+                _this.parents(".more_screen").remove();
+                colReset(this_screen_box);
+                opensShow(this_screen_box);
+
+                var condition_dict = {};
+                var module = this_screen_box.attr('condition_module');
+                this_screen_box.find(".more_screen").each(function (i) {
+                    var data_condition = $.parseJSON($(this).find(".checkbox").attr("data-condition"));
+                    var data_name = $(this).find(".checkbox").find('span').text();
+                    var province_str = $(this).find(".checkbox").attr("data-province");
+                    var data_province = [];
+                    if (province_str !== "undefined" && province_str !== undefined) {
+                        data_province = $.parseJSON($(this).find(".checkbox").attr("data-province"));
+                    }
+                    condition_dict[i] = {
+                        'name': data_name,
+                        'condition': data_condition,
+                        'province_dict': data_province
+                    };
+                });
+
+                var condition_str = JSON.stringify(condition_dict);
+                var b_data = {
+                    'module': module,
+                    'conditions': condition_str
+                };
+                ajaxPost("{{ reverse_url("backoffice_reports_search_condition_setup") }}", b_data, function (result) {
+                    if (result.code == -2) {
+                        tip_msg("条件格式错误！", 2000);
+                    } else if (result.code == -1) {
+                        tip_msg("缺少参数！", 2000);
+                    } else {
+                        ajaxGet("{{ reverse_url('backoffice_reports_search_condition_setup') }}?module=" + module, {}, function (result) {
+                            if (module === "{{ MODULE_SEARCH_CONDITION_SITUATION_MEMBER_TIMES }}") {
+                                if ($("#switch_daily_times").hasClass("active")) {
+                                    show_tendency_member_times_chart({}, '总体答题次数');
+                                } else if ($("#switch_daily_quantity").hasClass("active")) {
+                                    show_tendency_member_quantity_chart({}, '总体答题人数');
+                                }
+
+                            } else if (module === "{{ MODULE_SEARCH_CONDITION_SITUATION_MEMBER_ACTIVE }}") {
+                                show_member_active_chart({}, '总体活跃度');
+                            }
+                            if (result.code == 0) {
+                            } else if (result.code == -1) {
+                                tip_msg("条件缺少参数！", 2000);
+                            } else {
+                                if (result.conditions) {
+                                    this_screen_box.empty();
+                                    for (var key in result.conditions) {
+                                        var value = result.conditions[key];
+                                        var name = value.name;
+                                        var condition = value.condition;
+                                        var chart_color = value.color;
+                                        var condition_str = JSON.stringify(condition);
+                                        var province_str = JSON.stringify(value.province_dict);
+                                        var chart = "cl" + (this_screen_box.children().length + 1).toString();
+                                        var moreScreen = '<div class="more_screen clear fl mr20"> <div class="checkbox fl" data-province = ' + province_str + ' data-condition=' + condition_str + ' data-color=' + chart_color + '><i class="checkbox_i ' + chart + ' checked"></i><span>' + name + '</span></div> <div class="screen_control fl"> <i class="edit_i"></i> <i class="delete_i"></i> </div> </div>';
+                                        this_screen_box.append(moreScreen);
+                                        if (module === "{{ MODULE_SEARCH_CONDITION_SITUATION_MEMBER_TIMES }}") {
+                                            if ($("#switch_daily_times").hasClass("active")) {
+                                                show_tendency_member_times_chart(condition, name, chart_color);
+                                            } else if ($("#switch_daily_quantity").hasClass("active")) {
+                                                show_tendency_member_quantity_chart(condition, name, chart_color);
+                                            }
+
+                                        } else if (module === "{{ MODULE_SEARCH_CONDITION_SITUATION_MEMBER_ACTIVE }}") {
+                                            show_member_active_chart(condition, name, chart_color);
+                                        }
+                                    }
+                                    opensShow(this_screen_box);
+                                } else {
+                                    $(".opens").hide();
+                                }
+                            }
+                        });
+                    }
+
+                });
+
+            });
+        });
+        $(".echart_box").on("click", ".checkbox", function () {
+            // 图例事件
+            var common_chart = $(this).parents('.echart_box').children(".common_echart");
+            var dom_id = common_chart.attr('id');
+            var name = $(this).text();
+            var myChart = echarts.getInstanceByDom(document.getElementById(dom_id));
+            myChart.dispatchAction({
+                type: 'legendToggleSelect',
+                name: name
+            });
+            $(this).find(".checkbox_i").toggleClass("checked");
+        });
+        //展开收起：
+        $(document).on("click", ".opens", function () {
+            if ($(this).hasClass("on")) {
+                $(this).removeClass("on").html("展开");
+                $(this).parents(".echart_box").find(".more_screen_box").slideUp();
+            } else {
+                $(this).addClass("on").html("收起");
+                $(this).parents(".echart_box").find(".more_screen_box").slideDown();
+            }
+        });
+    });
+    var dataZoom = [];
+    function light_skin() {
+        backgroundColor = '#fff';
+        areaColor = '#EAF3FF';
+        d_info = [
+            {"size": 10, "color": "#e83232"},
+            {"size": 8, "color": "#FF5858"},
+            {"size": 6, "color": "#FF7878"},
+            {"size": 6, "color": "#FFB8B8"},
+            {"size": 6, "color": "#FFD3D3"},
+            {"size": 6, "color": "#FFD3D3"},
+            {"size": 6, "color": "#FFD3D3"},
+            {"size": 6, "color": "#FFD3D3"}
+        ];
+        legend_data = [
+            {
+                name: '1',
+                icon: 'image://../../../../static/images/echarts/icons_rd1.png'
+            },
+            {
+                name: '2',
+                icon: 'image://../../../../static/images/echarts/icons_rd2.png'
+            },
+            {
+                name: '3',
+                icon: 'image://../../../../static/images/echarts/icons_rd3.png'
+            },
+            {
+                name: '4',
+                icon: 'image://../../../../static/images/echarts/icons_rd4.png'
+            },
+            {
+                name: '5',
+                icon: 'image://../../../../static/images/echarts/icons_rd5.png'
+            }
+        ];
+        color_offset = ['#91C8FF', '#1F90FF'];
+        emphasis_colors = ['#000', '#C0C0C0'];
+        item_color = '#eee';
+        dataZoom = [
+            {
+                startValue: 0,
+                fillerColor: 'rgba(208,208,208, 0.6)'
+            }]
+    }
+
+    function dark_skin() {
+        backgroundColor = 'transparent';
+        areaColor = '#354068';
+        d_info = [
+            {"size": 10, "color": "#F66C1C"},
+            {"size": 8, "color": "#F28926"},
+            {"size": 6, "color": "#EFA22F"},
+            {"size": 6, "color": "#EBB936"},
+            {"size": 6, "color": "#E9C33A"},
+            {"size": 6, "color": "#E9C33A"},
+            {"size": 6, "color": "#E9C33A"},
+            {"size": 6, "color": "#E9C33A"}
+        ];
+        legend_data = [
+            {
+                name: '1',
+                icon: 'image://../../../../static/images/echarts/icons_yl1.png'
+            },
+            {
+                name: '2',
+                icon: 'image://../../../../static/images/echarts/icons_yl2.png'
+            },
+            {
+                name: '3',
+                icon: 'image://../../../../static/images/echarts/icons_yl3.png'
+            },
+            {
+                name: '4',
+                icon: 'image://../../../../static/images/echarts/icons_yl4.png'
+            },
+            {
+                name: '5',
+                icon: 'image://../../../../static/images/echarts/icons_yl5.png'
+            }
+        ];
+        color_offset = ['#EAC43A', '#F76B1C'];
+        emphasis_colors = ['#EAC43A', '#303B5B'];
+        item_color = '#303B5B';
+        dataZoom = [{
+                type:'slider',
+                textStyle: {
+                    color: 'rgba(230, 230, 230, 0.6)'
+                },
+                startValue: 0,
+                fillerColor: 'rgba(208,208,208, 0.4)'
+            }]
+    }
+
+</script>
+{% end %}
+{% block js %}
+
+{% end %}

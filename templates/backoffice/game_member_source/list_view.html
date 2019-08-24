@@ -1,0 +1,168 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_MEMBER_SOURCE_ACTIVE, STATUS_MEMBER_SOURCE_INACTIVE %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <a href="{{ reverse_url('backoffice_source_add') }}" class="btn btn_i btn_primary btn_lg pr fl">新增用户来源<i class="add_manage_i"></i></a>
+    <a href="javascript:window.location.reload();" class="refresh_btn pl20 mr20 fr mt10"><i class="refresh_i"></i>刷新</a>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">来源列表<i class="list_title_i"></i></h3>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <td>来源编号</td>
+                <td>来源名称</td>
+                <td>更新时间</td>
+                <td>是否启用</td>
+                <td>操作</td>
+            </tr>
+            {% set source_list = paging.page_items %}
+            {% if source_list %}
+            {% for item in source_list %}
+            <tr>
+                <td>{{ item.code }}</td>
+                <td>{{ item.title }}</td>
+                <td>{{ datetime_format(item.updated_dt) }}</td>
+                <td>
+                    <label class="table_switch">
+                        <input oid="{{ item.oid }}" class="status_switch" type="checkbox"
+                               {% if item.status== STATUS_MEMBER_SOURCE_ACTIVE %}checked="checked" {% end %}>
+                        <i></i>
+                    </label>
+                </td>
+                <td class="tools">
+                    <a href="{{ reverse_url('backoffice_source_edit', item.oid) }}" class="edit_i fl tips" data-name="编辑"></a>
+                    <a oid="{{ item.oid }}" href="#" class="delete_i fl tips" data-name="删除"></a>
+                    {% if item.need_qr_code %}
+                    <a href="{{ reverse_url('backoffice_source_qr_download', item.oid) }}" class="download_i fl tips" data-name="下载二维码"></a>
+                    {% end %}
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="7" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+        <div class="fix_page clear {% if not source_list %}dis_none{% end %}">
+            <div class="fr">
+                <span>跳至</span>
+                <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+                <span>页</span>
+            </div>
+            <div class="paging fr mr10">
+                <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+                   {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+                <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+                   {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+                {{ paging.other_pages_html }}
+                <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+                   {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+                <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+                   {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+            </div>
+            <div class="fr mr20">
+                共
+                <span class="page_all">{{ paging.total_pages }}</span>
+                页/
+                <span class="data_all">{{ paging.total_items }}</span>
+                条数据
+            </div>
+            <div class="fr mr15">
+                <span>每页</span>
+                <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+                    {% for num in [10, 20, 50, 100, 200] %}
+                    <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}
+                    </option>
+                    {% end %}
+                </select>
+                <span>条</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val() || {{ per_page_quantity }},
+                }
+                window.location.href = "{{ reverse_url('backoffice_source_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+
+    $('.delete_i').on('click', function () {
+       source_oid = $(this).attr('oid');
+       confirm_dialog('警告', '是否删除该来源?', function () {
+           url = "/backoffice/game_member_source/delete/" + source_oid + "/";
+           ajaxPost(url, {}, function (ret) {
+               if (ret.code === 0 ){
+                   tip_msg("删除失败，请重试！", 2000)
+               } else if (ret.code === 1) {
+                   tip_msg("删除成功!", 2000, function () {
+                       window.location.reload();
+                   })
+               }
+           })
+       })
+    });
+
+    $('.status_switch').on('click', function () {
+            var obj = $(this);
+            source_oid = $(this).attr('oid');
+
+            var target_status = $(this).prop('checked') ? {{ STATUS_MEMBER_SOURCE_ACTIVE }} :{{ STATUS_MEMBER_SOURCE_INACTIVE }};
+            if (source_oid && target_status) {
+                var data = {
+                    'source_oid': source_oid,
+                    'target_status': target_status
+                };
+                var url = "{{ reverse_url('backoffice_source_status_change') }}";
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code !== 1) {
+                        tip_msg("变更会员状态失败！", 2000, function () {
+                            if (target_status === {{ STATUS_MEMBER_SOURCE_ACTIVE }}) {
+                                obj.prop('checked', '')
+                            } else {
+                                obj.prop('checked', 'checked')
+                            }
+                        });
+
+                    } else {
+                        tip_msg("变更会员状态成功！", 2000);
+                    }
+                });
+                remove_loading();
+            } else {
+                tip_msg("变更会员状态失败！", 2000, function () {
+                    if (target_status === {{ STATUS_MEMBER_SOURCE_ACTIVE }}) {
+                        obj.prop('checked', '')
+                    } else {
+                        obj.prop('checked', 'checked')
+                    }
+                });
+
+            }
+        });
+
+
+</script>
+{% end %}

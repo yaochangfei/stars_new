@@ -1,0 +1,241 @@
+{% extends '../../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_SUBJECT_CATEGORY_ACTIVE %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <a href="{{ reverse_url('backoffice_subject_category_add') }}"
+       class="btn btn_i btn_primary btn_lg pr fl mr20">新增题目类别<i
+            class="subject_category_add_i"></i></a>
+    <a href="javascript:;" class="refresh_btn pl20 mr20 fr mt10"><i class="refresh_i"></i>刷新</a>
+</div>
+<div class="filter_box clear">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <input id="sd_title" name="sd_title" type="text" placeholder="题目类别名称" value="{{ sd_title }}">
+    </div>
+    <div class="filter_btn fr">
+        <a href="javascript:;" class="btn btn_i btn_primary pr mr5" onclick="do_jump_2_page(event, 1);">
+            查询
+            <i class="btn_search"></i>
+        </a>
+        <a href="javascript:;" id="cancel_search" class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr">
+            <select>
+                <option value="排列方式">排列方式</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tbody>
+            <tr>
+                <th width="40"></th>
+                <th>题目类别名称</th>
+                <th>题目数</th>
+                <th>备注</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            {% if paging.page_items %}
+            {% for index, subject_category in enumerate(paging.page_items) %}
+            <tr>
+                <td class="tc">
+                    <i class="checkbox_i" oid="{{ subject_category.oid }}"></i>
+                </td>
+                <td>{{ string_display(subject_category.title) }}</td>
+                <td>0</td>
+                <td>{{ string_display(subject_category.comment) }}</td>
+                <td>
+                    <label class="table_switch">
+                        <input id="subject_cate_status" name="subject_category_status" type="checkbox"
+                               class="subject_category_status"
+                               {% if subject_category.status == STATUS_SUBJECT_CATEGORY_ACTIVE %}checked="checked"{% end %}
+                               oid="{{ str(subject_category.oid) }}">
+                        <i></i>
+                    </label>
+                </td>
+                <td class="tools">
+                    <a href="{{ reverse_url('backoffice_subject_category_edit', str(subject_category.oid)) }}"
+                       class="edit_i fl tips" data-name="编辑"></a>
+                    <a href="javascript:;" class="delete_i fl tips" data-name="删除"
+                       oid="{{ str(subject_category.oid) }}"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="6" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+            </tbody>
+        </table>
+        {% if paging.page_items %}
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr25 ml10"></i>全选</div>
+            <div class="fl ml20">
+                <select id="operate" name="operate">
+                    <option value="1">启用</option>
+                    <option value="0">停用</option>
+                    <option value="-1">删除</option>
+                </select>
+            </div>
+            <div class="fl">
+                <a href="javascript:;" id="btn_category_batch" class="btn btn_primary ml20 btn_sm">确定</a>
+            </div>
+        </div>
+        {% end %}
+    </div>
+</div>
+{% if paging.page_items %}
+<div class="fix_page clear">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num == 1 %}class="btn_disabled"{% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num == 1 %}class="btn_disabled"{% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num == paging.total_pages %}class="btn_disabled"{% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num == paging.total_pages %}class="btn_disabled"{% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity == num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+{% end %}
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var sd_title = $.trim($("#sd_title").val());
+                var params = {
+                    "sd_title": sd_title,
+                    "page": to_page_num,
+                    "per_page_quantity": $('#per_page_quantity').val() || {{ per_page_quantity }}
+                };
+                window.location.href = "{{ reverse_url('backoffice_subject_category_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+    $(function () {
+        $(".subject_category_status").click(function (event) {
+            display_loading();
+            var target = $(event.target);
+            var subject_id = ($(event.target).attr('oid'));
+            var status = target.prop("checked");
+            ajaxPost("/backoffice/subject/category/status_switch/" + subject_id + "/", {"status": status}, function (result) {
+                if (result.code !== 1) {
+                    tip_msg("状态变更失败，请重试！", 2000);
+                    target.prop("checked", !status);
+                }
+                remove_loading()
+            })
+        });
+
+        $(".delete_i").click(function (event) {
+            confirm_dialog("警告", "确认要删除该题目类别？", function () {
+                display_loading();
+                var category_id = ($(event.target).attr('oid'));
+                if (category_id) {
+                    ajaxPost("/backoffice/subject/category/delete/" + category_id + "/", {}, function (result) {
+                        if (result.code === 1) {
+                            tip_msg("题目类别已被删除！", 2000, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            tip_msg("题目类别删除失败！", 2000);
+                        }
+                        remove_loading()
+                    });
+                }
+            });
+        });
+
+        $("#btn_category_batch").click(function () {
+            display_loading();
+            var operate = $("#operate").val();
+            var subject_category_id_list = [];
+            $(".table_list .checkbox_i").each(function () {
+                if ($(this).hasClass("checked")) {
+                    subject_category_id_list.push($(this).attr("oid"));
+                }
+            });
+            if (subject_category_id_list.length === 0) {
+                tip_msg("操作无法完成，请至少选择一笔题目类别信息！", 2000);
+                remove_loading();
+                return;
+            }
+            var msg = "";
+            if (operate === '0') {
+                msg = "确定【停用】选中的题目类别？";
+            } else if (operate === '-1') {
+                msg = "确定【删除】选中的题目类别？";
+            } else {
+                msg = "确定【启用】选中的题目类别？";
+            }
+            confirm_dialog("警告", msg, function () {
+                var data = {
+                    "operate": operate,
+                    "subject_category_id_list": subject_category_id_list
+                };
+                ajaxPost("{{ reverse_url('backoffice_subject_category_batch_operate') }}", data, function (result) {
+                    if (result.code === 1) {
+                        tip_msg("操作完成！", 2000, function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        tip_msg("操作失败，请重试！", 2000);
+                    }
+                    remove_loading()
+                })
+            });
+
+        });
+
+        $(".refresh_btn").click(function () {
+            window.location.reload();
+        });
+
+        $("#cancel_search").click(function (event) {
+            $("#sd_title").val("");
+            do_jump_2_page(event, 1);
+        });
+    });
+</script>
+{% end %}

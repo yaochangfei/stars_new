@@ -1,0 +1,147 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CATEGORY_REDPACKET_RULE_DICT %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_race_redpkt_rule_list') }}?race_cid={{race_cid}}" class="pl10 ml10">红包规则管理</a>
+        <span>&gt; 新增红包规则</span>
+    </div>
+    <div class="fr clear">
+        <a href="{{ reverse_url('backoffice_race_redpkt_rule_list') }}?race_cid={{race_cid}}"  class="fl back_btn pl20 mr20">
+            <i class="back_i"></i>返回
+        </a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr">新增红包规则<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        {% raw xsrf_form_html() %}
+        <table class="table_form">
+            <tbody>
+            <tr>
+                <th width="40%"><span class="necessary">*</span>红包规则编号</th>
+                <td><input id="code" name="code" class="input_text" type="text" maxlength="32"></td>
+            </tr>
+            <tr>
+                <th width="40%"><span class="necessary">*</span>红包规则名称</th>
+                <td><input id="title" name="title" class="input_text" type="text" maxlength="64"></td>
+            </tr>
+            <tr>
+                <th width="40%"><span class="necessary">*</span>红包发放形式</th>
+                <td>
+                    <select id="category" name="category">
+                        <option value="-1">—— 请选择 ——</option>
+                        {% for k, v in CATEGORY_REDPACKET_RULE_DICT.items() %}
+                        <option value="{{ k }}">{{ v }}</option>
+                        {% end %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="vt pt10">备注</th>
+                <td>
+                    <textarea id="comment" name="comment" class="textarea"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>状态</th>
+                <td>
+                    <label class="table_switch">
+                        <input id="status" name="status" type="checkbox">
+                        <i></i>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <span id="error_msg" class="cl_danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td>
+                    <a href="javascript:" id="submit" class="btn btn_primary btn_lg mt10">提交</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    $(function () {
+        $("#submit").on('click', function () {
+            display_loading();
+            if (!check_form()) {
+                remove_loading();
+                return false;
+            }
+
+            var params = {
+                'title': $.trim($("#title").val()),
+                'code': $.trim($("#code").val()),
+                'category': $("#category").val(),
+                'comment': $.trim($("#comment").val()),
+                'status': $("#status").prop('checked')
+            };
+
+            ajaxPost("{{ reverse_url('backoffice_race_redpkt_rule_add') }}?race_cid={{race_cid}}", params, function (data) {
+                if (data.code === 0) {
+                    tip_msg("添加红包规则失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("红包规则添加成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_race_redpkt_rule_list') }}?race_cid={{race_cid}}";
+                    });
+                } else if (data.code === -2) {
+                    $("#error_msg").html("请输入红包规则编号！");
+                } else if (data.code === -1) {
+                    $("#error_msg").html("请输入红包规则名称！");
+                } else if (data.code === -3) {
+                    $("#error_msg").html("请选择红包发放类型！");
+                } else if (data.code === -4) {
+                    $("#error_msg").html("红包规则编号已存在！");
+                }
+                remove_loading();
+            })
+        });
+
+        $(".radio_i").on("click", function () {
+            $(this).parents(".table_form").find(".radio_i").removeClass("checked").parent().find(".hide_f").val("");
+            $(this).addClass("checked").parent().find(".hide_f").val("1");
+        });
+    });
+
+    function check_form() {
+        var title = $.trim($("#title").val());
+        var code = $.trim($("#code").val());
+        var category = $("#category").val();
+
+        var re = /^[a-zA-Z0-9_]*$/;
+        if (code === "") {
+            $("#error_msg").html("请输入红包规则编号！");
+            return false;
+        }
+        if (title === "") {
+            $("#error_msg").html("请输入红包规则名称！");
+            return false;
+        }
+
+        if (!re.test(code)) {
+            $("#error_msg").html("红包规则编号请输入字母、数字和下划线！");
+            return false;
+        }
+
+        console.log(category);
+        if (category === "-1") {
+            $("#error_msg").html("请选择红包发放形式！");
+            return false;
+        }
+        return true;
+    }
+
+</script>
+{% end %}

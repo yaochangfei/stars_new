@@ -1,0 +1,115 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_role_list') }}" class="pl10 ml10">角色列表</a><span> &gt; 角色新增</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl pr back_btn pl20 mr20">
+            <i class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">角色编辑<i class="list_title_i add_manage_i"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="role_add" name="role_add" method="post" action="{{ reverse_url('backoffice_role_add') }}">
+            {% raw xsrf_form_html() %}
+            <table class="table_form">
+                <tr>
+                    <th width="40%">
+                        <span class="necessary">*</span>角色编码
+                    </th>
+                    <td>
+                        <input id="code" name="code" class="input_text" type="text" placeholder="请输入角色编码"
+                               maxlength="16">
+                    </td>
+                </tr>
+                <tr>
+                    <th width="40%">
+                        <span class="necessary">*</span>角色名称
+                    </th>
+                    <td>
+                        <input id="title" name="title" class="input_text" type="text" placeholder="请输入角色名称"
+                               maxlength="64">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="vt pt10">备注</th>
+                    <td>
+                            <textarea id="content" name="content" class="textarea" placeholder="请输入备注"
+                                      maxlength="256">
+                            </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>角色启用状态</th>
+                    <td>
+                        <label class="table_switch">
+                            <input id="status" name="status" type="checkbox" checked="checked">
+                            <i></i>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                            <span id="error_msg" class="cl_danger">
+
+                            </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <a id="submit" href="javascript:;" class="btn btn_primary mt15">提交</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#submit").click(function () {
+            var _t_form = $("#role_add");
+            var form_data = _t_form.serialize();
+            var code = $("#code").val();
+            var title = $("#title").val();
+            var code_reg = /^[0-9a-zA-Z_]+$/;
+            if ($.trim(code) === "") {
+                $("#error_msg").html("请输入角色编码！");
+                return;
+            }
+            if (!code_reg.test(code)) {
+                $("#error_msg").html("角色编码只能包含字母、数字和下划线！");
+                return;
+            }
+            if ($.trim(title) === "") {
+                $("#error_msg").html("请输入角色名称！");
+                return;
+            }
+            display_loading();
+            ajaxPost(_t_form.attr("action"), form_data, function (result) {
+                if (result.code === 0) {
+                    tip_msg("添加角色失败，请重试！", 2000);
+                } else if (result.code === 1) {
+                    tip_msg("角色添加成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_role_list') }}";
+                    });
+                } else if (result.code === -1) {
+                    $("#error_msg").html("请输入角色编码！");
+                } else if (result.code === -2) {
+                    $("#error_msg").html("请输入角色名称！");
+                } else if (result.code === -3) {
+                    $("#error_msg").html("角色编码已存在，请重新输入！");
+                    $("#code").focus();
+                }
+                remove_loading();
+            });
+        });
+    });
+</script>
+{% end %}

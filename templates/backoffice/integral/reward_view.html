@@ -1,0 +1,136 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import SOURCE_MEMBER_INTEGRAL_NOVICE, SOURCE_MEMBER_INTEGRAL_PII, SOURCE_MEMBER_INTEGRAL_FIRST_SURVEY, SOURCE_MEMBER_INTEGRAL_FIRST_KNOWLEDGE_PK %}
+{% from db import SOURCE_MEMBER_INTEGRAL_LOGIN_EVERYDAY, SOURCE_MEMBER_INTEGRAL_EVERY_SURVEY, SOURCE_MEMBER_INTEGRAL_KNOWLEDGE_PK_EVERYDAY, SOURCE_MEMBER_INTEGRAL_USER_RETURN %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <h3 class="pl10 ml10">积分奖励设置</h3>
+    </div>
+    <div class="fr">
+        <a href="javascript:window.location.reload();" class="refresh_btn pl20 mr20"><i class="refresh_i"></i>刷新</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">新手奖励 <span
+                class="list_title_remark">(新手奖励每个用户只奖励一次，相关值必须为大于0的整数)</span><i class="integral_reward_i"></i></h3>
+    </div>
+    <div class="pl30 pr30 clear">
+        <div class="award_box fl">
+            <div class="award_info">新手欢迎奖励</div>
+            <div>
+                <input type="text" class="only_num" id="novice"
+                       value="{{ integral_reward_dict.get(SOURCE_MEMBER_INTEGRAL_NOVICE, '') }}">
+                <span class="ml5">积分</span>
+            </div>
+        </div>
+        <div class="award_box fl">
+            <div class="award_info">完善个人信息</div>
+            <div>
+                <input type="text" class="only_num" id="pii"
+                       value="{{ integral_reward_dict.get(SOURCE_MEMBER_INTEGRAL_PII, '') }}"
+                ><span class="ml5">积分</span>
+            </div>
+        </div>
+        <div class="award_box fl">
+            <div class="award_info">首次参与调研</div>
+            <div>
+                <input type="text" class="only_num" id="first_survey"
+                       value="{{ integral_reward_dict.get(SOURCE_MEMBER_INTEGRAL_FIRST_SURVEY, '') }}"
+                ><span class="ml5">积分</span>
+            </div>
+        </div>
+        <div class="award_box fl">
+            <div class="award_info">首次参与汽车知识PK</div>
+            <div>
+                <input type="text" class="only_num" id="first_pk"
+                       value="{{ integral_reward_dict.get(SOURCE_MEMBER_INTEGRAL_FIRST_KNOWLEDGE_PK, '') }}"
+                ><span class="ml5">积分</span>
+            </div>
+        </div>
+    </div>
+    <div>
+        <h3 class="list_title pr add_manage">日常奖励 <span class="list_title_remark">(日常奖励相关数值必须为大雨0的整数)</span><i
+                class="integral_reward_i"></i></h3>
+    </div>
+    <div class="pl30 pr30 clear">
+        <div class="award_box fl">
+            <div class="award_info">每日签到</div>
+            <div>
+                <input type="text" class="only_num" id="login_everyday"
+                       value="{{ integral_reward_dict.get(SOURCE_MEMBER_INTEGRAL_LOGIN_EVERYDAY, '') }}"
+                ><span class="ml5">积分</span>
+            </div>
+        </div>
+        <div class="award_box fl">
+            <div class="award_info">参与调研(每份问卷)</div>
+            <div>
+                <input type="text" class="only_num" id="every_survey"
+                       value="{{ integral_reward_dict.get(SOURCE_MEMBER_INTEGRAL_EVERY_SURVEY, '') }}"
+                ><span class="ml5">积分</span>
+            </div>
+        </div>
+        <div class="award_box fl">
+            <div class="award_info">参与汽车知识PK(限每天一次)</div>
+            <div>
+                <input type="text" class="only_num" id="pk_every_day"
+                       value="{{ integral_reward_dict.get(SOURCE_MEMBER_INTEGRAL_KNOWLEDGE_PK_EVERYDAY, '') }}"
+                ><span class="ml5">积分</span>
+            </div>
+        </div>
+        <div class="award_box fl">
+            <div class="award_info">老用户回归(三天以上未签到)</div>
+            <div>
+                <input type="text" class="only_num" id="user_return"
+                       value="{{ integral_reward_dict.get(SOURCE_MEMBER_INTEGRAL_USER_RETURN, '') }}"
+                ><span class="ml5">积分</span>
+            </div>
+        </div>
+    </div>
+    <div class="ml30 pb50"><a href="#" class="btn btn_primary btn_lg submit_btn">提交</a></div>
+</div>
+<script>
+
+    $(function () {
+
+        $('.submit_btn').on('click', function () {
+            var novice = $('#novice').val();
+            var pii = $('#pii').val();
+            var first_survey = $('#first_survey').val();
+            var first_pk = $('#first_pk').val();
+            var login_everyday = $('#login_everyday').val();
+            var every_survey = $('#every_survey').val();
+            var pk_every_day = $('#pk_every_day').val();
+            var user_return = $('#user_return').val();
+
+            var data = {
+                'novice': novice,
+                'pii': pii,
+                'first_survey': first_survey,
+                'first_pk': first_pk,
+                'login_everyday': login_everyday,
+                'every_survey': every_survey,
+                'pk_every_day': pk_every_day,
+                'user_return': user_return
+            };
+
+            var url = "{{ reverse_url('backoffice_integral_reward') }}";
+
+            display_loading();
+            ajaxPost(url, data, function (ret) {
+                if (ret.code == 1) {
+                    tip_msg('积分奖励设置成功！', 2000, function () {
+                        window.location.reload();
+                    });
+
+                } else {
+                    tip_msg('系统错误！', 2000);
+                }
+            });
+            remove_loading();
+        });
+    })
+
+</script>
+{% end %}

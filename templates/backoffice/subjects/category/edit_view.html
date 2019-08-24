@@ -1,0 +1,122 @@
+{% extends '../../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_SUBJECT_CATEGORY_ACTIVE %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_subject_category_list') }}" class="pl10 ml10">题目类别管理</a>
+        <span>&gt; 编辑类别</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20">
+            <i class="back_i"></i>返回
+        </a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_category_manage">编辑类别<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="form_edit" name="form_edit" method="post"
+              action="{{ reverse_url('backoffice_subject_category_edit',str(subject_category.oid)) }}">
+            {% raw xsrf_form_html() %}
+            <table class="table_form">
+                <tbody>
+                <tr>
+                    <th width="40%"><span class="necessary">*</span>类别名称</th>
+                    <td><input id="title" name="title" class="input_text" type="text" maxlength="256"
+                               value="{{ subject_category.title if subject_category.title else '' }}"></td>
+                </tr>
+                <tr>
+                    <th class="vt pt10">备注</th>
+                    <td>
+                        <textarea id="comment" name="comment"
+                                  class="textarea">{{ subject_category.comment if subject_category.comment else '' }}
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>状态</th>
+                    <td>
+                        <label class="table_switch">
+                            <input id="status" name="status" type="checkbox"
+                                   {% if subject_category.status == STATUS_SUBJECT_CATEGORY_ACTIVE %}checked="checked"{% end %}>
+                            <i></i>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <span id="error_msg" class="cl_danger"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <a href="javascript:;" id="submit" class="btn btn_primary btn_lg mt10">提交</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    $(function () {
+
+        $("#form_edit").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("编辑类别失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("类别编辑成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_subject_category_list') }}";
+                    });
+                } else if (data.code === -1) {
+                    $("#error_msg").html("请输入类别名称！");
+                } else if (data.code === -2) {
+                    $("#error_msg").html("类别名称已存在！");
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+
+        $("#submit").click(function () {
+            $("#form_edit").submit();
+        });
+
+        $(".radio_i").on("click", function () {
+            $(this).parents(".table_form").find(".radio_i").removeClass("checked").parent().find(".hide_f").val("");
+            $(this).addClass("checked").parent().find(".hide_f").val("1");
+        });
+    });
+
+    function check_form() {
+        var title = $.trim($("#title").val());
+        var ordered = $.trim($("#ordered").val());
+        if (title === "") {
+            $("#error_msg").html("请输入类别名称！");
+            return false;
+        }
+        return true;
+    }
+
+</script>
+{% end %}

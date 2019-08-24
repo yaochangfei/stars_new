@@ -1,0 +1,224 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CATEGORY_REDPACKET_RULE_DIRECT, CATEGORY_REDPACKET_RULE_DICT, CATEGORY_REDPACKET_RULE_LOTTERY, CATEGORY_REDPACKET_DICT, CATEGORY_REDPACKET_CONST, CATEGORY_REDPACKET_RANDOM %}
+<div class="main clear">
+
+    <div class="right_area">
+        <div class="edit_info m20 pl10 pr10">
+            <div class="atlas_tabs clear">
+                <a href="{{ reverse_url('backoffice_race_redpkt_rule_list') }}?race_cid={{race_cid}}">红包规则</a>
+                <a href="{{ reverse_url('backoffice_race_redpkt_rule_see_result') }}?race_cid={{race_cid}}"
+                   class="active">结果查看</a>
+                <a href="/backoffice/race/redpkt_rule/list/?race_cid={{ race_cid }}" class="back_btn pl20 mr20 mt10" style="float: right;margin: 0;">
+                    <i class="back_i"></i>返回
+                </a>
+            </div>
+            <div class="mb10">
+                <div class="clear">
+                    <div class="fl">
+                        <h3 class="list_title pr">发放总览<i class="list_title_i"></i></h3>
+                    </div>
+                </div>
+                <table class="table_list">
+                    <tr>
+                        <th>活动名称</th>
+                        <th>已发放红包金额</th>
+                        <th>已发放红包个数</th>
+                    </tr>
+                    {% if race %}
+                    <tr>
+                        <td>{{race.title}}</td>
+                        {% if already_put_red_packet_amount_list %}
+                            <td>{{round(already_put_red_packet_amount_list[0].sum, 2)}}</td>
+                            <td>{{round(already_put_red_packet_amount_list[0].quantity, 2)}}</td>
+                        {% else %}
+                            <td></td>
+                            <td></td>
+                        {% end %}
+                    </tr>
+                    {% end %}
+                </table>
+            </div>
+            <div>
+                <div class="clear">
+                    <div class="fl">
+                        <h3 class="list_title pr">红包发放详情<i class="list_title_i"></i></h3>
+                    </div>
+                </div>
+                <div class="filter_box clear no_m">
+                    <div class="filter_condition fl">
+                        <span>筛选条件：</span>
+                        <input type="text" name="kw_word" id="kw_word" placeholder="请输入关键词" value="{{kw_word}}">
+                        <span style="padding: 30px">发放形式</span>
+                        <select name="put_out_form" id="put_out_form">
+                            <option value="">请选择</option>
+                            {% for form in CATEGORY_REDPACKET_RULE_DICT %}
+                            <option value="{{CATEGORY_REDPACKET_RULE_DICT.get(form)}}" {% if put_out_form == CATEGORY_REDPACKET_RULE_DICT.get(form) %}
+                                    selected="selected" {% end %} >{{CATEGORY_REDPACKET_RULE_DICT.get(form)}}
+                            </option>
+                            {% end %}
+                        </select>
+                        <span style="padding: 30px" id="lottery">抽奖奖项</span>
+                        <select name="lottery_item" id="lottery_item">
+                            <option value="">请选择</option>
+                            {% if lottery_item_list %}
+                                {% for lottery_item in lottery_item_list %}
+                            <option value="{{lottery_item}}" {% if red_packet_item == lottery_item %} selected="selected" {% end %}>
+                                {{lottery_item}}
+                            </option>
+                                {% end %}
+                            {% end %}
+                        </select>
+                    </div>
+                    <div class="filter_btn fr">
+                        <a href="javascript:;" class="btn btn_i btn_primary pr mr5" id="search">
+                            查询
+                            <i class="btn_search"></i>
+                        </a>
+                        <a href="javascript:void (0)" id="cancel_search" class="btn btn_default">取消筛选</a>
+                    </div>
+                </div>
+                <table class="table_list mt10">
+                    <tr>
+                        <th>会员ID</th>
+                        <th>微信昵称</th>
+                        <th>发放关卡</th>
+                        <th>发放时间</th>
+                        <th>发放形式</th>
+                        <th>明细</th>
+                        <th>金额</th>
+                    </tr>
+
+                    {% if paging.page_items %}
+                    {% for index, history in enumerate(paging.page_items) %}
+                    <tr>
+                        <td>{{history.member_cid}}</td>
+                        <td>{{history.nick_name}}</td>
+                        <td>{{history.checkpoint}}</td>
+                        <td>{{datetime_format(history.draw_dt)}}</td>
+                        <td>{{history.category}}</td>
+                        {% if history.detail == 0 %}
+                        <td>{{CATEGORY_REDPACKET_DICT.get(CATEGORY_REDPACKET_CONST)}}</td>
+                        {% elif history.detail == 1 %}
+                        <td>{{CATEGORY_REDPACKET_DICT.get(CATEGORY_REDPACKET_RANDOM)}}</td>
+                        {% else %}
+                        <td>{{history.detail}}</td>
+                        {% end %}
+                        <td>{{history.award_amount}}</td>
+                    </tr>
+                    {% end %}
+                    {% else %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% end %}
+                </table>
+                <div class="fix_page clear {% if not paging.page_items %}dis_none{% end %}">
+                    <div class="fr">
+                        <span>跳至</span>
+                        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+                        <span>页</span>
+                    </div>
+                    <div class="paging fr mr10">
+                        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+                           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+                        <a href="javascript:;" onclick="do_jump_2_page(event, '{{ paging.previous_page_num }}');"
+                           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+                        {{ paging.other_pages_html }}
+                        <a href="javascript:;" onclick="do_jump_2_page(event, '{{ paging.next_page_num }}');"
+                           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+                        <a href="javascript:;" onclick="do_jump_2_page(event, '{{ paging.total_pages }}');"
+                           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+                    </div>
+                    <div class="fr mr20">
+                        共
+                        <span class="page_all">{{ paging.total_pages }}</span>
+                        页/
+                        <span class="data_all">{{ paging.total_items }}</span>
+                        条数据
+                    </div>
+                    <div class="fr mr15">
+                        <span>每页</span>
+                        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+                            {% for num in [10, 20, 50, 100, 200] %}
+                            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num
+                                }}
+                            </option>
+                            {% end %}
+                        </select>
+                        <span>条</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            var is_checked = false;
+            var put_out_form = $("#put_out_form option:selected").val();
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                // 填充请求参数
+                display_loading();
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val() || '{{ per_page_quantity }}',
+                    'kw_word': $('#kw_word').val(),
+                    'race_cid': "{{race_cid}}",
+                    // 'put_out_form': put_out_form,
+                    // 'red_packet_item': $('#lottery_item option:selected').val(),
+                };
+                window.location.href = "{{ reverse_url('backoffice_race_redpkt_rule_see_result') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+
+    $(function () {
+        if('{{red_packet_item}}' === "" || $("#put_out_form option:selected").val() !== "抽奖形式" ){
+            $('#lottery').hide();
+            $('#lottery_item').hide();
+        }
+        $('#put_out_form').click(function () {
+            if ($("#put_out_form option:selected").val() === "抽奖形式" ) {
+                $('#lottery_item').show();
+                $('#lottery').show();
+            }else{
+               $('#lottery').hide();
+               $('#lottery_item').hide();
+            }
+        });
+        $("#search").on('click', function () {
+            var params = {
+                'per_page_quantity': '{{ per_page_quantity }}',
+                'kw_word': $('#kw_word').val(),
+                'put_out_form': $("#put_out_form option:selected").val(),
+                'red_packet_item': $('#lottery_item option:selected').val(),
+                'race_cid': "{{race_cid}}"
+            };
+            window.location.href = "{{ reverse_url('backoffice_race_redpkt_rule_see_result') }}?" + dict_2_url_params(params);
+        });
+
+        $("#cancel_search").click(function (event) {
+
+            $("#kw_word").val("");
+            $("#put_out_form option:selected").val("");
+            $('#lottery_item option:selected').val("");
+            do_jump_2_page(event, 1);
+        });
+
+    })
+</script>
+{% end %}

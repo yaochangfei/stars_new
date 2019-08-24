@@ -1,0 +1,267 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CATEGORY_SUBJECT_KNOWLEDGE_DICT, STATUS_UNIT_MANAGER_ACTIVE, STATUS_SUBJECT_LIST, STATUS_SUBJECT_DICT, CATEGORY_SUBJECT_DICT %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <a href="{{ reverse_url('backoffice_race_unit_manager_add') }}?race_cid={{race_cid}}" id="refer_subject" class="btn btn_i btn_primary btn_lg pr fl mr20">新增单位<i
+            class="subject_add_i"></i></a>
+    <a id="unit_import" href="javascript:;" class="btn btn_i btn_primary btn_lg pr fl mr20">单位导入<i
+            class="add_push_i"></i></a>
+    <a id="subject_import_template" href="{{ reverse_url('backoffice_race_unit_manager_download') }}"
+       class="btn btn_i btn_primary btn_lg pr fl"><i
+            class="upload_file_i"></i>下载模板</a>
+    <a href="javascript:;" class="refresh_btn pl20 mr20 fr mt10"><i class="refresh_i"></i>刷新</a>
+    <a href="/backoffice/race/list/" class="back_btn pl20 mr20 fr mt10">
+        <i class="back_i"></i>返回
+    </a>
+</div>
+<div class="filter_box clear pr">
+    <div class="filter_condition fl">
+        <div class="in_block filter_text">筛选条件：</div>
+        <div class="in_block filter_con">
+            <input id="code" name="code" type="text" placeholder="单位ID" value="{{ code }}">
+            <input id="title" name="title" type="text" placeholder="单位名称" value="{{ title }}">
+        </div>
+    </div>
+    <div class="filter_btn fr">
+        <a href="javascript:;" class="btn btn_i btn_primary pr mr5" onclick="do_jump_2_page(event, 1);">
+            查询结果
+            <i class="btn_search"></i>
+        </a>
+        <a href="javascript:;" id="cancel_search" class="btn btn_default">取消筛选</a>
+    </div>
+    <div class="more_kw pa">
+        <span>展开更多筛选</span>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tbody>
+            <tr>
+                <th width="40"></th>
+                <th>单位编号</th>
+                <th>单位名称</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            {% if paging.page_items %}
+                {% for index, unit in enumerate(paging.page_items) %}
+                <tr>
+                    <td class="tc">
+                        <i class="checkbox_i" cid="{{ unit.cid }}"></i>
+                    </td>
+                    <td>{{ string_display(unit.code) }}</td>
+                    <td>{{ string_display(unit.title) }}</td>
+                    <td>
+                        <label class="table_switch">
+                            <input type="checkbox"
+                                   class="unit_status"
+                                   {% if unit.status== STATUS_UNIT_MANAGER_ACTIVE %}checked="checked" {%
+                                   end %}
+                                   cid="{{ str(unit.cid) }}">
+                            <i></i>
+                        </label>
+                    </td>
+                    <td class="tools">
+                        <a href="{{ reverse_url('backoffice_race_unit_manager_edit', str(unit.cid)) }}?race_cid={{race_cid}}"
+                           class="edit_i fl tips" data-name="编辑"></a>
+                        <a href="javascript:;" class="delete_i fl tips" data-name="删除"
+                           cid="{{ str(unit.cid) }}"></a>
+                    </td>
+                </tr>
+                {% end %}
+            {% else %}
+            <tr>
+                <td colspan="8" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+            </tbody>
+        </table>
+        {% if paging.page_items %}
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr25 ml10"></i>全选</div>
+            <div class="fl ml20">
+                <select id="operate" name="operate">
+                    <option value="1">启用</option>
+                    <option value="0">停用</option>
+                    <option value="-1">删除</option>
+                </select>
+            </div>
+            <div class="fl">
+                <a href="javascript:;" id="btn_batch" class="btn btn_primary ml20 btn_sm">确定</a>
+            </div>
+        </div>
+        {% end %}
+    </div>
+</div>
+{% if paging.page_items %}
+<div class="fix_page clear">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+{% end %}
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var subject_dimension_cid_list = [];
+                $('.subject_dimension').each(function () {
+                    var subject_dimension = $(this).val();
+                    if (subject_dimension) {
+                        subject_dimension_cid_list.push(subject_dimension);
+                    }
+                });
+
+                var title = $.trim($("#title").val());
+                var code = $.trim($("#code").val());
+                var params = {
+                    "title": title,
+                    "code": code,
+                    "page": to_page_num,
+                    "per_page_quantity": $('#per_page_quantity').val() || {{ per_page_quantity }}
+                };
+                window.location.href = "{{ reverse_url('backoffice_race_unit_manager_list') }}?race_cid={{race_cid}}&" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+    $(function () {
+        $(".unit_status").click(function (event) {
+            display_loading();
+            var target = $(event.target);
+            var unit_cid = ($(event.target).attr('cid'));
+            var status = target.prop("checked");
+            ajaxPost("/backoffice/race/unit/manager/status/switch/" + unit_cid + "/?race_cid={{race_cid}}", {"status": status}, function (result) {
+                if (result.code !== 1) {
+                    tip_msg("状态变更失败，请重试！", 2000);
+                    target.prop("checked", !status);
+                }
+                remove_loading()
+            })
+        });
+
+        $(".delete_i").click(function (event) {
+            confirm_dialog("警告", "确认要删除该单位？", function () {
+                display_loading();
+                var unit_cid = ($(event.target).attr('cid'));
+                if (unit_cid) {
+                    ajaxPost("/backoffice/race/unit/manager/delete/" + unit_cid + "/?race_cid={{race_cid}}", {}, function (result) {
+                        if (result.code === 1) {
+                            tip_msg("单位删除成功！", 2000, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            tip_msg("单位删除失败！", 2000);
+                        }
+                        remove_loading()
+                    });
+                }
+            });
+        });
+
+        $("#btn_batch").click(function () {
+            display_loading();
+            var operate = $("#operate").val();
+            var unit_cid_list = [];
+            $(".table_list .checkbox_i").each(function () {
+                if ($(this).hasClass("checked")) {
+                    unit_cid_list.push($(this).attr("cid"));
+                }
+            });
+            if (unit_cid_list.length === 0) {
+                tip_msg("操作无法完成，请至少选择一笔题目信息！", 2000);
+                remove_loading();
+                return;
+            }
+            var msg = "";
+            if (operate === '0') {
+                msg = "确定【停用】选中的单位？";
+            } else if (operate === '-1') {
+                msg = "确定【删除】选中的单位？";
+            } else {
+                msg = "确定【启用】选中的单位？";
+            }
+            confirm_dialog("警告", msg, function () {
+                var data = {
+                    "operate": operate,
+                    "unit_cid_list": unit_cid_list
+                };
+                ajaxPost("{{ reverse_url('backoffice_race_unit_manager_batch_operate') }}?race_cid={{race_cid}}", data, function (result) {
+                    if (result.code === 1) {
+                        tip_msg("操作完成！", 2000, function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        tip_msg("操作失败，请重试！", 2000);
+                    }
+                    remove_loading()
+                })
+            });
+
+        });
+
+
+        $(".refresh_btn").click(function () {
+            window.location.reload();
+        });
+
+        $("#cancel_search").click(function (event) {
+            $('.subject_dimension').each(function () {
+                $(this).val("");
+            });
+            $("#title").val("");
+            $("#code").val("");
+            do_jump_2_page(event, 1);
+        });
+    });
+        $("#unit_import").click(function () {
+        iframe_dialog('导入单位', "{{ reverse_url('backoffice_race_unit_manager_import') }}?race_cid={{race_cid}}")
+    });
+</script>
+{% end %}

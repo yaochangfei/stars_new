@@ -1,0 +1,379 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_race_list') }}" class="pl10 ml10">竞赛活动列表</a>
+        <span> &gt; 新增竞赛活动</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">新增竞赛活动<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="form_add" name="form_add" method="post" action="{{ reverse_url('backoffice_race_add') }}">
+            {% raw xsrf_form_html() %}
+            <table class="table_form">
+                <tr>
+                    <th width="35%"><span class="necessary">*</span>活动编号</th>
+                    <td><input class="input_text" type="text" name="code" id="code" maxlength="16"></td>
+                </tr>
+                <tr>
+                    <th><span class="necessary">*</span>活动标题</th>
+                    <td><input class="input_text" type="text" name="title" id="title" minlength="4" maxlength="32"></td>
+                </tr>
+                <tr>
+                    <th><span class="necessary">*</span>活动范围</th>
+                    <td>
+                        <select id="province" name="province" title="省份" class="mr10">
+                            <option value="">--请选择--</option>
+                            {% if province_list %}
+                            {% for province in province_list %}
+                            <option value="{{ string_display(province.code) }}">{{ string_display(province.title) }}
+                            </option>
+                            {% end %}
+                            {% end %}
+                        </select>
+                        <select id="city" name="city" title="城市">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class="necessary">*</span>活动周期</th>
+                    <td>
+                <span class="fl">
+                    <input type="text" readonly class="input_text time_i pointer w180" id="start_datetime"
+                           name="start_dt" placeholder="请选择开始时间">
+                </span>
+                        <span class="ml10 mr10 fl mt5">至</span>
+                        <span class="fl">
+                    <input type="text" readonly class="input_text time_i pointer w180" id="end_datetime"
+                           name="end_dt" placeholder="请选择结束时间">
+                </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class=""></span>定制功能:</th>
+
+                    <td>
+                        <label class="checkbox_wrap" key="com">
+                            <i class="checkbox_i"></i>单位
+                        </label>
+                        <label class="checkbox_wrap" id="certain" key="sure">
+                            <i class="checkbox_i"></i>必选(单位)
+                        </label>
+                        <label class="checkbox_wrap" key="tel" id="after_race">
+                            <i class="checkbox_i"></i>手机号填写(活动之后)
+                        </label>
+                        <label class="checkbox_wrap" key="ans">
+                            <i class="checkbox_i"></i>答题解析
+                        </label>
+                        <label class="checkbox_wrap" key="play_quantity">
+                            <i class="checkbox_i"></i>参与人数
+                        </label>
+                        <label class="checkbox_wrap" key="before_tel" id="before_race">
+                            <i class="checkbox_i"></i>手机号填写(活动之前)
+                        </label>
+                        <input id="com" name="com" type="hidden">
+                        <input id="tel" name="tel" type="hidden">
+                        <input id="ans" name="ans" type="hidden">
+                        <input id="sure" name="sure" type="hidden">
+                        <input id="play_quantity" name="play_quantity" type="hidden">
+                        <input type="hidden" id="before_tel" name="before_tel">
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class=""></span>红包账户:</th>
+                    <td><span class="fl">
+                    <input type="text" class="input_text pointer w180" id="red_account"
+                           name="red_account" placeholder="请输入红包账户">
+                    </span></td>
+                </tr>
+                <tr>
+                    <th><span class=""></span>红包周期:</th>
+                    <td><span class="fl">
+                    <input type="text" readonly class="input_text time_i pointer w180" id="red_start_time"
+                           name="red_start" placeholder="请选择开始时间">
+                </span>
+                        <span class="ml10 mr10 fl mt5">至</span>
+                        <span class="fl">
+                    <input type="text" readonly class="input_text time_i pointer w180" id="red_end_time"
+                           name="red_end" placeholder="请选择结束时间">
+                </span></td>
+                </tr>
+                <tr>
+                    <th class="vt pt10"><span class="necessary">*</span>活动图片</th>
+                    <td>
+                        <div class="pic_show fl mr10">
+                            <img id="none_title_image" src="{{ static_url('images/default/upload_def.png') }}"
+                                 alt="标题图片">
+                        </div>
+                        <div class="pic_upload_box fl">
+                            <div class="mt10">
+                                <a href="javascript:;" class="btn btn_warning_empty delete_title"
+                                   id="delete_title">删除图片</a>
+                            </div>
+                            <div class="pr mt10">
+                                <input type="file" name="title_image" id="title_image" class="pa"
+                                       accept="image/jpeg,image/png,image/gif,image/jpg">
+                                <a href="javascript:;" class="btn btn_primary_empty upload_pic_btn">上传图片</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="th_backgroud">
+                    <th class="vt pt10"><span class="necessary">*</span>活动说明</th>
+                    <td>
+                        <input id="guide" name="guide" type="hidden">
+                        <div id="guide_rich_text" class="editor"></div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                        <span id="error_msg" class="cl_danger"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><a href="#" class="btn btn_primary mt15 btn_lg submit_btn">提交</a></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<script src="{{ static_url('js/plugins/ueditor/ueditor.config.js') }}"></script>
+<script src="{{ static_url('js/plugins/ueditor/ueditor.all.js') }}"></script>
+<script src="{{ static_url('js/plugins/ueditor/lang/zh-cn/zh-cn.js') }}"></script>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    var toolbars = [['source', '|', 'undo', 'redo', '|', 'bold', 'italic', 'underline', 'strikethrough', 'superscript',
+        'subscript', 'removeformat', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist',
+        'selectall', 'cleardoc', 'emotion', '|', 'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+        'indent', '|', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'link', 'unlink',
+        'simpleupload', 'fullscreen']];
+
+    laydate.render({
+        elem: '#start_datetime', //指定元素
+        trigger: 'click', //采用click弹出
+        type: 'datetime',
+        value: new Date(),
+        min: 0
+    });
+    laydate.render({
+        elem: '#red_start_time', //指定元素
+        trigger: 'click', //采用click弹出
+        type: 'datetime',
+        min: 0
+    });
+    let today_last_time = new Date();
+    today_last_time.setHours(23, 59, 59, 999);
+
+    laydate.render({
+        elem: '#end_datetime', //指定元素
+        trigger: 'click', //采用click弹出
+        value: today_last_time,
+        type: 'datetime',
+        min: 1
+    });
+    laydate.render({
+        elem: '#red_end_time', //指定元素
+        trigger: 'click', //采用click弹出
+        type: 'datetime',
+        min: 1
+    });
+
+    var guide_editor = null;
+    $(function () {
+        $('#certain').hide();
+        $(".checkbox_wrap").on("click", function () {
+            var _t = $(this);
+            var checkbox = _t.find(".checkbox_i");
+            var key = _t.attr("key");
+            if (!checkbox.hasClass("checked")) {
+                checkbox.addClass("checked");
+                $("#" + key).val(key);
+            } else {
+                checkbox.removeClass("checked");
+                $("#" + key).val("");
+            }
+        if($('#com').val() !== ""){
+            $('#certain').show();
+        }else{
+            $('#certain').hide();
+        }
+        //  手机号码活动之前填写和之后填写，单选框互斥事件
+        if($('#tel').val() !== "" && $('#tel').val() !== "undefined"){
+            $('#before_race').hide();
+        }else{
+            $('#before_race').show();
+        }
+        if($('#before_tel').val() !== "" && $('#before_tel').val() !== "undefined"){
+            $('#after_race').hide();
+        }else{
+            $('#after_race').show();
+        }
+        });
+        guide_editor = UE.getEditor('guide_rich_text', {
+            toolbars: toolbars,
+            initialFrameHeight: 300,//设置 编辑器高度
+            autoHeightEnabled: false,//是否自动长高，默认true
+            elementPathEnabled: false, //删除元素路径
+            wordCount: false    //删除字数统计
+        });
+
+        review_upload_image('none_title_image', 'title_image', 'delete_title');
+        $("#form_add").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            beforeSerialize: function () {
+                $("#guide").val(guide_editor.getContent());
+            },
+            success: function (ret) {
+                $(".cl_danger").html('');
+                display_loading();
+                if (ret.code === -2) {
+                    $("#error_msg").html('编号已存在!')
+                } else if (ret.code === 1) {
+                    tip_msg('新增成功!', 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_race_list') }}";
+                    });
+                } else if (ret.code === -3) {
+                    $('#error_msg').html('该区域已经存在同名活动!')
+                } else if (ret.code === -4) {
+                    $('#error_msg').html('编码长度或标题长度不对!')
+                } else if (ret.code === -5) {
+                    $("#error_msg").html('活动结束时间不允许小于或等于开始时间!')
+                } else if (ret.code === -6) {
+                    $("#error_msg").html('红包结束时间不允许小于开始时间!')
+                }
+                remove_loading();
+            },
+            error: function () {
+                tip_msg("操作失败，请重试！", 2000);
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+
+        $(".submit_btn").click(function () {
+            $("#form_add").submit();
+        });
+
+        $('#province').on('change', function () {
+            var province_code = $('#province').val();
+            $('#city').empty();
+            var obj = document.getElementById('city');
+            obj.options.add(new Option('请选择', ''));
+
+            if (province_code) {
+                var url = "{{ reverse_url('common_admin_division') }}";
+                var data = {'post_code': province_code};
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code === 1) {
+                        for (var i = 0; i < ret.division_list.length; i++) {
+                            obj.options.add(new Option(ret.division_list[i]['title'], ret.division_list[i]["code"])); //这个兼容IE与firefox
+                        }
+                    } else {
+                        tip_msg("选择城市失败！", 2000);
+                    }
+                });
+                remove_loading();
+            }
+
+        });
+    });
+
+    function review_upload_image(none_image_id, upload_btn_id, delete_btn_id) {
+        var uploadPicBtn = $("#" + upload_btn_id);
+        uploadPicBtn.on("mouseover", function () {
+            $(this).addClass("current");
+        });
+        uploadPicBtn.on("mouseup", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("mouseout", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("change", function () {
+            var file = this.files[0];
+            single_reads(file, none_image_id);
+        });
+        $("#" + delete_btn_id).on("click", function () {
+            var file = $("#" + upload_btn_id);
+            file.val('');
+            $("#" + none_image_id).attr("src", "{{ static_url('images/default/upload_def.png') }}");
+        })
+    }
+
+    $('#title').mousedown()
+
+    function single_reads(file, review_image_id) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            $("#" + review_image_id).attr("src", reader.result);
+        };
+    }
+
+    function check_form() {
+        var title = $.trim($("#title").val());
+        var code = $.trim($("#code").val());
+        var upload_image = $('#title_image').val();
+        var province = $("#province option:selected").val();
+        var start_datetime = $("#start_datetime").val();
+        var end_datetime = $('#end_datetime').val();
+        var guide = $('#guide').val();
+        var re = /^[a-zA-Z0-9_]*$/;
+        if (code === "") {
+            $("#error_msg").html("请输入活动编号！");
+            return false;
+        }
+        if (title === "") {
+            $("#error_msg").html("请输入活动标题！");
+            return false;
+        }
+        if (province === "") {
+            $('#error_msg').html('请选择活动范围！');
+            return false;
+        }
+        if (start_datetime === "") {
+            $('#error_msg').html('请选择活动开始时间！');
+            return false;
+        }
+        if (end_datetime === "") {
+            $('#error_msg').html('请选择活动结束时间！');
+            return false;
+        }
+        if (!re.test(code)) {
+            $("#error_msg").html("活动编号请输入字母、数字和下划线！");
+            return false;
+        }
+        if (upload_image === "") {
+            $('#error_msg').html('请上传活动图片！');
+            return false;
+        }
+        if (guide === "") {
+            $('#error_msg').html('请输入活动说明！');
+            return false;
+        }
+        return true;
+    }
+
+</script>
+{% end %}

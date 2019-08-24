@@ -1,0 +1,117 @@
+<div class="person_box clear">
+    <div class="distr_left fl pr">
+        <p>可选用户（可多选）</p>
+        <div class="select_box">
+            <div class="select_head pr">
+                <input type="text" placeholder="请输入用户名称">
+                <input type="button" class="search_btn pa">
+            </div>
+            <div class="select_list move_dealer">
+                {% for wait_user in wait_assign_users_list %}
+                <div class="select_list_item" title="{{ wait_user.cid }}">{{ wait_user.name }}</div>
+                {% end %}
+            </div>
+        </div>
+    </div>
+    <span class="cl_danger"></span>
+    <div class="select_arrow pa">
+        <div class="arrow_icon arrow_right"></div>
+        <div class="arrow_icon arrow_left"></div>
+        <div class="arrow_icon arrow_right_all"></div>
+        <div class="arrow_icon arrow_left_all"></div>
+    </div>
+    <div class="distr_right fr">
+        <p>已选用户（可多选）</p>
+        <div class="select_box">
+            <div class="select_head pr">
+                选择请点击
+            </div>
+            <div id="assgin_owner_div" class="select_list selected_dealer">
+                {% for assign_user in assign_user_list %}
+                <div class="select_list_item" title="{{ assign_user.cid }}">{{ assign_user.name }}</div>
+                {% end %}
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="mt20 tr">
+    <a href="javascript:void(0)" class="btn btn_primary" onclick="save()">保存</a>
+    <a href="" class="btn btn_default mr20 ml10">取消</a>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+
+<script>
+    $(function () {
+        $('.person_box').on("click", ".select_list_item", function () {
+            $(this).toggleClass("active");
+        });
+        $('.person_box').on("click", ".arrow_right", function () {
+            if (!$(".move_dealer").find(".select_list_item").hasClass("active")) {
+                tip_msg("请至少选择一个用户");
+                return false;
+            }
+            else {
+                $(".move_dealer .select_list_item").each(function () {
+                    if ($(this).hasClass("active")) {
+                        $(this).remove();
+                        $(".selected_dealer").append('<div class="select_list_item" title="' + $(this).attr('title') + '">' + $(this).html() + '</div>');
+                    }
+                })
+            }
+        });
+        $('.person_box').on("click", ".arrow_left", function () {
+            if (!$(".selected_dealer").find(".select_list_item").hasClass("active")) {
+                tip_msg("请至少选择一个用户");
+                return false;
+            }
+            else {
+                $(".selected_dealer .select_list_item").each(function () {
+                    if ($(this).hasClass("active")) {
+                        $(this).remove();
+                        $(".move_dealer").append('<div class="select_list_item" title="' + $(this).attr('title') + '">' + $(this).html() + '</div>');
+                    }
+                })
+            }
+        });
+        $('.person_box').on("click", ".arrow_right_all", function () {
+            $(".selected_dealer").append($(".move_dealer").html());
+            $(".move_dealer").empty();
+        });
+        $('.person_box').on("click", ".arrow_left_all", function () {
+            $(".move_dealer").append($(".selected_dealer").html());
+            $(".selected_dealer").empty();
+        });
+
+    });
+
+    function save() {
+        var assigned_owner_code_list = new Array();
+        var divArr = $('#assgin_owner_div div');
+        $.each(divArr, function () {
+            assigned_owner_code_list.push($(this).attr('title'))
+        });
+
+        var url = "{{ reverse_url('backoffice_race_owner_assign') }}";
+        var data = {
+            'race_cid': '{{ race_cid }}',
+            'assigned_owner_code_list': assigned_owner_code_list
+        };
+        display_loading();
+        ajaxPost(url, data, function (ret) {
+            if (ret.code === -1) {
+                $('.cl_danger').html('保存失败！');
+            } else if (ret.code === 1) {
+                tip_msg("保存成功！", 2000, function () {
+                    window.location.reload(true);
+                });
+            } else {
+                $('.cl_danger').html('系统错误！');
+            }
+        });
+        remove_loading();
+    }
+
+
+</script>
+</html>

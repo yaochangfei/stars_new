@@ -1,0 +1,253 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_EXCHANGE_ORDER_DICT, STATUS_EXCHANGE_ORDER_UNSHIPPED %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <h3 class="pl10 ml10">兑换订单列表</h3>
+    </div>
+    <div class="fr">
+        <a href="javascript:window.location.reload();" class="refresh_btn pl20 mr20"><i class="refresh_i"></i>刷新</a>
+    </div>
+</div>
+<div class="filter_box clear m10 no_mb">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <input type="text" placeholder="订单编号" id="search_code" value="{{ search_code }}">
+        <input type="text" placeholder="收货人姓名/手机号" id="search_member" value="{{ search_member }}">
+        <span>
+                            <input type="text" placeholder="请选择提交时间" id="search_datetime" value="{{ search_datetime }}"
+                                   class="calendar_i">
+                        </span>
+    </div>
+    <div class="filter_btn fr">
+        <a href="#" class="btn btn_i btn_primary pr mr5 search_data">查询<i class="btn_search"></i></a>
+        <a href="{{ reverse_url('backoffice_order_list') }}" class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr">
+            <select>
+                <option value="排列方式">排列方式</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th width="50"></th>
+                <th>订单编号</th>
+                <th>提交时间</th>
+                <th>用户账号</th>
+                <th>收货人姓名</th>
+                <th>收货地址</th>
+                <th>订单积分</th>
+                <th>订单状态</th>
+                <th>操作</th>
+            </tr>
+            {% set order_list = paging.page_items %}
+            {% if order_list %}
+            {% for order in order_list %}
+            <tr>
+                <td class="tc">
+                    <i class="checkbox_i" oid="{{ order.oid }}"></i>
+                </td>
+                <td>{{ string_display(order.code) }}</td>
+                <td>{{ datetime_format(order.order_datetime) }}</td>
+                <td>{{ string_display(order.member_code) }}</td>
+                <td>{{ string_display(order.receiver_name) }}</td>
+                <td>{{ string_display(order.receive_address) }}</td>
+                <td>{{ order.ex_integral }}</td>
+                <td>{{ string_display(STATUS_EXCHANGE_ORDER_DICT.get(order.status)) }}</td>
+                <td class="tools">
+                    <a href="{{ reverse_url('backoffice_order_delivery') }}?order_id={{ order.oid }}"
+                       class="order_delivery_i fl tips" data-name="订单发货"></a>
+                    <a href="#" oid="{{ order.oid }}" class="close_delivery_i fl tips close_order" data-name="关闭订单"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="8" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr10 ml15"></i>全选</div>
+            <div class="fl ml20">
+                <select id="selected_operation">
+                    <option value="close">关闭</option>
+                    <option value="delete">删除</option>
+                </select>
+            </div>
+            <div class="fl">
+                <a href="#" class="btn btn_primary ml20 btn_sm selected_change">确定</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="fix_page clear {% if not order_list %}dis_none{% end %}">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val(),
+                    'search_code': $('#search_code').val(),
+                    'search_member': $('#search_member').val(),
+                    'search_datetime': $('#search_datetime').val()
+                };
+                window.location.href = "{{ reverse_url('backoffice_order_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+
+    $(function () {
+
+        laydate.render({
+            elem: '#search_datetime', //指定元素
+            trigger: 'click' //采用click弹出
+        });
+
+        $('.selected_change').on('click', function () {
+            var operation = $('#selected_operation').val();
+            var selected_order_ids = [];
+            var obj_list = $('.table_list').find('.checkbox_i.checked');
+            for (var i = 0; i < obj_list.length; i++) {
+                var obj = obj_list[i];
+                if ($(obj).attr('oid')) {
+                    selected_order_ids.push($(obj).attr('oid'));
+                }
+            }
+            if (selected_order_ids.length > 0) {
+                var data = {
+                    'order_ids': selected_order_ids
+                };
+                if (operation == 'delete') {
+
+                    confirm_dialog('警告', '确认删除订单？', function () {
+                        display_loading();
+                        var url = "{{ reverse_url('backoffice_order_delete') }}";
+                        ajaxPost(url, data, function (ret) {
+                            if (ret.code == 1) {
+                                tip_msg("删除订单成功！", 2000, function () {
+                                    window.location.reload();
+                                });
+                            } else {
+                                tip_msg("删除订单失败！", 2000);
+                            }
+                        });
+                        remove_loading();
+                    });
+
+                } else if (operation == 'close') {
+
+                    confirm_dialog('警告', '确认关闭订单？', function () {
+                        display_loading();
+                        var url = "{{ reverse_url('backoffice_order_close') }}";
+                        ajaxPost(url, data, function (ret) {
+                            if (ret.code == 1) {
+                                tip_msg("关闭订单成功！", 2000, function () {
+                                    window.location.reload();
+                                });
+                            } else {
+                                tip_msg("关闭订单失败！", 2000);
+                            }
+                        });
+                        remove_loading();
+                    });
+                } else {
+                    tip_msg("批量操作失败！", 2000);
+                }
+            } else {
+                tip_msg("请选择数据！", 2000);
+            }
+
+        });
+
+        $('.close_order').on('click', function () {
+            var order_id = $(this).attr('oid');
+            if (order_id) {
+                var data = {
+                    'order_ids': [order_id]
+                };
+                var url = "{{ reverse_url('backoffice_order_close') }}";
+
+                confirm_dialog('警告', '确认关闭订单？', function () {
+                    display_loading();
+                    ajaxPost(url, data, function (ret) {
+                        if (ret.code == 1) {
+                            tip_msg("关闭订单成功！", 2000, function () {
+                                window.location.href = "{{ reverse_url('backoffice_order_list') }}";
+                            });
+                        } else {
+                            tip_msg("关闭订单失败！", 2000);
+                        }
+                    });
+                    remove_loading();
+                });
+            }
+        });
+
+        $('.search_data').on('click', function () {
+            var param_dict = {
+                'per_page_quantity': $('#per_page_quantity').val(),
+                'search_code': $('#search_code').val(),
+                'search_member': $('#search_member').val(),
+                'search_datetime': $('#search_datetime').val()
+            };
+            window.location.href = "{{ reverse_url('backoffice_order_list') }}?" + dict_2_url_params(param_dict);
+        });
+
+    })
+
+</script>
+{% end %}

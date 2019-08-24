@@ -1,0 +1,112 @@
+<div class="clear">
+    <div class="fl">
+        <h3 class="list_title pr table_msg">数据列表<i class="list_title_i"></i></h3>
+    </div>
+    <div class="fr">
+        <select id="sort" name="sort" title="排序">
+            <option value="1" {% if sort == 1 %} selected {% end %}>正确率由高到低</option>
+            <option value="2" {% if sort == 2 %} selected {% end %}>正确率由低到高</option>
+            <option value="3" {% if sort == 3 %} selected {% end %}>答题次数由高到低</option>
+            <option value="4" {% if sort == 4 %} selected {% end %}>答题次数由低到高</option>
+            <option value="5" {% if sort == 5 %} selected {% end %}>题号由高到低</option>
+            <option value="6" {% if sort == 6 %} selected {% end %}>题号由低到高</option>
+        </select>
+    </div>
+</div>
+<div>
+    <table class="table_list">
+        <tbody>
+        <tr>
+            <th width="45">序号</th>
+            <th width="80">题目ID</th>
+            <th width="80">题号</th>
+            <th>题目标题</th>
+            <th width="180">正确答案</th>
+            <th width="84" style="text-align: center">总作答次数</th>
+            <th width="84" style="text-align: center">正确次数</th>
+            <th width="72">正确率</th>
+        </tr>
+        {% if paging.page_items %}
+        {% for index, subject in enumerate(paging.page_items) %}
+        <tr>
+            <td>{{ index + 1 }}</td>
+            <td>{{ string_display(subject.custom_code if subject else None) }}</td>
+            <td>{{ string_display(subject.code if subject else None) }}</td>
+            <td class="question_title pr">
+                <ul class="option_box pa none">
+                    <li>{{ string_display(subject.title if subject else None) }}</li>
+                    {% for opt_sort, option in  subject.option_dict.items() %}
+                    <li>{{ string_display('%s、%s' % (opt_sort, option.get('title'))) }}</li>
+                    {% end %}
+                </ul>
+                {{ string_display(subject.title if subject else None) }}
+            </td>
+            <td>
+                {% for opt_sort, option in subject.option_dict.items() %}
+                    {% if option.get('correct') %}
+                    {{ string_display('%s、%s'%(opt_sort, option.get('title'))) }}
+                    {% end %}
+                {% end %}
+            </td>
+            <td style="text-align: center">
+                {{ subject.total }}
+            </td>
+            <td style="text-align: center">
+                {{ subject.correct }}
+            </td>
+            <td>
+                <span style="font-weight: bold">
+                    {{ round(subject.percent * 100, 2) }}
+                </span>%
+            </td>
+        </tr>
+        {% end %}
+        {% else %}
+        <tr>
+            <td colspan="9" align="center">没有相关记录！</td>
+        </tr>
+        {% end %}
+        </tbody>
+    </table>
+</div>
+{% if paging.page_items %}
+<div class="fix_page clear">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num == 1 %}class="btn_disabled"{% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num == 1 %}class="btn_disabled"{% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num == paging.total_pages %}class="btn_disabled"{% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num == paging.total_pages %}class="btn_disabled"{% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [50, 100, 200, 500] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity == num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    $("#sort").on('change', function () {
+        do_jump_2_page(event, 1, $(this).val());
+    })
+</script>
+{% end %}

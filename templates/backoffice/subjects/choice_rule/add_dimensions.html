@@ -1,0 +1,46 @@
+{% from db import CATEGORY_SUBJECT_DIMENSION_NUMERICAL, CATEGORY_SUBJECT_DIMENSION_OPTIONS %}
+<div class="dimension_box">
+    <div class="clear add_manage" cid="{{ dimension.cid }}">
+        <h3 class="list_title pr fl">{{ dimension.title }}
+            <i class="subject_choose_i"></i>
+        </h3>
+        <a href="#" class="fr delete_dimension"></a>
+    </div>
+    {% if not dimension.category == CATEGORY_SUBJECT_DIMENSION_OPTIONS %}
+    <div class="pl30 pr30 clear">
+        <div class="mt30 clear">
+            {% if sub_list %}
+            {% for sub_dimension in sub_list %}
+            <div class="award_box fl diff_box">
+                <div class="award_info">{{ sub_dimension.title }}</div>
+                <div>
+                    {% if dimension.category == CATEGORY_SUBJECT_DIMENSION_NUMERICAL %}
+                    <input type="text" class="only_num" cid="{{ sub_dimension.cid }}"
+                           value="{% if dimension_rules and dimension_rules.get(dimension.cid) and  (dimension_rules.get(dimension.cid).get(sub_dimension.cid) or dimension_rules.get(dimension.cid).get(sub_dimension.cid)==0) %}{{ int(dimension_rules.get(dimension.cid).get(sub_dimension.cid)) }}{% else %}0{% end %}">
+                    <span class="ml5">题</span>
+                    {% else %}
+                    <input type="text" class="only_num" cid="{{ sub_dimension.cid }}"
+                           value="{% if dimension_rules and dimension_rules.get(dimension.cid) and  (dimension_rules.get(dimension.cid).get(sub_dimension.cid) or dimension_rules.get(dimension.cid).get(sub_dimension.cid)==0) %}{{ int(dimension_rules.get(dimension.cid).get(sub_dimension.cid)) }}{% else %}1{% end %}">
+                    {% end %}
+                </div>
+            </div>
+            {% end %}
+            {% else %}
+            <div class="award_info">没有设置子维度信息</div>
+            {% end %}
+        </div>
+    </div>
+    {% else %}
+    <div class="pl30 pr30 clear mb20 table_role mt20">
+        {% if sub_list %}
+        {% for sub_dimension in sub_list %}
+        <div class="subject_kind fl" cid="{{ sub_dimension.cid }}">
+            <i class="checkbox_i {% if dimension_rules and dimension_rules.get(dimension.cid) and  dimension_rules.get(dimension.cid).get(sub_dimension.cid) %}checked{% end %}"></i>{{ sub_dimension.title }}
+        </div>
+        {% end %}
+        {% else %}
+        没有设置子维度信息
+        {% end %}
+    </div>
+    {% end %}
+</div>

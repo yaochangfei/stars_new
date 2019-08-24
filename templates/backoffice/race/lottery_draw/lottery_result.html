@@ -1,0 +1,202 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+
+<div class="main clear">
+
+    <div class="right_area">
+        <div class="edit_info m20 pl10 pr10">
+            <div class="atlas_tabs clear">
+                <a href="/backoffice/race/lottery/draw/list/?race_cid={{race_cid}}">抽奖设置</a>
+                <a href="/backoffice/race/lottery/draw/result/list/?race_cid={{race_cid}}" class="active">结果查看</a>
+            </div>
+            <div class="mb10">
+                <div class="clear">
+                    <div class="fl">
+                        <h3 class="list_title pr">抽奖总览<i class="list_title_i"></i></h3>
+                    </div>
+                </div>
+                <table class="table_list">
+                    <tr>
+                        <th>奖项名称</th>
+                        <th>奖品金额(元)</th>
+                        <th>奖品数量</th>
+                        <th>已中奖</th>
+                        <th>剩余名额</th>
+                    </tr>
+                    {% if red_packet_item_list %}
+                        {% for index, red_packet_item in enumerate(red_packet_item_list) %}
+                            <tr>
+                                <td>{{red_packet_item.title}}</td>
+                                <td>{{red_packet_item.amount}}</td>
+                                <td>{{red_packet_item.count}}</td>
+                                <td>{{ win_prize_quantity_list[index] }}</td>
+                                <td>{{remain_prize_quantity_list[index] }}</td>
+                            </tr>
+                        {% end %}
+                    {% else %}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    {% end %}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    {% if old_red_item_list %}
+                        {% for index, old_red_packet_item in enumerate(old_red_item_list) %}
+                            <tr>
+                                <td>{{old_red_packet_item.title}}('旧')</td>
+                                <td>{{old_red_packet_item.amount}}</td>
+                                <td>{{old_red_packet_item.count}}</td>
+                                <td>{{ old_win_prize_quantity_list[index] }}</td>
+                            </tr>
+                        {% end %}
+                    {% end %}
+
+                </table>
+            </div>
+            <div>
+                <div class="clear">
+                    <div class="fl">
+                        <h3 class="list_title pr">抽奖详情<i class="list_title_i"></i></h3>
+                    </div>
+                </div>
+                <div class="filter_box clear no_m">
+                    <div class="filter_condition fl">
+                        <span>筛选条件：</span>
+                        <input type="text" name="kw_word" id="kw_word" placeholder="请输入关键词" value="{{kw_word}}">
+                            <select name="" id="item_title">
+                                <option value="">未选择</option>
+                                {% for red_packet_item in red_packet_item_list %}
+                                <option value={{red_packet_item.title}} {% if item_title == red_packet_item.title %} selected="selected" {% end %}>{{red_packet_item.title}}</option>
+
+                                {% end %}
+                            </select>
+
+                    </div>
+                    <div class="filter_btn fr">
+                        <a href="javascript:;" class="btn btn_i btn_primary pr mr5" id="search" >
+                            查询
+                            <i class="btn_search"></i>
+                        </a>
+                        <a href="javascript:void (0)" id="cancel_search" class="btn btn_default">取消筛选</a>
+                    </div>
+                </div>
+                <table class="table_list mt10">
+                    <tr>
+                        <th>会员ID</th>
+                        <th>微信昵称</th>
+                        <th>城市</th>
+                        <th>抽奖时间</th>
+                        <th>抽中奖项</th>
+                    </tr>
+
+                     {% if paging.page_items %}
+                        {% for history in paging.page_items %}
+                            <tr>
+                                <td>{{history.member_cid}}</td>
+                                <td>{{history.nick_name}}</td>
+                                <td>{{ string_display(history.province if history.p_list else '') + string_display(history.city if history.c_list else '') }}</td>
+                                <td>{{history.lottery_dt}}</td>
+                                <td>{{ history.award_title if history.item_list else '未中奖'}}</td>
+                            </tr>
+                        {% end %}
+                    {% else %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% end %}
+                </table>
+                <div class="fix_page clear {% if not paging.page_items %}dis_none{% end %}">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, '{{ paging.previous_page_num }}');"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, '{{ paging.next_page_num }}');"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, '{{ paging.total_pages }}');"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                // 填充请求参数
+                display_loading();
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val() || '{{ per_page_quantity }}',
+                    'kw_word': $('#kw_word').val(),
+                    'item_title': $("#item_title option:selected").val(),
+                    'race_cid':"{{race_cid}}"
+                };
+                window.location.href = "{{ reverse_url('backoffice_race_lottery_result_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+    $(function () {
+    $("#search").on('click', function () {
+            var params = {
+                'per_page_quantity': '{{ per_page_quantity }}',
+                'kw_word': $('#kw_word').val(),
+                'item_title': $("#item_title option:selected").val(),
+                'race_cid': "{{race_cid}}"
+            };
+            window.location.href = "{{ reverse_url('backoffice_race_lottery_result_list') }}?" + dict_2_url_params(params);
+        });
+
+    $("#cancel_search").click(function (event) {
+
+            $("#kw_word").val("");
+            $("#item_title option:selected").val("");
+
+            do_jump_2_page(event, 1);
+        });
+
+    })
+</script>
+{% end %}

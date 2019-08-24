@@ -1,0 +1,285 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import SOURCE_MEMBER_DIAMOND_NOVICE, SOURCE_MEMBER_DIAMOND_FIRST_PK, SOURCE_MEMBER_DIAMOND_FIRST_WIN %}
+{% from db import SOURCE_MEMBER_DIAMOND_LOGIN_EVERYDAY, SOURCE_MEMBER_DIAMOND_WIN_STREAK_TIMES, SOURCE_MEMBER_DIAMOND_WIN_STREAK_AWARD_START %}
+{% from db import SOURCE_MEMBER_DIAMOND_WIN_STREAK_AWARD_APPEND, SOURCE_MEMBER_DIAMOND_USER_RETURN,SOURCE_MEMBER_DIAMOND_DAILY_SHARE %}
+{% from db import SOURCE_MEMBER_DIAMOND_DAILY_SHARE_TIMES_LIMIT,SOURCE_MEMBER_DIAMOND_DAILY_RANKING_VALUE_LIMIT,SOURCE_MEMBER_DIAMOND_DAILY_RANKING %}
+<form id="form_award" name="form_award" method="post" action="{{ reverse_url('backoffice_diamond_award') }}">
+    {% raw xsrf_form_html() %}
+    <div class="edit_info">
+        <div class="clear">
+            <h3 class="list_title pr add_manage fl">新手奖励
+                <span class="list_title_remark">
+                    (新手奖励每个用户只奖励一次，相关值必须为大于0的整数)
+                </span>
+                <i class="diamond_reward_i"></i>
+            </h3>
+            <div class="fr clear mt15">
+                <a href="javascript:void(0);" onclick="self.location=document.referrer;"
+                   class="fl back_btn pl20 mr20">
+                    <i class="back_i"></i>返回
+                </a>
+            </div>
+        </div>
+        <div class="pl30 pr30 clear">
+            <div class="award_box fl">
+                <div class="award_info">新手欢迎奖励</div>
+                <div>
+                    <input id="novices_reward" name="novices_reward" class="only_num" type="text" maxlength="4"
+                           value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_NOVICE, '') }}">
+                    <span class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">首次PK</div>
+                <div>
+                    <input id="first_pk" name="first_pk" class="only_num" type="text" maxlength="4"
+                           value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_FIRST_PK, '') }}">
+                    <span class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">首次获胜</div>
+                <div>
+                    <input id="first_win" name="first_win" class="only_num" type="text" maxlength="4"
+                           value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_FIRST_WIN, '') }}">
+                    <span class="ml5">钻石</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3 class="list_title pr add_manage">日常奖励
+                <span class="list_title_remark">(日常奖励相关数值必须为大雨0的整数)</span>
+                <i class="diamond_reward_i"></i>
+            </h3>
+        </div>
+        <div class="pl30 pr30 clear">
+            <div class="award_box fl">
+                <div class="award_info">每日登录</div>
+                <div>
+                    <input id="login_everyday" name="login_everyday" class="only_num" type="text" maxlength="4"
+                           value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_LOGIN_EVERYDAY, '') }}">
+                    <span class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="fl mr10 pb30">
+                <div class="award_title pl10">连胜</div>
+                <div class="clear award_box_lg">
+                    <div class="fl award_box pl10">
+                        <div class="award_info">起始次数</div>
+                        <div>
+                            <input id="starting_times" name="starting_times" class="only_num" type="text"
+                                   maxlength="4" value="
+                                        {{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_WIN_STREAK_TIMES, '') }}">
+                            <span class="ml5">次</span>
+                        </div>
+                    </div>
+                    <div class="fl award_box">
+                        <div class="award_info">起始奖励钻石</div>
+                        <div>
+                            <input id="starting_award" name="starting_award" class="only_num" type="text"
+                                   maxlength="4"
+                                   value=" {{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_WIN_STREAK_AWARD_START, '') }}">
+                            <span class="ml5">钻石</span>
+                        </div>
+                    </div>
+                    <div class="fl award_box">
+                        <div class="award_info">每次连胜增加钻石</div>
+                        <div>
+                            <input id="append_award" name="append_award" class="only_num" type="text" maxlength="4"
+                                   value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_WIN_STREAK_AWARD_APPEND, '') }}">
+                            <span class="ml5">钻石</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">老用户回归(三天以上未登录)</div>
+                <div>
+                    <input id="user_return" name="user_return" class="only_num" type="text" maxlength="4"
+                           value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_USER_RETURN, '') }}">
+                    <span class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="fl mr10 pb30">
+                <div class="award_title pl10">每日分享奖励</div>
+                <div class="clear award_box_lg">
+                    <div class="fl award_box pl10">
+                        <div class="award_info">奖励次数</div>
+                        <div>
+                            <input id="share_times_limit" name="share_times_limit" class="only_num" type="text"
+                                   maxlength="4"
+                                   value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_DAILY_SHARE_TIMES_LIMIT, '') }}">
+                            <span class="ml5">次</span>
+                        </div>
+                    </div>
+                    <div class="fl award_box">
+                        <div class="award_info">奖励钻石</div>
+                        <div>
+                            <input id="share_award" name="share_award" class="only_num" type="text" maxlength="4"
+                                   value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_DAILY_SHARE, '') }}">
+                            <span class="ml5">钻石</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fl mr10 pb30">
+                <div class="award_title pl10">每日排行榜奖励</div>
+                <div class="clear award_box_lg">
+                    <div class="fl award_box pl10">
+                        <div class="award_info">奖励名次包含</div>
+                        <div>
+                            <input id="ranking_limit" name="ranking_limit" class="only_num" type="text"
+                                   maxlength="4"
+                                   value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_DAILY_RANKING_VALUE_LIMIT, '') }}">
+                            <span class="ml5">名</span>
+                        </div>
+                    </div>
+                    <div class="fl award_box">
+                        <div class="award_info">奖励钻石</div>
+                        <div>
+                            <input id="ranking_award" name="ranking_award" class="only_num" type="text"
+                                   maxlength="4"
+                                   value="{{ diamond_reward_dict.get(SOURCE_MEMBER_DIAMOND_DAILY_RANKING, '') }}">
+                            <span class="ml5">钻石</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pl30 mb20" style="height: 16px; line-height: 16px;">
+            <span id="error_msg" class="cl_danger"></span>
+        </div>
+        <div class="ml30 pb50">
+            <a href="javascript:;" id="submit" class="btn btn_primary btn_lg">提交</a>
+        </div>
+    </div>
+</form>
+<script type="text/javascript" src="{{ static_url("js/plugins/form/jquery.form.min.js") }}"></script>
+<script>
+    $(function () {
+        $("#form_award").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("钻石奖励设置失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("钻石奖励设置成功！", 2000);
+                } else if (data.code === -1) {
+                    $("#error_msg").html("请输入【新手欢迎奖励】！");
+                } else if (data.code === -2) {
+                    $("#error_msg").html("请输入【首次PK】！");
+                } else if (data.code === -3) {
+                    $("#error_msg").html("请输入【首次获胜】！");
+                } else if (data.code === -4) {
+                    $("#error_msg").html("请输入【每日登录】！");
+                } else if (data.code === -5) {
+                    $("#error_msg").html("请输入【连胜·起始次数】！");
+                } else if (data.code === -6) {
+                    $("#error_msg").html("请输入【连胜·起始奖励】！");
+                } else if (data.code === -7) {
+                    $("#error_msg").html("请输入【连胜·每次连胜增加】！");
+                } else if (data.code === -8) {
+                    $("#error_msg").html("请输入【老用户回归】！");
+                } else if (data.code === -9) {
+                    $("#error_msg").html("请输入【每日分享奖励次数】！");
+                } else if (data.code === -10) {
+                    $("#error_msg").html("请输入【每日分享奖励钻石】！");
+                } else if (data.code === -11) {
+                    $("#error_msg").html("请输入【每日排行榜奖励名次】！");
+                } else if (data.code === -12) {
+                    $("#error_msg").html("请输入【每日排行榜奖励钻石】！");
+                }
+
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+    });
+
+    $("#submit").click(function () {
+        $("#form_award").submit();
+    });
+
+
+    function check_form() {
+        var novices_reward = $.trim($("#novices_reward").val());
+        var first_pk = $.trim($("#first_pk").val());
+        var first_win = $.trim($("#first_win").val());
+        var login_everyday = $.trim($("#login_everyday").val());
+        var starting_times = $.trim($("#starting_times").val());
+        var starting_award = $.trim($("#starting_award").val());
+        var append_award = $.trim($("#append_award").val());
+        var user_return = $.trim($("#user_return").val());
+
+        var share_times_limit = $.trim($("#share_times_limit").val());
+        var share_award = $.trim($("#share_award").val());
+        var ranking_limit = $.trim($("#ranking_limit").val());
+        var ranking_award = $.trim($("#ranking_award").val());
+
+        if (novices_reward === "") {
+            $("#error_msg").html("请输入【新手欢迎奖励】！");
+            return false;
+        }
+        if (first_pk === "") {
+            $("#error_msg").html("请输入【首次PK】！");
+            return false;
+        }
+        if (first_win === "") {
+            $("#error_msg").html("请输入【首次获胜】！");
+            return false;
+        }
+        if (login_everyday === "") {
+            $("#error_msg").html("请输入【每日登录】！");
+            return false;
+        }
+        if (starting_times === "") {
+            $("#error_msg").html("请输入【连胜·起始次数】！");
+            return false;
+        }
+        if (starting_award === "") {
+            $("#error_msg").html("请输入【连胜·起始奖励】！");
+            return false;
+        }
+        if (append_award === "") {
+            $("#error_msg").html("请输入【连胜·每次连胜增加】！");
+            return false;
+        }
+        if (user_return === "") {
+            $("#error_msg").html("请输入【老用户回归】！");
+            return false;
+        }
+
+        if (share_times_limit === "") {
+            $("#error_msg").html("请输入【每日分享奖励次数】！");
+            return false;
+        }
+        if (share_award === "") {
+            $("#error_msg").html("请输入【每日分享奖励钻石】！");
+            return false;
+        }
+        if (ranking_limit === "") {
+            $("#error_msg").html("请输入【每日排行榜奖励名次】！");
+            return false;
+        }
+        if (ranking_award === "") {
+            $("#error_msg").html("请输入【每日排行榜奖励钻石】！");
+            return false;
+        }
+        return true;
+    }
+</script>
+{% end %}

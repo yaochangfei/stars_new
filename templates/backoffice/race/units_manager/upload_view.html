@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>title</title>
+    <link rel="shortcut icon" href="{{ static_url('images/favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ static_url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/default/user_list.css') }}">
+
+    <script src="{{ static_url('js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+    <script src="{{ static_url('js/public.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+</head>
+<body class="file_body">
+<div>
+    <form id="form_import" name="form_import" method="post" action="{{ reverse_url('backoffice_race_unit_manager_import') }}?race_cid={{race_cid}}">
+        {% raw xsrf_form_html() %}
+        <input name="file" type="file" id="upload_file_btn">
+    </form>
+    <a href="#" class="btn btn_primary_empty upload_file_btn">上传文件</a>
+</div>
+<div class="files_name"></div>
+<div class="tr">
+    <span id="error" style="color: red"></span>
+    <a href="javascript:;" class="btn btn_primary" id="save">保存</a>
+    <a href="javascript:;" class="btn btn_primary" id="close">关闭</a>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    //按钮闪烁bug：
+    var uploadPicBtn = $("#upload_file_btn");
+    uploadPicBtn.on("mouseover", function () {
+        $(this).addClass("current");
+    });
+    uploadPicBtn.on("mouseup", function () {
+        $(this).removeClass("current");
+    });
+    uploadPicBtn.on("mouseout", function () {
+        $(this).removeClass("current");
+    });
+
+
+    $("#close").on("click", function () {
+        window.parent.layer.closeAll(); //疯狂模式，关闭所有层
+    });
+
+    uploadPicBtn.on("change", function () {
+        $(".files_name").append('<div class="file_name ellipsis" title="' + $(this).val() + '">' + $(this).val() + '</div>')
+    });
+
+    $(function () {
+        $("#form_import").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("导入单位失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("单位导入成功！", 2000, function () {
+                        window.parent.layer.closeAll();
+                        window.parent.window.location.reload();
+                    });
+                }else if (data.code === 2){
+                    tip_msg("表头有误，请确认！", 2000, function () {
+                        window.parent.layer.closeAll();
+                    });
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+        $("#save").click(function () {
+            var filename_list = [];
+            $('.file_name').each(function () {
+                filename_list.push($(this).text())
+            });
+            var filename = $('.file_name').text();
+            if (filename){
+                if (filename.endsWith(".xlsx") && filename_list.length === 1){
+                   $("#form_import").submit();
+                }else if(filename_list.length > 1){
+                    $('#error').html("只能上传单一文件！")
+                }
+                else{
+                    $('#error').html("文件格式错误！")
+                }
+            }
+
+        });
+    });
+</script>
+</body>

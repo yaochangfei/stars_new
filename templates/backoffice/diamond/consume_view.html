@@ -1,0 +1,236 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import TYPE_DAN_GRADE_ONE, TYPE_DAN_GRADE_TWO, TYPE_DAN_GRADE_THIRD, TYPE_DAN_GRADE_FOUR, TYPE_DAN_GRADE_FIVE %}
+{% from db import TYPE_DAN_GRADE_SIX, TYPE_DAN_GRADE_SEVEN,TYPE_DAN_GRADE_EIGHT, TYPE_DAN_GRADE_NINE, TYPE_DAN_GRADE_TEN %}
+{% from db import TYPE_DAN_GRADE_ELEVEN %}
+<form id="form_consume" name="form_consume" method="post" action="{{ reverse_url('backoffice_diamond_consume') }}">
+    {% raw xsrf_form_html() %}
+    <div class="edit_info">
+        <div class="clear">
+            <h3 class="list_title pr add_manage fl">
+                各段位PK消耗
+                <span class="list_title_remark">(相关值必须为大于等于0的整数)</span>
+                <i class="diamond_reward_i"></i>
+            </h3>
+            <div class="fr clear mt15 mt15">
+                <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20">
+                    <i class="back_i"></i>返回
+                </a>
+            </div>
+        </div>
+        <div class="pl30 pr30 clear">
+            <div class="award_box fl">
+                <div class="award_info">入门新手</div>
+                <div>
+                    <input id="type_dan_grade_one" name="type_dan_grade_one" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_ONE, '') }}"><span
+                        class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">坚定磐石</div>
+                <div>
+                    <input id="type_dan_grade_two" name="type_dan_grade_two" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_TWO, '') }}"><span
+                        class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">无畏黑铁</div>
+                <div>
+                    <input id="type_dan_grade_third" name="type_dan_grade_third" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_THIRD, '') }}"><span
+                        class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">勇敢青铜</div>
+                <div>
+                    <input id="type_dan_grade_four" name="type_dan_grade_four" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_FOUR, '') }}"><span
+                        class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">秩序白银</div>
+                <div>
+                    <input id="type_dan_grade_five" name="type_dan_grade_five" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_FIVE, '') }}"><span
+                        class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">高贵黄金</div>
+                <div>
+                    <input id="type_dan_grade_six" name="type_dan_grade_six" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_SIX, '') }}">
+                    <span class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">庄严白金</div>
+                <div>
+                    <input id="type_dan_grade_seven" name="type_dan_grade_seven" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_SEVEN, '') }}"><span
+                        class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">奢华铂金</div>
+                <div>
+                    <input id="type_dan_grade_eight" name="type_dan_grade_eight" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_EIGHT, '') }}"><span
+                        class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">光辉钻石</div>
+                <div>
+                    <input id="type_dan_grade_nine" name="type_dan_grade_nine" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_NINE, '') }}"><span
+                        class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">一代宗师</div>
+                <div>
+                    <input id="type_dan_grade_ten" name="type_dan_grade_ten" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_TEN, '') }}">
+                    <span class="ml5">钻石</span>
+                </div>
+            </div>
+            <div class="award_box fl">
+                <div class="award_info">车界传说</div>
+                <div>
+                    <input id="type_dan_grade_eleven" name="type_dan_grade_eleven" class="only_num" type="text"
+                           maxlength="4" value="{{ diamond_consume_dict.get(TYPE_DAN_GRADE_ELEVEN, '') }}"><span
+                        class="ml5">钻石</span>
+                </div>
+            </div>
+        </div>
+        <div class="pl30 mb20" style="height: 16px; line-height: 16px;">
+            <span id="error_msg" class="cl_danger"></span>
+        </div>
+        <div class="ml30 pb50">
+            <a href="javascript:;" id="submit" class="btn btn_primary btn_lg">提交</a>
+        </div>
+    </div>
+</form>
+<script type="text/javascript" src="{{ static_url("js/plugins/form/jquery.form.min.js") }}"></script>
+<script>
+    $(function () {
+        $("#form_consume").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("段位消耗设置失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("段位消耗设置成功！", 2000);
+                } else if (data.code === -1) {
+                    $("#error_msg").html("请输入【入门新手】！");
+                } else if (data.code === -2) {
+                    $("#error_msg").html("请输入【坚定磐石】！");
+                } else if (data.code === -3) {
+                    $("#error_msg").html("请输入【无畏黑铁】！");
+                } else if (data.code === -4) {
+                    $("#error_msg").html("请输入【勇敢青铜】！");
+                } else if (data.code === -5) {
+                    $("#error_msg").html("请输入【秩序白银】！");
+                } else if (data.code === -6) {
+                    $("#error_msg").html("请输入【高贵黄金】！");
+                } else if (data.code === -7) {
+                    $("#error_msg").html("请输入【庄严白金】！");
+                } else if (data.code === -8) {
+                    $("#error_msg").html("请输入【奢华铂金】！");
+                } else if (data.code === -9) {
+                    $("#error_msg").html("请输入【光辉钻石】！");
+                } else if (data.code === -10) {
+                    $("#error_msg").html("请输入【一代宗师】！");
+                } else if (data.code === -11) {
+                    $("#error_msg").html("请输入【车界传说】！");
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+    });
+
+    $("#submit").click(function () {
+        $("#form_consume").submit();
+    });
+
+
+    function check_form() {
+        var type_dan_grade_one = $.trim($("#type_dan_grade_one").val());
+        var type_dan_grade_two = $.trim($("#type_dan_grade_two").val());
+        var type_dan_grade_third = $.trim($("#type_dan_grade_third").val());
+        var type_dan_grade_four = $.trim($("#type_dan_grade_four").val());
+        var type_dan_grade_five = $.trim($("#type_dan_grade_five").val());
+        var type_dan_grade_six = $.trim($("#type_dan_grade_six").val());
+        var type_dan_grade_seven = $.trim($("#type_dan_grade_seven").val());
+        var type_dan_grade_eight = $.trim($("#type_dan_grade_eight").val());
+        var type_dan_grade_nine = $.trim($("#type_dan_grade_nine").val());
+        var type_dan_grade_ten = $.trim($("#type_dan_grade_ten").val());
+        var type_dan_grade_eleven = $.trim($("#type_dan_grade_eleven").val());
+        if (type_dan_grade_one === "") {
+            $("#error_msg").html("请输入【入门新手】！");
+            return false;
+        }
+        if (type_dan_grade_two === "") {
+            $("#error_msg").html("请输入【坚定磐石】！");
+            return false;
+        }
+        if (type_dan_grade_third === "") {
+            $("#error_msg").html("请输入【无畏黑铁】！");
+            return false;
+        }
+        if (type_dan_grade_four === "") {
+            $("#error_msg").html("请输入【勇敢青铜】！");
+            return false;
+        }
+        if (type_dan_grade_five === "") {
+            $("#error_msg").html("请输入【秩序白银】！");
+            return false;
+        }
+        if (type_dan_grade_six === "") {
+            $("#error_msg").html("请输入【高贵黄金】！");
+            return false;
+        }
+        if (type_dan_grade_seven === "") {
+            $("#error_msg").html("请输入【庄严白金】！");
+            return false;
+        }
+        if (type_dan_grade_eight === "") {
+            $("#error_msg").html("请输入【奢华铂金】！");
+            return false;
+        }
+        if (type_dan_grade_nine === "") {
+            $("#error_msg").html("请输入【光辉钻石】！");
+            return false;
+        }
+        if (type_dan_grade_ten === "") {
+            $("#error_msg").html("请输入【一代宗师】！");
+            return false;
+        }
+        if (type_dan_grade_eleven === "") {
+            $("#error_msg").html("请输入【车界传说】！");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+{% end %}

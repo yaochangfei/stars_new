@@ -1,0 +1,194 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_race_game_checkpoint_list') }}?race_cid={{race_cid}}" class="pl10 ml10">关卡管理</a>
+        <span>&gt; 新增关卡</span>
+    </div>
+    <div class="fr clear">
+        <a href="{{ reverse_url('backoffice_race_game_checkpoint_list') }}?race_cid={{race_cid}}"  class="fl back_btn pl20 mr20">
+            <i class="back_i"></i>返回
+        </a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">新增关卡<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="form_add" name="form_add" method="post" action="{{ reverse_url('backoffice_race_game_checkpoint_add') }}?race_cid={{race_cid}}">
+            {% raw xsrf_form_html() %}
+            <table class="table_form">
+                <tbody>
+                <tr>
+                    <th width="40%"><span class="necessary ">*</span>序号</th>
+                    <td><input id="index" name="index" class="input_text only_num" type="text" maxlength="4"></td>
+                </tr>
+                <tr>
+                    <th width="40%">关卡别名</th>
+                    <td><input id="alias" name="alias" class="input_text " type="text" maxlength="256"></td>
+                </tr>
+                <tr>
+                    <th><span class="necessary">*</span>抽题规则</th>
+                    <td class="subject_diff">
+                        <select id="rule_cid" name="rule_cid">
+                            <option value="" quantity="">--请选择--</option>
+                            {% for race_subject_choice_rules in race_subject_choice_rules_list %}
+                            <option value="{{ race_subject_choice_rules.cid }}"
+                                    quantity="{{ race_subject_choice_rules.quantity }}" cid="{{ race_subject_choice_rules.cid }}">{{ race_subject_choice_rules.title }}({{ race_subject_choice_rules.code }})
+                            </option>
+                            {% end %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class=""></span>红包规则</th>
+                    <td class="subject_diff">
+                        <select id="red_rule" name="red_rule">
+                            <option value="" quantity="">--请选择--</option>
+                            {% for red_rule in red_rule_list %}
+                            <option value="{{ red_rule.cid }}"
+                                     cid="{{ red_rule.cid }}">{{ red_rule.title }}
+                            </option>
+                            {% end %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span>答题限制数量:</span></th>
+                    <td><input class="input_text" name="answer_limit_quantity"></td>
+                </tr>
+                <tr>
+                    <th><input class="rule_quantity" name="rule_quantity" type="hidden" value=""></th>
+                    <td class="subject_role_info">
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class="necessary only_num">*</span>解锁所需答对题数</th>
+                    <td class="pr">
+                        <input id="unlock_quantity" name="unlock_quantity" class="input_text only_num" type="text"
+                               maxlength="4">
+                    </td>
+                </tr>
+                <tr>
+                    <th class="vt pt10">备注</th>
+                    <td>
+                        <textarea id="comment" name="comment" class="textarea">
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>关卡启用状态</th>
+                    <td>
+                        <label class="table_switch">
+                            <input id="status" name="status" type="checkbox" checked="checked">
+                            <i></i>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <span id="error_msg" class="cl_danger"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <a href="javascript:;" id="submit" class="btn btn_primary btn_lg mt10">提交</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    $(function () {
+//        抽题规则信息提示：
+        $("#rule_cid").change(function () {
+            $(".subject_role_info").text('单局共 ' + $("#rule_cid option:selected").attr("quantity")+ '题');
+            $(".rule_quantity").val($("#rule_cid option:selected").attr("quantity"));
+        });
+        $("#form_add").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("添加关卡失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("关卡添加成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_race_game_checkpoint_list') }}?race_cid={{race_cid}}";
+                    });
+                } else if (data.code === -1) {
+                    $("#error_msg").html("请输入序号！");
+                }else if (data.code === -3) {
+                    $("#error_msg").html("解锁所需答对题数！");
+                }
+                else if (data.code === -5) {
+                    $("#error_msg").html("请选择抽题规则！");
+                } else if (data.code === -6) {
+                    $("#error_msg").html("序号已存在，请换一个！");
+                } else if (data.code === -7) {
+                    $("#error_msg").html("关卡名称已存在，请换一个！");
+                } else if (data.code === -8) {
+                    $("#error_msg").html("解锁所需答对题数需小于等于关卡题目数量！");
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+
+        $("#submit").click(function () {
+            $("#form_add").submit();
+        });
+
+        $(".radio_i").on("click", function () {
+            $(this).parents(".table_form").find(".radio_i").removeClass("checked").parent().find(".hide_f").val("");
+            $(this).addClass("checked").parent().find(".hide_f").val("1");
+        });
+    });
+
+    function check_form() {
+        var index = $.trim($("#index").val());
+        var unlock_quantity = $.trim($("#unlock_quantity").val());
+        var rule_cid = $.trim($("#rule_cid").val());
+        var rule_quantity = $.trim($("#rule_cid option:selected").attr("quantity"));
+        if (index === "") {
+            $("#error_msg").html("请输入序号！");
+            return false;
+        }if (rule_cid === "") {
+            $("#error_msg").html("请选择抽题规则！");
+            return false;
+        }if (unlock_quantity === "") {
+            $("#error_msg").html("请输入解锁所需答对题数！");
+            return false;
+        }if (unlock_quantity) {
+            unlock_quantity = parseInt(unlock_quantity)
+        }if (rule_quantity) {
+            rule_quantity = parseInt(rule_quantity)
+        }
+        if (unlock_quantity > rule_quantity) {
+            $("#error_msg").html("解锁所需答对题数需小于等于关卡题目数量！");
+            return false;
+        }
+
+        return true;
+    }
+
+
+</script>
+{% end %}

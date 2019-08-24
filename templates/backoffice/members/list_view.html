@@ -1,0 +1,371 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+
+{% block js %}
+<script src="{{ static_url('js/ajaxfileupload.js') }}"></script>
+{% end %}
+
+{% block content %}
+{% from db import STATUS_USER_ACTIVE, STATUS_USER_INACTIVE, CAN_SEE_ALL_RACE, CAN_NOT_SEE_ALL_RACE %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <a href="{{ reverse_url('backoffice_member_add') }}" class="btn btn_i btn_primary btn_lg pr fl">新增会员<i
+            class="add_manage_i"></i></a>
+    <a href="javascript:window.location.reload();" class="refresh_btn pl20 mr20 fr mt10"><i class="refresh_i"></i>刷新</a>
+</div>
+{% module xsrf_form_html() %}
+<div class="filter_box clear">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <input id="search_account" type="text" class="account" placeholder="输入会员ID"
+               value="{{ search_account }}">
+        <input id="search_nickname" type="text" class="username" placeholder="输入会员昵称" value="{{ search_nickname }}">
+        <span>
+                <input id="search_register_time" type="text" class="registration_time calendar_i"
+                       value="{{ datetime_format(search_register_time, '%Y-%m-%d', '') }}" placeholder="选择注册时间">
+            </span>
+    </div>
+    <div class="filter_btn fr">
+        <a href="#" class="btn btn_i btn_primary pr mr5 search_data">查询<i class="btn_search"></i></a>
+        <a href="{{ reverse_url('backoffice_member_list') }}" class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr">
+            <select>
+                <option value="排列方式">排列方式</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th width="50"></th>
+                <th>会员ID</th>
+                <th>微信昵称</th>
+                <th>手机号码</th>
+                <th>城市</th>
+                {#                    <th>车型</th>#}
+                {#                    <th>积分</th>#}
+                <th>状态</th>
+                <th>超管</th>
+                <th>操作</th>
+            </tr>
+            {% set member_list = paging.page_items %}
+            {% if member_list %}
+            {% for member in member_list %}
+            <tr>
+                {% set needless = member.needless if member.needless else {} %}
+                <td class="tc">
+                    <i class="checkbox_i" oid="{{ member.oid }}"></i>
+                </td>
+                <td>{{ string_display(str(member.code)) }}</td>
+                <td>{{ string_display(member.nick_name) }}</td>
+                <td>{{ string_display(member.mobile) }}</td>
+                <td>{{ string_display(needless.get('province')) }}
+                    {{ string_display(needless.get('city')) }}</td>
+                {#                    {% set vehicle_display = '%s(%s)' % (string_display(needless.get('vehicle_title')), string_display(member.vehicle_code)) %}#}
+                {#                    <td>{{ string_display(vehicle_display) }}</td>#}
+                {#                    <td>{{ member.integral if member.integral else 0 }}</td>#}
+                <td>
+                    <label class="table_switch">
+                        <input oid="{{ member.oid }}" class="status_switch" type="checkbox"
+                               {% if member.status == STATUS_USER_ACTIVE %}checked="checked"{% end %}>
+                        <i></i>
+                    </label>
+                </td>
+                <td>
+                    <label class="table_switch">
+                        <input oid="{{ member.oid }}" id="race_privilege_status" class="table_switch" type="checkbox"
+                               {% if member.race_privilege == CAN_SEE_ALL_RACE %}checked="checked"{% end %}>
+                        <i></i>
+                    </label>
+                </td>
+                <td class="tools">
+                    <a href="{{ reverse_url('backoffice_member_detail') }}?member_id={{ member.oid }}"
+                       class="see_i fl tips" data-name="查看"></a>
+                    <a href="{{ reverse_url('backoffice_member_edit') }}?member_id={{ member.oid }}"
+                       class="edit_i fl tips" data-name="编辑"></a>
+                    <a oid="{{ member.oid }}" href="#" class="delete_i fl tips delete_member" data-name="删除"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="7" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr25 ml15"></i>全选</div>
+            <div class="fl ml20">
+                <select id="selected_operation">
+                    <option value="active">启用</option>
+                    <option value="inactive">停用</option>
+                    <option value="delete">删除</option>
+                </select>
+            </div>
+            <div class="fl">
+                <a href="#" class="btn btn_primary ml20  selected_change">确定</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="fix_page clear {% if not member_list %}dis_none{% end %}">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val() || {{ per_page_quantity }},
+                    'search_account': $('#search_account').val(),
+                    'search_nickname': $('#search_nickname').val(),
+                    'search_register_time': $('#search_register_time').val(),
+                };
+                window.location.href = "{{ reverse_url('backoffice_member_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+    $(function () {
+
+        laydate.render({
+            elem: '.registration_time', //指定元素
+            trigger: 'click' //采用click弹出
+        });
+
+        $('.selected_change').on('click', function () {
+            var operation = $('#selected_operation').val();
+            var selected_member_ids = [];
+            var obj_list = $('.table_list').find('.checkbox_i.checked');
+            for (var i = 0; i < obj_list.length; i++) {
+                var obj = obj_list[i];
+                if ($(obj).attr('oid')) {
+                    selected_member_ids.push($(obj).attr('oid'));
+                }
+            }
+            if (selected_member_ids.length > 0) {
+                var data = {
+                    'member_ids': selected_member_ids
+                };
+                if (operation === 'delete') {
+                    var url = "{{ reverse_url('backoffice_member_delete') }}";
+                    confirm_dialog('警告', '确认删除会员？', function () {
+                        display_loading();
+                        ajaxPost(url, data, function (ret) {
+                            if (ret.code === 1) {
+                                tip_msg("删除会员成功！", 2000, function () {
+                                    window.location.href = "{{ reverse_url('backoffice_member_list') }}";
+                                });
+                            } else {
+                                tip_msg("删除会员失败！", 2000)
+                            }
+                        });
+                        remove_loading();
+                    });
+                } else if (operation === 'active' || operation === 'inactive') {
+
+                    data['target_status'] = operation === 'active' ? {{ STATUS_USER_ACTIVE }} :{{ STATUS_USER_INACTIVE }};
+                    var url = "{{ reverse_url('backoffice_member_status') }}";
+
+                    confirm_dialog('警告', '确认变更会员状态？', function () {
+                        display_loading();
+                        ajaxPost(url, data, function (ret) {
+                            if (ret.code !== 1) {
+                                tip_msg("变更会员状态失败！", 2000)
+                            } else {
+                                tip_msg("变更会员状态成功！", 2000, function () {
+                                    window.location.href = "{{ reverse_url('backoffice_member_list') }}";
+                                });
+                            }
+                        });
+                        remove_loading();
+                    });
+
+                } else {
+                    tip_msg("批量操作失败！", 2000)
+                }
+            } else {
+                tip_msg("请选择数据！", 2000)
+            }
+
+        });
+
+        $('.status_switch').on('click', function () {
+            var obj = $(this);
+            var member_id = $(this).attr('oid');
+            var target_status = $(this).prop('checked') ? {{ STATUS_USER_ACTIVE }} :{{ STATUS_USER_INACTIVE }};
+            if (member_id && target_status) {
+                var data = {
+                    'member_ids': [member_id],
+                    'target_status': target_status
+                };
+                var url = "{{ reverse_url('backoffice_member_status') }}";
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code !== 1) {
+                        tip_msg("变更会员状态失败！", 2000, function () {
+                            if (target_status === {{ STATUS_USER_ACTIVE }}) {
+                                obj.prop('checked', '')
+                            } else {
+                                obj.prop('checked', 'checked')
+                            }
+                        });
+
+                    } else {
+                        tip_msg("变更会员状态成功！", 2000);
+                    }
+                });
+                remove_loading();
+            }
+        });
+        $('.table_switch').on('click', function () {
+            var obj = $(this);
+            var member_id = $(this).attr('oid');
+            var target_status = $(this).prop('checked') ? {{ CAN_SEE_ALL_RACE }} :{{ CAN_NOT_SEE_ALL_RACE }};
+            if (member_id && target_status) {
+                var data = {
+                    'member_id': member_id,
+                    'target_status': target_status
+                };
+                var url = "{{ reverse_url('backoffice_member_race_privilege_change') }}";
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code !== 1) {
+                        tip_msg("变更超管状态失败！", 2000, function () {
+                            if (target_status === {{ CAN_SEE_ALL_RACE }}) {
+                                obj.prop('checked', '')
+                            } else {
+                                obj.prop('checked', 'checked')
+                            }
+                        });
+
+                    } else {
+                        tip_msg("变更超管状态成功！", 2000);
+                    }
+                });
+                remove_loading();
+            }
+        });
+        $('.delete_member').on('click', function () {
+            var member_id = $(this).attr('oid');
+            if (member_id) {
+                var data = {
+                    'member_ids': [member_id]
+                };
+                var url = "{{ reverse_url('backoffice_member_delete') }}";
+                confirm_dialog('警告', '确认删除会员？', function () {
+                    display_loading();
+                    ajaxPost(url, data, function (ret) {
+                        if (ret.code === 1) {
+                            tip_msg("删除会员成功！", 2000, function () {
+                                window.location.href = "{{ reverse_url('backoffice_member_list') }}";
+                            });
+                        } else {
+                            tip_msg("删除会员失败！", 2000);
+                        }
+                    });
+                    remove_loading();
+                });
+            }
+        });
+
+        $('.search_data').on('click', function () {
+            var param_dict = {
+                'search_account': $('#search_account').val(),
+                'search_nickname': $('#search_nickname').val(),
+                'search_register_time': $('#search_register_time').val(),
+                'per_page_quantity': $('#per_page_quantity').val()
+            };
+            window.location.href = "{{ reverse_url('backoffice_member_list') }}?" + dict_2_url_params(param_dict);
+        });
+
+        $('.member_upload').on('click', function () {
+            $("#uploadfile").click();
+            $("#uploadfile").on("change", function () {
+                var file = $(this).get(0).files[0];
+                console.log(file);
+                var reg = /^.*\.(?:xls|xlsx)$/i;
+                if (!reg.test(file.name)) {
+                    tip_msg("请上传xls,xlsx格式文件");
+                    return;
+                }
+                data = {};
+                data['filename'] = file.name;
+                set_xsrf(data);
+
+                $.ajaxFileUpload({
+                    url: $("#uploadfile").attr('href'),
+                    secureuri: false,
+                    fileElementId: "uploadfile",
+                    data: data,
+                    dataType: 'json',
+                    success: function (ret, status) {
+                        if (ret.error) {
+                            tip_msg(ret.error);
+                            return false;
+                        } else {
+                            tip_msg("文件已导入，请耐心等待上传");
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    },
+                    error: function (data, status, e) {
+                        alert(data.responseText);
+                        alert(e);
+                        tip_msg('上传文件失败');
+                    }
+                });
+            });
+        });
+    })
+</script>
+{% end %}

@@ -1,0 +1,116 @@
+{% extends '../base_race.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="main clear">
+    <div class="right_area">
+        <div class="edit_info m20 pl10 pr10">
+            <div class="atlas_tabs clear mb10">
+                <!--<a href="/backoffice/race/lottery/draw/list/?race_cid={{race_cid}}" class="active">抽奖设置</a>-->
+                <!--<a href="/backoffice/race/lottery/draw/result/list/?race_cid={{race_cid}}">结果查看</a>-->
+                <!--<a href="{{ reverse_url('backoffice_race_redpkt_rule_list') }}?race_cid={{ race_cid }}"  class="back_btn pl20 mr20 fr mt10"><i class="back_i"></i>返回</a>-->
+            </div>
+            <div class="lottery_info_box clear">
+                <div class="fl lottery_info">
+                    <div class="base_setup">
+                        <div class="setup_title">红包设置</div>
+                        <div class="menu_box">
+                            <label><input type="radio" checked="checked" name="red_form" value="0" {% if red_conf and red_conf.category == 0 %} checked="checked" {% end %}>普通红包</label>
+                            <label><input type="radio" name="red_form" value="1" {% if red_conf and red_conf.category == 1 %} checked="checked" {% end %}>随机红包</label>
+                        </div>
+                    </div>
+                    <div class="price_setup">
+                        <table class="table_form">
+                            <tr>
+                                <th width="40%"><span class="necessary ">*</span>总金额</th>
+                                <td><input id="account" name="account" class="input_text only_decials" type="text"
+                                           maxlength="16" {% if red_conf %} value="{{red_conf.total_amount}}" {% end %}>&nbsp;&nbsp;&nbsp;<span>元</span></td>
+                            </tr>
+                            <tr>
+                                <th width="40%"><span class="necessary ">*</span>红包个数</th>
+                                <td><input id="count" name="count" class="input_text only_num" type="text"
+                                           maxlength="16" {% if red_conf %} value="{{red_conf.quantity}}" {% end %}></td>
+                            </tr>
+                            <tr>
+                                <th width="40%"><span class="necessary">*</span>每天领取上限</th>
+                                <td><input id="top_limit" name="top_limit" class="input_text only_num" type="text"
+                                           maxlength="16" {% if red_conf %} value="{{red_conf.top_limit}}" {% end %}></td>
+                            </tr>
+
+                        </table>
+                    </div>
+                    <div class="base_setup">
+                        <div class="setup_title">提示语设置</div>
+                        <table class="table_form">
+                            <tr>
+                                <th width="40%"><span class="necessary ">*</span>红包祝福语</th>
+                                <td>
+                                    <input type="text" id="bless_language" class="input_text" {% if red_conf %} value="{{red_conf.msg}}" {% end %} placeholder="请输入提示语内容">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="40%"><span class="necessary ">*</span>已达每日上限</th>
+                                <td>
+                                    <input type="text" id="over_limit" class="input_text" {% if red_conf %} value="{{red_conf.over_msg}}" {% end %}  placeholder="请输入提示语内容">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <span id="error_msg" class="cl_danger"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    {% if not red_conf %}<a href="javascript:void(0)" id="submit" class="btn btn_primary btn_lg ml10">提交</a>{% end %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#submit').click(function () {
+            console.log('123');
+            var red_form = $('input:radio:checked').val();
+            var account = $('#account').val();
+            var count = $('#count').val();
+            var top_limit = $('#top_limit').val();
+            var bless_language = $('#bless_language').val();
+            var over_limit = $('#over_limit').val()
+            if(account === ''){
+                 $('#error_msg').html('请设置单个红包金额！');
+                 return false;
+            }
+            if(count === ''){
+                 $('#error_msg').html('请设置红包个数！');
+                 return false;
+            }
+            if(account === ''){
+                 $('#error_msg').html('请设置单个红包金额！');
+                 return false;
+            }
+            if(top_limit === ''){
+                 $('#error_msg').html('请设置每天领取上限！');
+                 return false;
+            }
+            if(bless_language === ''){
+                 $('#error_msg').html('请设置红包祝福语！');
+                 return false;
+            }
+            if(over_limit === ''){
+                 $('#error_msg').html('请设置已达每日上限的提示语！');
+                 return false;
+            }
+            ajaxPost('{{ reverse_url("backoffice_race_redpkt_direct") }}', {'red_form':red_form, 'account': account,'top_limit':top_limit ,'count':count, 'bless_language':bless_language,'over_limit':over_limit, 'race_cid': '{{race_cid}}', 'rule_cid': '{{rule_cid}}'},function (ret) {
+                if(ret.code === 1){
+                    tip_msg('添加成功!', 2000,function () {
+                        window.location.reload()
+                    })
+                }else{
+                    tip_msg('添加失败请重试!!!')
+                }
+            })
+        })
+    })
+</script>
+{% end %}

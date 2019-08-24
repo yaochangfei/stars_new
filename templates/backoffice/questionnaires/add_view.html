@@ -1,0 +1,114 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_QUESTIONNAIRE_ACTIVE, STATUS_QUESTIONNAIRE_INACTIVE %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_questionnaire_list') }}" class="pl10 ml10">问卷管理</a>
+        <span> &gt; 发布问卷</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20">
+            <i class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">发布问卷<i class="edit_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <table class="table_form">
+            <tr>
+                <th width="40%"><span class="necessary">*</span>问卷编号:</th>
+                <td><input class="input_text" type="text" id="code"></td>
+            </tr>
+            <tr>
+                <th width="40%"><span class="necessary">*</span>问卷名称:</th>
+                <td><input class="input_text" type="text" id="title"></td>
+            </tr>
+            <tr>
+                <th class="vt pt10"><span class="necessary">*</span>问卷链接:</th>
+                <td><textarea class="textarea" id="url"></textarea></td>
+            </tr>
+            <tr>
+                <th class="vt pt10">报告链接:</th>
+                <td><textarea class="textarea" id="report_url"></textarea></td>
+            </tr>
+            <tr>
+                <th class="vt pt10">进度链接:</th>
+                <td><textarea class="textarea" id="process_url"></textarea></td>
+            </tr>
+            <tr>
+                <th class="vt pt10">下载链接:</th>
+                <td><textarea class="textarea" id="download_url"></textarea></td>
+            </tr>
+            <tr>
+                <th>问卷启用状态</th>
+                <td>
+                    <label class="table_switch">
+                        <input type="checkbox" checked="checked" value="{{ STATUS_QUESTIONNAIRE_ACTIVE }}"
+                               id="status">
+                        <i></i>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <span class="cl_danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><a href="#" class="btn btn_primary btn_lg mt10 submit_btn">提交</a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+    $(function () {
+        // 提交表单
+        $('.submit_btn').on('click', function () {
+            var code = $('#code').val();
+            var title = $('#title').val();
+            var url = $('#url').val();
+            var report_url = $('#report_url').val();
+            var process_url = $('#process_url').val();
+            var download_url = $('#download_url').val();
+            var status = $('#status').prop('checked') ? {{ STATUS_QUESTIONNAIRE_ACTIVE }} :{{ STATUS_QUESTIONNAIRE_INACTIVE }};
+
+            if (!(code && title && url)) {
+                $('.cl_danger').html('请填写必填信息！');
+                return false;
+            }
+
+            var post_url = "{{ reverse_url('backoffice_questionnaire_add') }}";
+            var data = {
+                'code': code,
+                'title': title,
+                'url': url,
+                'status': status,
+                'report_url': report_url,
+                'download_url': download_url,
+                'process_url': process_url
+            };
+
+            display_loading();
+            ajaxPost(post_url, data, function (ret) {
+                if (ret.code == -2) {
+                    $('.cl_danger').html('问卷编号已存在！');
+                } else if (ret.code == -1) {
+                    $('.cl_danger').html('填写完整信息！');
+                } else if (ret.code == 1) {
+                    tip_msg("发布问卷成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_questionnaire_list') }}";
+                    });
+                } else {
+                    $('.cl_danger').html('系统错误！');
+                }
+            });
+            remove_loading();
+        })
+    })
+</script>
+{% end %}

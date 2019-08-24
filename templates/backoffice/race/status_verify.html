@@ -1,0 +1,59 @@
+{% autoescape None %}
+{% from db import STATUS_RACE_ACTIVE %}
+<div class="activity_pop">
+    <div class="activity_item"><i class="status_loading subject" path="subject"></i>题库管理</div>
+    <div class="activity_item"><i class="status_loading dimension" path="dimension"></i>维度管理</div>
+    <div class="activity_item"><i class="status_loading choice_rules" path="choice_rules"></i>抽题管理</div>
+    <div class="activity_item"><i class="status_loading point" path="point"></i>关卡管理</div>
+    <div class="activity_item dis_none"><i></i>证书管理</div>
+    <div class="activity_danger dis_none"><span class="cl_danger"></span></div>
+</div>
+<script>
+    var result2;
+    function beginVerify(fail_call_back, success_call_back) {
+        ajaxPost("{{ reverse_url('backoffice_race_verify') }}", {"race_cid": "{{ race_cid }}"}, function (result) {
+            result2 = result;
+            if (result.code === 0) {
+                fail_msg("服务器异常，请重试！");
+                return false;
+            } else if (result.code === 1) {
+                var obj = $(".activity_pop").find(".status_loading");
+                for (var i = 0; i < obj.length; i++) {
+                    var key = $(obj[i]).attr("path");
+                    setTimeout(do_thing, 500 * (i + 1), result[key], $(obj[i]), i, fail_call_back, success_call_back);
+                }
+            }
+        });
+    }
+
+    function do_thing(key, obj, i, fail_call_back, success_call_back) {
+        if (key === 1) {
+            obj.removeClass("status_loading").addClass("active");
+        } else if (key === 0) {
+            obj.removeClass("status_loading");
+        }
+        if (i >= 3) {
+            setTimeout(function () {
+                if (result2.subject === 1 && result2.dimension === 1 && result2.choice_rules === 1 && result2.point === 1) {
+                    ajaxPost("{{ reverse_url('backoffice_race_status') }}", {
+                        'race_cid': '{{ race_cid }}',
+                        'target_status': {{ STATUS_RACE_ACTIVE }}
+                    }, function (status_result) {
+                        if (status_result.code === 1) {
+                            success_msg("活动状态已变更！", 2000);
+                            success_call_back()
+                        } else {
+                            fail_call_back();
+                            fail_msg("服务器异常，请重试！");
+                        }
+                    });
+                } else {
+                    fail_call_back();
+                    fail_msg("活动变更失败！")
+                }
+            }, 20);
+        }
+    }
+
+</script>
+

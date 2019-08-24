@@ -1,0 +1,233 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_USER_ACTIVE, STATUS_USER_INACTIVE %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_member_list') }}" class="pl10 ml10">会员列表</a>
+        <span> &gt; 会员编辑</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="pr back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">会员编辑<i class="edit_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <table class="table_form">
+            <tr>
+                <th width="40%">会员ID</th>
+                <td><input class="input_text" type="text" disabled value="{{ string_display(member.code) }}"></td>
+            </tr>
+            <tr>
+                <th>所在城市</th>
+                <td>
+                    <select id="province_select" title="省份" class="mr10">
+                        <option value="">--请选择--</option>
+                        {% for province in province_list %}
+                        <option {% if province.code == member.province_code %}selected{% end %}
+                                value="{{ string_display(province.code) }}">{{ string_display(province.title) }}</option>
+                        {% end %}
+                    </select>
+                    <select id="city_select" title="城市">
+                        <option value="">--请选择--</option>
+                        {% for city in city_list %}
+                        <option {% if city.code == member.city_code %}selected{% end %}
+                                value="{{ string_display(city.code) }}">
+                            {{ string_display(city.title) }}
+                        </option>
+                        {% end %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>定位城市</th>
+                <td>
+                    <select id="location_province" title="省份" class="mr10">
+                        <option value="">--请选择--</option>
+                        {% for province in province_list %}
+                        <option {% if province.code == province_code %}selected{% end %}
+                                value="{{ string_display(province.code) }}">{{ string_display(province.title) }}</option>
+                        {% end %}
+                    </select>
+                    <select id="location_city" title="城市">
+                        <option value="">--请选择--</option>
+                        {% for city in location_city_list %}
+                        <option {% if city.code == city_code %}selected{% end %}
+                                value="{{ string_display(city.code) }}">
+                            {{ string_display(city.title) }}
+                        </option>
+                        {% end %}
+                    </select>
+                    <select id="localtion_district" title="区域">
+                        <option value="">--请选择--</option>
+                        {% for district in location_district_list %}
+                        <option {% if district.code == district_code %}selected{% end %}
+                                value="{{ string_display(city.code) }}">
+                            {{ string_display(district.title) }}
+                        </option>
+                        {% end %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="vt pt10">备注</th>
+                <td>
+                        <textarea class="textarea" id="content" title="备注">
+                            {{ string_display(member.content, '') }}
+                        </textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>账户启用状态</th>
+                <td>
+                    <label class="table_switch">
+                        <input id="status" type="checkbox"
+                               {% if member.status == STATUS_USER_ACTIVE %}checked="checked"{% end %} name="status"
+                               id="status">
+                        <i></i>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <span class="cl_danger"></span>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><a href="#" class="btn btn_primary mt10 btn_lg submit_btn">提交</a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+
+    $(function () {
+        laydate.render({
+            elem: '.purchase_datetime',
+            trigger: 'click',
+            type: 'month'
+        });
+
+        $('.submit_btn').on('click', function () {
+
+            var member_id = '{{ member.oid }}';
+            var province_code = $('#province_select').val();
+            var city_code = $('#city_select').val();
+            var location_province_code = $('#location_province').val();
+            var location_city_code = $('#location_city').val();
+            var location_district_code = $('#localtion_district').val();
+            // 车辆信息
+            var vehicle_code = $('#vehicle_select').val();
+            var purchase_datetime = $('#purchase_datetime').val();
+            var content = $('#content').val();
+            var status = $('#status').prop('checked') ? {{ STATUS_USER_ACTIVE }} :{{ STATUS_USER_INACTIVE }};
+
+            var url = "{{ reverse_url('backoffice_member_edit') }}";
+            var data = {
+                'member_id': member_id,
+                'province_code': province_code,
+                'city_code': city_code,
+                'location_province_code': location_province_code,
+                'location_city_code': location_city_code,
+                'location_district_code': location_district_code,
+                'purchase_datetime': purchase_datetime,
+                'content': content,
+                'status': status,
+                'vehicle_code': vehicle_code
+            };
+            display_loading();
+            ajaxPost(url, data, function (ret) {
+                if (ret.code === 1) {
+                    tip_msg("修改会员成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_member_list') }}";
+                    });
+                } else if (ret.code === -99) {
+                    $('.cl_danger').html('未选择区县');
+                } else {
+                    $('.cl_danger').html('系统错误');
+                }
+            });
+            remove_loading();
+        });
+
+        $('#province_select').on('change', function () {
+            var province_code = $('#province_select').val();
+            $('#city_select').empty();
+            var obj = document.getElementById('city_select');
+            obj.options.add(new Option('请选择', ''));
+
+            if (province_code) {
+
+                var url = "{{ reverse_url('common_admin_division') }}";
+                var data = {'post_code': province_code};
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code === 1) {
+                        for (var i = 0; i < ret.division_list.length; i++) {
+                            obj.options.add(new Option(ret.division_list[i]['title'], ret.division_list[i]["code"])); //这个兼容IE与firefox
+                        }
+                    } else {
+                        tip_msg("选择城市失败！", 2000);
+                    }
+                });
+                remove_loading();
+            }
+
+        });
+        $('#location_province').on('change', function () {
+            var localtion_province_code = $('#location_province').val();
+            $('#location_city').empty();
+            $('#localtion_district').empty();
+            var obj = document.getElementById('location_city');
+            obj.options.add(new Option('请选择', ''));
+            var district_obj = document.getElementById('localtion_district');
+            district_obj.options.add(new Option('请选择', ''));
+            if (localtion_province_code) {
+
+                var url = "{{ reverse_url('common_admin_division') }}";
+                var data = {'post_code': localtion_province_code};
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code === 1) {
+                        for (var i = 0; i < ret.division_list.length; i++) {
+                            obj.options.add(new Option(ret.division_list[i]['title'], ret.division_list[i]["code"])); //这个兼容IE与firefox
+                        }
+                    } else {
+                        tip_msg("选择城市失败！", 2000);
+                    }
+                });
+                remove_loading();
+            }
+        });
+        $('#location_city').on('change', function () {
+            var localtion_city_code = $('#location_city').val();
+            $('#localtion_district').empty();
+            var obj = document.getElementById('localtion_district');
+            obj.options.add(new Option('请选择', ''));
+
+            if (localtion_city_code) {
+
+                var url = "{{ reverse_url('common_admin_division') }}";
+                var data = {'post_code': localtion_city_code};
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code === 1) {
+                        for (var i = 0; i < ret.division_list.length; i++) {
+                            obj.options.add(new Option(ret.division_list[i]['title'], ret.division_list[i]["code"])); //这个兼容IE与firefox
+                        }
+                    } else {
+                        tip_msg("选择城市失败！", 2000);
+                    }
+                });
+                remove_loading();
+            }
+        });
+    });
+</script>
+{% end %}

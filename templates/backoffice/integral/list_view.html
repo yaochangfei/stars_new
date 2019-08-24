@@ -1,0 +1,145 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <h3 class="pl10 ml10">积分查询</h3>
+    </div>
+    <div class="fr">
+        <a href="javascript:window.location.reload();" class="refresh_btn pl20 mr20"><i class="refresh_i"></i>刷新</a>
+    </div>
+</div>
+<div class="filter_box clear m10 no_mb">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <input id="search_account" type="text" placeholder="输入用户ID" value="{{ search_account }}">
+        <input id="search_nickname" type="text" placeholder="输入用户昵称" value="{{ search_nickname }}">
+    </div>
+    <div class="filter_btn fr">
+        <a href="#" class="btn btn_i btn_primary pr mr5 search_data">查询<i class="btn_search"></i></a>
+        <a href="{{ reverse_url('backoffice_integral_list') }}" class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr">
+            <select>
+                <option value="排列方式">排列方式</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th width="50"></th>
+                <th>用户ID</th>
+                <th>微信昵称</th>
+                <th>手机号码</th>
+                <th>积分</th>
+                <th>操作</th>
+            </tr>
+            {% set member_list = paging.page_items %}
+            {% if member_list %}
+            {% for member in member_list %}
+            <tr>
+                <td class="tc">
+                    <i class="checkbox_i"></i>
+                </td>
+                <td>{{ string_display(member.code) }}</td>
+                <td>{{ string_display(member.nick_name) }}</td>
+                <td>{{ string_display(member.mobile) }}</td>
+                <td>{{ member.integral }}</td>
+                <td class="tools">
+                    <a href="{{ reverse_url('backoffice_integral_detail') }}?member_id={{ member.oid }}"
+                       class="integral_detail_i fl tips" data-name="积分明细"></a>
+                    <a href="{{ reverse_url('backoffice_integral_edit') }}?member_id={{ member.oid }}"
+                       class="integral_revise_i fl tips" data-name="修改数值"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="6" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr10 ml15"></i>全选</div>
+        </div>
+    </div>
+</div>
+<div class="fix_page clear">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val(),
+                    'search_account': $('#search_account').val(),
+                    'search_nickname': $('#search_nickname').val(),
+                };
+                window.location.href = "{{ reverse_url('backoffice_integral_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+    $(function () {
+
+        $('.search_data').on('click', function () {
+            var param_dict = {
+                'search_account': $('#search_account').val(),
+                'search_nickname': $('#search_nickname').val(),
+                'per_page_quantity': $('#per_page_quantity').val()
+            };
+            window.location.href = "{{ reverse_url('backoffice_integral_list') }}?" + dict_2_url_params(param_dict);
+        });
+
+    })
+</script>
+{% end %}

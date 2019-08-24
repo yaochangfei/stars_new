@@ -1,0 +1,120 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import TYPE_DAN_GRADE_ONE, TYPE_DAN_GRADE_TWO, TYPE_DAN_GRADE_THIRD, TYPE_DAN_GRADE_FOUR, TYPE_DAN_GRADE_FIVE %}
+{% from db import TYPE_DAN_GRADE_SIX, TYPE_DAN_GRADE_SEVEN,TYPE_DAN_GRADE_EIGHT, TYPE_DAN_GRADE_NINE, TYPE_DAN_GRADE_TEN %}
+{% from db import TYPE_DAN_GRADE_ELEVEN %}
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage ">
+            金库设置
+            <i class="diamond_reward_i"></i>
+        </h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="bank_form" name="bank_form" method="post" action="{{ reverse_url('backoffice_bank_view') }}">
+            {% raw xsrf_form_html() %}
+            <input type="hidden" name="bank_id" value="{% if bank %}{{ bank.oid }}{% end %}">
+            <div class="pl30 pr30 clear">
+                <div class="award_box fl">
+                    <div class="award_info">领取时间</div>
+                    <div>
+                        <input id="minutes" class="only_num" type="text" name="minutes"
+                               value="{% if bank %}{{ bank.minutes }}{% end %}">
+                        <span class="ml5">分</span>
+                    </div>
+                </div>
+                <div class="award_box fl">
+                    <div class="award_info">日领取上限次数</div>
+                    <div>
+                        <input id="minutes" class="only_num" type="text" name="times"
+                               value="{% if bank %}{{ bank.times }}{% end %}">
+                        <span class="ml5">次</span>
+                    </div>
+                </div>
+                <div class="award_box fl">
+                    <div class="award_info">钻石上限</div>
+                    <div>
+                        <input id="quantity" class="only_num" type="text" name="quantity"
+                               value="{% if bank %}{{ bank.quantity }}{% end %}">
+                        <span class="ml5">个</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pl30 mb20" style="height: 16px; line-height: 16px;">
+                <span id="error_msg" class="cl_danger"></span>
+            </div>
+            <div class="ml30 pb50">
+                <a href="javascript:;" id="submit" class="btn btn_primary btn_lg">提交</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="{{ static_url("js/plugins/form/jquery.form.min.js") }}"></script>
+<script>
+    $(function () {
+        $("#bank_form").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            success: function (data) {
+                $("#error_msg").hide();
+                if (data.code === 0) {
+                    tip_msg("金库设置失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("金库设置成功！", 2000);
+                } else if (data.code === -1) {
+                    $("#error_msg").html("请输入【领取时间】！");
+                } else if (data.code === -2) {
+                    $("#error_msg").html("请输入【钻石上限】！");
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+    });
+
+    $("#submit").click(function () {
+        $("#bank_form").submit();
+    });
+
+    function check_form() {
+        var minutes = $.trim($("#minutes").val());
+        var quantity = $.trim($("#quantity").val());
+
+        if (minutes === "") {
+            $("#error_msg").html("请输入【领取时间】！");
+            return false;
+        }
+        var minutes_int = parseInt(minutes);
+        if (minutes_int < 60) {
+            $("#error_msg").html("时间不能小于60分钟！");
+            return false;
+        }
+        if (quantity === "") {
+            $("#error_msg").html("请输入【钻石上限】！");
+            return false;
+        }
+        var quantity_int = parseInt(quantity);
+        if (quantity_int < 1) {
+            $("#error_msg").html("钻石数量不能小于1个！");
+            return false;
+        }
+        if (quantity_int > 9999) {
+            $("#error_msg").html("钻石数量不能大于9999个！");
+            return false;
+        }
+        return true;
+    }
+</script>
+{% end %}

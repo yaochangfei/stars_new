@@ -1,0 +1,142 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <a href="{{ reverse_url('backoffice_diamond_award') }}" class="btn btn_i btn_primary btn_lg pr fl mr20">
+        钻石奖励设置<i class="diamond_award_i"></i>
+    </a>
+    <a href="{{ reverse_url('backoffice_diamond_consume') }}" class="btn btn_i btn_primary btn_lg pr fl">
+        钻石消耗设置<i class="diamond_consumption_i"></i></a>
+    <a href="javascript:;" class="refresh_btn pl20 mr20 fr mt10"><i class="refresh_i"></i>刷新</a>
+</div>
+<div class="filter_box clear">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <input id="kw_name" name="kw_name" type="text" placeholder="用户ID/姓名" value="{{ kw_name }}">
+        <input id="kw_nickname" name="kw_nickname" type="text" placeholder="用户昵称" value="{{ kw_nickname }}">
+    </div>
+    <div class="filter_btn fr">
+        <a href="javascript:;" class="btn btn_i btn_primary pr mr5" onclick="do_jump_2_page(event, 1);">
+            查询<i class="btn_search"></i>
+        </a>
+        <a href="javascript:;" id="cancel_search" class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr">
+            <select>
+                <option value="排列方式">排列方式</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th width="48">序号</th>
+                <th>用户ID</th>
+                <th>姓名</th>
+                <th>昵称</th>
+                <th>手机号</th>
+                <th>可用钻石</th>
+                <th>操作</th>
+            </tr>
+            {% if paging.page_items %}
+            {% for index, member in enumerate(paging.page_items) %}
+            <tr>
+                <td>{{ index + 1 }}</td>
+                <td>{{ string_display(member.code) }}</td>
+                <td>{{ string_display(member.name) }}</td>
+                <td>{{ string_display(member.nick_name) }}</td>
+                <td>{{ string_display(member.mobile) }}</td>
+                <td>{{ member.diamond }}</td>
+                <td class="tools">
+                    <a href="{{ reverse_url('backoffice_diamond_detail') }}?member_id={{ member.oid }}"
+                       class="diamond_detail_i fl tips" data-name="钻石明细"></a>
+                    <a href="{{ reverse_url('backoffice_diamond_edit') }}?member_id={{ member.oid }}"
+                       class="diamond_revise_i fl tips" data-name="修改数值"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% end %}
+        </table>
+    </div>
+</div>
+{% if paging.page_items %}
+<div class="fix_page clear">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num == 1 %}class="btn_disabled"{% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num == 1 %}class="btn_disabled"{% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num == paging.total_pages %}class="btn_disabled"{% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num == paging.total_pages %}class="btn_disabled"{% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity == num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+{% end %}
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ""));
+            } else {
+                display_loading();
+                // 填充请求参数
+                var kw_name = $.trim($("#kw_name").val());
+                var kw_nickname = $("#kw_nickname").val();
+                var params = {
+                    "kw_name": kw_name,
+                    "kw_nickname": kw_nickname,
+                    "page": to_page_num,
+                    "per_page_quantity": $('#per_page_quantity').val() || {{ per_page_quantity }}
+                };
+                window.location.href = "{{ reverse_url('backoffice_diamond_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+
+    $(function () {
+        $("#cancel_search").click(function (event) {
+            $("#kw_name").val("");
+            $("#kw_nickname").val("");
+            do_jump_2_page(event, 1);
+        });
+
+        $(".refresh_btn").click(function () {
+            window.location.reload();
+        });
+    })
+</script>
+{% end %}
