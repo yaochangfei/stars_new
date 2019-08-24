@@ -11,3 +11,4 @@ static/images/games/*
 requirements.txt
 Pipfile.lock
 Pipfile
+static/js/echarts/map/json/mapdata/*
