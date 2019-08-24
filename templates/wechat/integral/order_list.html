@@ -1,0 +1,93 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>兑换记录</title>
+{% end %}
+{% block content %}
+{% from db import STATUS_EXCHANGE_ORDER_CLOSED %}
+<div class="container">
+    <div class="tab_bar">
+        <ul class="clear">
+            <li class="my_coupon"><a href="{{ reverse_url('wechat_integral_present_coupons') }}">我的优惠券</a></li>
+            <li class="my_gift current"><a href="{{ reverse_url('wechat_integral_present_orders') }}">我的礼品</a></li>
+        </ul>
+    </div>
+    <div class="mescroll" id="mescroll">
+        <ul class="gift_lists clear" id="order_list">
+        </ul>
+    </div>
+
+</div>
+<script>
+    $(function () {
+        $(document).on("click",".order_li",function () {
+            var present_cid = $(this).attr('cid');
+            window.location.href = "{{ reverse_url('wechat_integral_present_detail') }}?present_cid=" + present_cid;
+        });
+
+        $(document).on("click", ".delete_order", function () {
+            var order_id = $(this).attr('order_id');
+            $.showConfirm({
+                title: "提示",
+                content: '确认删除该订单？',
+                sure: function () {
+                    $.post("{{ reverse_url('common_get_xsrf') }}", {}, function (res) {
+                        var url = "{{ reverse_url('wechat_integral_present_order_delete') }}";
+                        var data = {
+                            'order_id': order_id,
+                            '_xsrf': res._xsrf
+                        };
+                        $.post(url, data, function (ret) {
+                            if (ret.code === 1) {
+                                window.location.reload();
+                            } else {
+                                $.showAlert({
+                                    title: "删除失败",
+                                    content: '系统错误，请联系客服！'
+                                })
+                            }
+                        }, 'JSON');
+                    }, 'JSON');
+                },
+                //取消操作：
+                cancel: function () {
+                }
+            });
+        });
+
+        // 上拉加载js
+        var mescroll = new MeScroll("mescroll", {
+            down: {
+                auto: false,
+                callback: function () {
+                    window.location.reload();
+                }
+            },
+            up: {
+                isBounce: false,
+                callback: function (page) {
+                    $.post("{{ reverse_url('common_get_xsrf') }}", {}, function (r) {
+                        var url = "{{ reverse_url('wechat_integral_present_orders') }}";
+                        var data = {
+                            pageNum: page.num,
+                            size: page.size,
+                            _xsrf: r._xsrf
+                        };
+                        set_xsrf(data);
+                        $.post(url, data, function (res) {
+                            if (!res.html && page.num === 1) {
+                                var empty_html = '<div class="tc">暂无订单信息！</div>';
+                                $('#order_list').html(empty_html);
+                            } else {
+                                $('#order_list').append(res.html);
+                            }
+                            mescroll.endBySize(res.current_length, res.totalSize);
+                        }, 'JSON');
+                    }, 'JSON');
+                }
+            }
+        });
+    });
+
+</script>
+{% end %}

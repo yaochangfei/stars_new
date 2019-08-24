@@ -1,0 +1,19 @@
+{% if push_list %}
+{% for push in push_list %}
+<li>
+    {% set questionnaire = push.questionnaire[0] if push.questionnaire else {} %}
+    <div class="questionnaire_info" q_url="{{ questionnaire.get('url') }}">
+        <div class="questionnaire_title ellipsis">{{ string_display(push.title) }}</div>
+        <div class="questionnaire_time"><span>{{ datetime_format(push.push_datetime, dt_format='%Y-%m-%d', default='') }}</span>
+        </div>
+    </div>
+    <div class="questionnaire_img">
+        {% if push.cover and  push.needless.get('cover_title') %}
+        <img src="{{ static_url(string_display(push.needless.get('cover_title'), '')) }}">
+        <!-- 答题回调参数 -->
+        {# <img src="{{ static_url(string_display(push.get('needless', {}).get('cover_title'), '')) }}?oid={{ member.get('open_id') }}&sa_id={{ push.get('_id') }}"> #}
+        {% end %}
+    </div>
+</li>
+{% end %}
+{% end %}

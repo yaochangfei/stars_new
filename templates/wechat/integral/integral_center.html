@@ -1,0 +1,162 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>积分中心</title>
+{% end %}
+{% block content %}
+{% from db import CATEGORY_PRESENT_DICT, CATEGORY_PRESENT_DISCOUNT_COUPON, CATEGORY_PRESENT_REAL_GIFT, CATEGORY_PRESENT_WECHAT_LUCKY_MONEY %}
+<div class="container">
+    <div class="integral_info clear">
+        <div class="fl my_integral">我的积分：
+            <span id="member_integral" value="{{ member.integral }}">
+                {{ member.integral }}
+            </span>
+        </div>
+        <div class="fr record_exchange"><a href="{{ reverse_url('wechat_integral_present_coupons') }}">兑换记录</a></div>
+    </div>
+    <div class="mescroll" id="mescroll">
+        <ul class="goods_lists clear" id="present_list">
+        </ul>
+    </div>
+</div>
+<style>
+    .mescroll {
+    }
+
+    html, body {
+    }
+</style>
+<script>
+    $(function () {
+        // 兑换优惠券
+        $(document).on("click", ".exchange_coupon", function () {
+            var present_id = $(this).attr('present_id');
+            var member_integral = $('#member_integral').attr('value');
+            var present_integral = $(this).attr('present_integral');
+            // 用户积分不足
+            // 增加积分校验
+            if (parseInt(member_integral) < parseInt((present_integral))) {
+                $.showAlert({
+                    title: "兑换失败",   //兑换成功
+                    content: '积分不够，请攒够积分再来兑换吧'
+                });
+            } else {
+                $.showConfirm({
+                    title: "兑换",
+                    content: '确认兑换此物品吗？',
+                    sure: function () {
+                        $.post("{{ reverse_url('common_get_xsrf') }}", {}, function (res) {
+                            var url = "{{ reverse_url('wechat_integral_present_exchange_coupon') }}";
+                            var data = {
+                                'present_id': present_id,
+                                '_xsrf': res._xsrf
+                            };
+
+                            $.post(url, data, function (ret) {
+                                if (ret.code === 1) {
+                                    $.showAlert({
+                                        title: "兑换成功",
+                                        content: '兑换礼品成功，请至右上角"兑换记录"查看！',
+                                        sure: function () {
+                                            window.location.href = "{{ reverse_url('wechat_integral_present_coupons') }}";
+                                        }
+                                    })
+                                } else if (ret.code === -3) {
+                                    $.showAlert({
+                                        title: "兑换失败",
+                                        content: '您已超出兑换限制，不能再次兑换！'
+                                    })
+                                } else if (ret.code === -1) {
+                                    $.showAlert({
+                                        title: "兑换失败",
+                                        content: '积分不够，请攒够积分再来兑换吧！'
+                                    })
+                                } else if (ret.code === -2) {
+                                    $.showAlert({
+                                        title: "兑换失败",
+                                        content: '库存不够，请下次再来！'
+                                    })
+                                } else {
+                                    $.showAlert({
+                                        title: "兑换失败",
+                                        content: '系统错误，请联系客服！'
+                                    })
+                                }
+
+                            }, 'JSON');
+                        }, 'JSON');
+
+                    },
+                    //取消操作：
+                    cancel: function () {
+
+                    }
+                });
+            }
+        });
+
+        // 兑换实物礼品
+        $(document).on("click", ".exchange_gift", function () {
+            var present_id = $(this).attr('present_id');
+            var member_integral = $('#member_integral').attr('value');
+            var present_integral = $(this).attr('present_integral');
+            // 用户积分不足
+            // 增加积分校验
+            if (parseInt(member_integral) < parseInt((present_integral))) {
+                $.showAlert({
+                    title: "兑换失败",   //兑换成功
+                    content: '积分不够，请攒够积分再来兑换吧'
+                });
+            } else {
+                var url = "{{ reverse_url('wechat_integral_present_exchange_gift') }}?present_id=" + present_id;
+
+                window.location.href = url;
+            }
+
+        });
+
+        // 兑换红包
+        $(document).on("click", ".exchange_lucky_money", function () {
+            console.log('wechat luck money');
+        });
+
+        var mescroll = new MeScroll("mescroll", {
+            down: {
+                auto: false,
+                callback: function () {
+                    window.location.reload();
+                }
+            },
+            up: {
+                isBounce: false,
+                page: {
+                    size: 9
+                },
+                callback: function (page) {
+                    $.post("{{ reverse_url('common_get_xsrf') }}", {}, function (r) {
+                        var url = "{{ reverse_url('wechat_integral_center') }}";
+                        var data = {
+                            pageNum: page.num,
+                            size: page.size,
+                            _xsrf: r._xsrf
+                        };
+
+                        $.post(url, data, function (res) {
+                            if (!res.html && page.num === 1) {
+                                var empty_html = '<div class="tc">暂无礼品信息！</div>';
+                                $('#present_list').html(empty_html);
+                            } else {
+                                $('#present_list').append(res.html);
+                            }
+                            $(".goods_info").each(function () {
+                                $(this).height($(this).width());
+                            });
+                            mescroll.endBySize(res.current_length, res.totalSize);
+                        }, 'JSON');
+                    }, 'JSON');
+                }
+            }
+        });
+    })
+</script>
+{% end %}

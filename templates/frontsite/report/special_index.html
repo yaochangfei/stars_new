@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if _city %} {{ _city.title }} {% elif _prov %} {{ _prov.title }} {% end %}科协活动报表</title>
+    <link rel="stylesheet" href="{{ static_url('css/frontsite/index.css') }}">
+    <script src="{{ static_url('js/jquery-1.10.2.js') }}"></script>
+    <script src="{{ static_url('js/plugins/jquery.cookie.1.4.1.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+    <script src="{{ static_url('js/public.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/echarts/echarts.js') }}"></script>
+
+    <script type="text/javascript" src="{{ static_url('js/echarts/map/js/all-province.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ static_url('js/report_charts/statistics_map_chart_frontsite.js') }}"></script>
+</head>
+<style>
+</style>
+<body>
+{% from enums.variables import CHART_COLOR_LIST %}
+<div class="container">
+    <div class="header">
+        <div class="header_title">
+            {% if _city %} {{ _city.title }} {% elif _prov %} {{ _prov.title }} {% end %}科协活动报表
+            <div class="title_i left_title_i"></div>
+            <div class="title_i right_title_i"></div>
+        </div>
+        <div class="user_info clear">
+            <div class="user_name fl">{{user.name}}</div>
+            <div class="logout fl">注销</div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="chat_box">
+            <div class="content_title">
+                <ul class="quantity_count tabs clear">
+                    <li class="fl">
+                        <a href="javascript:void(0)" class="map_tab" data-name="人数">
+                            <div class="tabs_i person_i"></div>
+                            <div>参与人数</div>
+                            <div class="line"></div>
+                        </a>
+                    </li>
+                    <li class="fr">
+                        <a href="javascript:void(0)" class="active map_tab" data-name="次数">
+                            <div class="tabs_i time_i map_tab"></div>
+                            <div>参与次数</div>
+                            <div class="line"></div>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="chat_detail clear">
+                <div class="fl clear pr" style="left: 50%; transform:translateX(-50%)">
+                    <div class="chat_title fl">参与答题次数一览表</div>
+                    <div class="chat_title_i fl"></div>
+                    <a href="javascript:void (0)" id="prov_back" class="back_chart map_back fl dis_none"><i></i>返回</a>
+                    <div id="province_statistics" class="fl_special" style="width: 100%;height: 580px"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="{{ static_url('js/download_utils.js') }}"></script>
+<script>
+    var map_code_dict = {{ map_code_dict }};
+    var city_name = "{{ region_name if region_name else 'china' }}";
+    var area_category = "{{ area_category }}";
+    var backgroundColor = ''; //'#fff'
+    var areaColor = ''; // '#EAF3FF'
+    var d_info = [
+        {"size": 10, "color": "#e83232"},
+        {"size": 8, "color": "#FF5858"},
+        {"size": 6, "color": "#FF7878"},
+        {"size": 6, "color": "#FFB8B8"},
+        {"size": 6, "color": "#FFD3D3"},
+        {"size": 6, "color": "#FFD3D3"},
+        {"size": 6, "color": "#FFD3D3"},
+        {"size": 6, "color": "#FFD3D3"}
+    ];
+    var legend_data = [
+        {
+            name: '1',
+            icon: 'image://../../../../static/images/echarts/icons_rd1.png'
+        },
+        {
+            name: '2',
+            icon: 'image://../../../../static/images/echarts/icons_rd2.png'
+        },
+        {
+            name: '3',
+            icon: 'image://../../../../static/images/echarts/icons_rd3.png'
+        },
+        {
+            name: '4',
+            icon: 'image://../../../../static/images/echarts/icons_rd4.png'
+        },
+        {
+            name: '5',
+            icon: 'image://../../../../static/images/echarts/icons_rd5.png'
+        }
+    ];
+    var color_offset = ['#91C8FF', '#1F90FF'];
+    var emphasis_colors = ['#000', '#C0C0C0'];
+    var item_color = '#eee';
+
+    var geoCoordMap = {};
+    var city_people_data = null
+    var city_attend_data = null
+    var is_city_level = 0
+    var city_title = null
+    $.getJSON("{{ static_url('js/echarts/map/json/china_city.json') }}", function (data) {
+        $.each(data, function (i, item) {
+            if (item[3] === "上海") {
+                geoCoordMap["上海市"] = [item[1], item[2]];
+            } else if (item[3] === "北京") {
+                geoCoordMap["北京市"] = [item[1], item[2]];
+            } else if (item[3] === "天津") {
+                geoCoordMap["天津市"] = [item[1], item[2]];
+            } else if (item[3] === "重庆") {
+                geoCoordMap["重庆市"] = [item[1], item[2]];
+            } else {
+                geoCoordMap[item[0]] = [item[1], item[2]]
+            }
+        });
+    });
+    var new_race_cid = '{{ race_cid }}';
+    var geoDistrictMap = {};
+    $.getJSON("{{ static_url('js/echarts/map/json/china-district.json') }}", function (data) {
+        $.each(data, function (i, item) {
+            if (item[3] === "上海") {
+                geoDistrictMap["上海市"] = [item[1], item[2]];
+            } else if (item[3] === "北京") {
+                geoDistrictMap["北京市"] = [item[1], item[2]];
+            } else if (item[3] === "天津") {
+                geoDistrictMap["天津市"] = [item[1], item[2]];
+            } else if (item[3] === "重庆") {
+                geoDistrictMap["重庆市"] = [item[1], item[2]];
+            } else {
+                geoDistrictMap[item[0]] = [item[1], item[2]]
+            }
+        });
+    });
+
+    function show_map_statistics(data, city_name, label_type_name) {
+        var category = $('.quantity_count a.active').attr("data-name");
+        if (data !== null) {
+            showProvinceChart(data, city_name, label_type_name, '{{ race_cid }}', category, 'city');
+        }
+    }
+    function show_city_statistics(data, city_name, label_type_name) {
+        var category = $('.quantity_count a.active').attr("data-name");
+        if (data !== null) {
+            showCityChart(data, city_name, label_type_name, '{{ race_cid }}', category);
+        }
+    }
+    //人数
+    var member_quantity_data = null;
+    //人次
+    var cumulative_data = null;
+    //请求初始化数据，stat_type=0(人数) 1(人次)
+    function get_data(race_cid,stat_type){
+        ajaxPost("{{ reverse_url('frontsite_special_race_map') }}", {'race_cid': race_cid,'stat_type':stat_type}, function (result) {
+        if (result.code === 0) {
+            tip_msg("获取数据失败！", 2000);
+        } else if (result.code === 2) {
+            get_cachekey_data(result.cache_key, function (data) {
+                member_quantity_data = data
+            });
+        } else if(result.code === 1 && result.area === 'province'){
+            if(stat_type==0) {
+                member_quantity_data = result.data
+                console.log(member_quantity_data)
+                console.log(city_name, 'city')
+                show_map_statistics(member_quantity_data, city_name, '人数')
+            }
+            else{
+                cumulative_data = result.data
+                console.log(cumulative_data)
+                show_map_statistics(cumulative_data, city_name, '次数')
+            }
+        }else if(result.code === 1 && result.area === "city"){
+            if(stat_type==0) {
+                member_quantity_data = result.data;
+                console.log(member_quantity_data);
+                show_city_statistics(member_quantity_data, city_name, '人数')
+            }
+            else{
+                cumulative_data = result.data
+                console.log(cumulative_data)
+                show_city_statistics(cumulative_data, city_name, '次数')
+            }
+        }
+    });
+    }
+
+    $(function () {
+        console.log(area_category, 'ca')
+        //tab切换
+        $(".map_tab").on("click", function () {
+            console.log('click')
+            if (!$(this).hasClass("active")) {
+                $(this).addClass("active");
+                $(this).parent().siblings().find("a").removeClass("active");
+                var label_type_name = $(this).attr('data-name');
+                if (area_category === "province") {
+                    if (label_type_name === '人数') {
+                        if (is_city_level == 1) {
+                            if (!city_people_data) {
+                                get_next_level_map_data(city_title, label_type_name)
+                            } else {
+                                refresh_city_map(city_people_data, label_type_name)
+                            }
+                        } else {
+                            if (!member_quantity_data)
+                                get_data(new_race_cid, 0)
+                            else
+                                show_map_statistics(member_quantity_data, city_name, label_type_name);
+                        }
+                        $(".chat_title").html("参与答题人数一览表")
+                    } else {
+                        if (is_city_level == 1) {
+                            if (!city_attend_data) {
+                                get_next_level_map_data(city_title, label_type_name)
+                            } else {
+                                refresh_city_map(city_attend_data, label_type_name)
+                            }
+                        } else {
+                            if (!cumulative_data)
+                                get_data(new_race_cid, 1);
+                            else
+                                show_map_statistics(cumulative_data, city_name, label_type_name);
+                        }
+                        $(".chat_title").html("参与答题次数一览表")
+                    }
+                } else {
+                    console.log('click2')
+                    if (label_type_name === '人数') {
+                        if (is_city_level == 1) {
+                            if (!city_people_data) {
+                                get_next_level_map_data(city_title, label_type_name)
+                            } else {
+                                refresh_city_map(city_people_data, label_type_name)
+                            }
+                        } else {
+                            if (!member_quantity_data)
+                                get_data(new_race_cid, 0)
+                            else
+                                show_city_statistics(member_quantity_data, city_name, label_type_name);
+                        }
+                        $(".chat_title").html("参与答题人数一览表")
+                    } else {
+                        if (is_city_level == 1) {
+                            if (!city_attend_data) {
+                                get_next_level_map_data(city_title, label_type_name)
+                            } else {
+                                refresh_city_map(city_attend_data, label_type_name)
+                            }
+                        } else {
+                            if (!cumulative_data)
+                                get_data(new_race_cid, 1);
+                            else
+                                show_city_statistics(cumulative_data, city_name, label_type_name);
+                        }
+                        $(".chat_title").html("参与答题次数一览表")
+                    }
+                }
+            }
+        });
+        light_skin();
+
+        $('#map_statistics').ready(function () {
+            get_data(new_race_cid,1)
+        });
+
+
+        if (city_name === 'china') {
+            $('.map_back').addClass('dis_none');
+        }
+
+        //返回，市返回到省
+        $('#prov_back').on("click", function () {
+            console.log('map_back');
+            var label_type_name = $('.map_tab.active').attr('data-name');
+            var data = null;
+            if (label_type_name === '人数') {
+                data = member_quantity_data;
+            } else if (label_type_name === '次数') {
+                data = cumulative_data;
+            }
+            show_map_statistics(data, city_name, label_type_name);
+            $('.map_back').addClass('dis_none');
+            is_city_level = 0;
+            city_attend_data = null;
+            city_people_data = null;
+            city_title = null;
+        });
+        // 注销
+        $(".logout").on('click', function () {
+            window.location.href = "{{ reverse_url('frontsite_race_special_login') }}"
+        });
+        // 切换
+        $(".rank_tab").on('click', function () {
+            $(this).addClass('active');
+            $(this).parent().siblings().find('a').removeClass('active');
+        });
+
+    });
+
+    function light_skin() {
+        backgroundColor = '#fff';
+        areaColor = '#EAF3FF';
+        d_info = [
+            {"size": 10, "color": "#e83232"},
+            {"size": 8, "color": "#FF5858"},
+            {"size": 6, "color": "#FF7878"},
+            {"size": 6, "color": "#FFB8B8"},
+            {"size": 6, "color": "#FFD3D3"},
+            {"size": 6, "color": "#FFD3D3"},
+            {"size": 6, "color": "#FFD3D3"},
+            {"size": 6, "color": "#FFD3D3"}
+        ];
+        legend_data = [
+            {
+                name: '1',
+                icon: 'image://../../../../static/images/echarts/icons_rd1.png'
+            },
+            {
+                name: '2',
+                icon: 'image://../../../../static/images/echarts/icons_rd2.png'
+            },
+            {
+                name: '3',
+                icon: 'image://../../../../static/images/echarts/icons_rd3.png'
+            },
+            {
+                name: '4',
+                icon: 'image://../../../../static/images/echarts/icons_rd4.png'
+            },
+            {
+                name: '5',
+                icon: 'image://../../../../static/images/echarts/icons_rd5.png'
+            }
+        ];
+        color_offset = ['#91C8FF', '#1F90FF'];
+        emphasis_colors = ['#000', '#C0C0C0'];
+        item_color = '#eee';
+    }
+
+    //当下钻到下级地图后，人数、人次tab切换请求的接口
+    function get_next_level_map_data(city_title,category) {
+        url = "/frontsite/report/drill/down/district/";
+        post_data = {
+                "name": city_title,
+                'race_cid': new_race_cid,
+                'category': category,
+                'area_category': 'city',
+        };
+        ajaxPost(url, post_data, function (ret) {
+            if (ret.code === 1 && ret.data_dict !== "") {
+                if(category == '人数')
+                    city_people_data = ret.data_dict
+                else
+                    city_attend_data = ret.data_dict
+                drill_down_district(ret.data_dict, 'city');
+                let data_dict = ret.data_dict;
+                let title =  data_dict['title'];
+                if(title.indexOf('市') !== -1){
+                    title = title.substring(0, title.length - 1)
+                }
+                data_dict['title'] = title;
+            }
+        });
+    }
+
+    function refresh_city_map(data,category) {
+        drill_down_district(data,'city');
+    }
+</script>
+</body>
+</html>

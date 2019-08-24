@@ -1,0 +1,160 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>认证车主信息</title>
+{% end %}
+{% block content %}
+<div class="authentication">
+    <div class="car_info pr">
+        <div class="owner_info pa">
+            <div class="owner_pic"><img src="{{ avatar }}" alt=""></div>
+            <div class="owner_name">{{ nickname }}</div>
+        </div>
+        <div class="info_detail">
+            <div class="tel pr">
+                <i class="tel_i"></i>
+                <input type="tel" class="only_num" value="" id="mobile" placeholder="请填写手机号">
+            </div>
+            <div class="code pr">
+                <i class="code_i"></i>
+                <input type="text" class="only_num" placeholder="请填写验证码" id="validate_code" value="">
+                <div class="get_code">获取验证码</div>
+            </div>
+            <div class="name pr">
+                <i class="name_i"></i>
+                <input type="text" placeholder="请填写车主姓名" id="name" value="">
+            </div>
+            <div class="error_msg"></div>
+            <div class="submit_btn mobile_val">
+                <a href="#">提交</a>
+            </div>
+            <div class="frame_btn">
+                <a href="javascript:void(0)">通过车架号认证>></a>
+            </div>
+        </div>
+        <div class="info_detail none">
+            <div class="tel pr mb30">
+                <i class="car_i"></i>
+                <input type="text" class="only_num" placeholder="请填写车架号" id="vin" name="vin">
+            </div>
+            <div class="error_msg mb20"></div>
+            <div class="submit_btn vehicle_val mb20">
+                <a href="#">提交</a>
+            </div>
+            <div class="frame_btn">
+                <a href="javascript:void(0)">通过手机号认证>></a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".frame_btn").click(function () {
+            $('.error_msg').html('');
+            $(".info_detail").removeClass("none");
+            $(this).parents(".info_detail").addClass("none");
+        });
+
+        // 车架号授权
+        $(".vehicle_val").on('click', function () {
+            var open_id = "{{ open_id }}";
+            var union_id = "{{ union_id }}";
+            var nickname = "{{ string_display(nickname) }}";
+            var avatar = "{{ string_display(avatar) }}";
+            var data = {
+                'open_id': open_id,
+                'union_id': union_id,
+                'nickname': nickname,
+                'avatar': avatar,
+                'vin': $('#vin').val()
+            };
+            var url = "{{ reverse_url('wechat_auto_owner_auth_token') }}";
+            $.post(url, data, function (ret) {
+                if (ret.code === -1) {
+                    $('.error_msg').html('请填写必要信息！');
+                } else if (ret.code === -2) {
+                    $('.error_msg').html('验证码不正确！');
+                } else if (ret.code === -3) {
+                    $('.error_msg').html('未找到合法的车主信息！');
+                } else if (ret.code === -4) {
+                    $('.error_msg').html('绑定失败，请尝试使用手机号绑定！');
+                } else if (ret.code === 1) {
+                    window.location.href = "{{ reverse_url('wechat_auto_owner_auth_success') }}";
+
+                } else {
+                    $('.error_msg').html('系统错误！');
+                }
+            }, 'JSON');
+        });
+
+        // 用户授权
+        $('.mobile_val').on("click", function () {
+            var open_id = "{{ open_id }}";
+            var union_id = "{{ union_id }}";
+            var nickname = "{{ string_display(nickname) }}";
+            var avatar = "{{ string_display(avatar) }}";
+            var data = {
+                'open_id': open_id,
+                'union_id': union_id,
+                'nickname': nickname,
+                'avatar': avatar,
+                'validate_code': $('#validate_code').val(),
+                'name': $('#name').val(),
+                'mobile': $('#mobile').val()
+            };
+            var url = "{{ reverse_url('wechat_auto_owner_auth_token') }}";
+            $.post(url, data, function (ret) {
+                if (ret.code === -1) {
+                    $('.error_msg').html('请填写必要信息！');
+                } else if (ret.code === -2) {
+                    $('.error_msg').html('验证码不正确！');
+                } else if (ret.code === -3) {
+                    $('.error_msg').html('未找到合法的车主信息！');
+                } else if (ret.code === -4) {
+                    $('.error_msg').html('绑定失败，请尝试使用车架号绑定！');
+                } else if (ret.code === 1) {
+                    window.location.href = "{{ reverse_url('wechat_auto_owner_auth_success') }}";
+
+                } else {
+                    $('.error_msg').html('系统错误！');
+                }
+            }, 'JSON');
+        });
+
+        $(".get_code").click(function () {
+            var mobile = $('#mobile').val();
+            var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+            if(!myreg.test(mobile)){
+                $('.cl_danger').html('请输入正确的手机号！');
+            }else{
+                var url = "{{ reverse_url('common_mobile_validate') }}";
+                var data = {
+                    'mobile': mobile
+                 };
+                $.post(url, data, function (ret) {
+                    if(ret.code === 1){
+                        var n = 60;
+                        if (!$(this).hasClass("active")) {
+                            $(this).addClass("active").html("<span>" + n + "</span>s后重新获取");
+                        } else {
+                            return false;
+                        }
+                        var timer = setInterval(function () {
+                            if (n > 0) {
+                                n--;
+                                $(".get_code").html("<span>" + n + "</span>s后重新获取");
+                            }
+                            else {
+                                clearInterval(timer);
+                                $(".get_code").removeClass("active").html("获取验证码");
+                            }
+                        }, 1000);
+                    } else {
+                        $('.cl_danger').html('发送失败请重试！');
+                    }
+                }, 'JSON');
+            }
+        })
+    })
+</script>
+{% end %}

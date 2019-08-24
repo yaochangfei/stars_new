@@ -1,0 +1,52 @@
+{% from db import STATUS_EXCHANGE_ORDER_CLOSED, CODE_CARRIER_DICT, STATUS_EXCHANGE_ORDER_DICT  %}
+{% for order in order_list %}
+<li class="order_li" cid="{{ order.present_cid }}">
+    <div class="order_num clear">
+        <div class="fl">订单编号: {{ string_display(order.code) }}</div>
+        {% if order.status == STATUS_EXCHANGE_ORDER_CLOSED %}
+        <div class="fr">
+            <a class="btn_delete delete_order" order_id="{{ order.oid }}" href="javascript:void(0);">
+                删除订单
+            </a>
+        </div>
+        {% else %}
+        <div class="fr"><a class="btn_delete" order_id="{{ order.oid }}" href="javascript:void(0);">{{ STATUS_EXCHANGE_ORDER_DICT.get(order.status) }}</a>
+        </div>
+        {% end %}
+    </div>
+    <div class="coupon_goods clear">
+        <div class="fl coupon_goods_img">
+            <div class="for_integral">
+                <div>{{ order.ex_integral }}积分</div>
+            </div>
+            {% set present = order.present[0] if order.present else {} %}
+            {% set placard_title = present.get('needless', {}).get('placard_title') %}
+            {% if placard_title %}
+            <img src="{{ static_url(placard_title) }}" alt="">
+            {% else %}
+            <img src="" alt="">
+            {% end %}
+        </div>
+        <div class="fl coupon_goods_info">
+            <div class="goods_title">{{ string_display(present.get('title')) }}</div>
+            {% if order.needless %}
+            {% set province = order.needless.get('province', '') %}
+            {% set city = order.needless.get('city', '') %}
+            {% set district = order.needless.get('district', '') %}
+            {% else %}
+            {% set province = '' %}
+            {% set city = '' %}
+            {% set district = '' %}
+            {% end %}
+            <div class="goods_value">
+                {{ province }}{{ city }}{{ district }}{{ string_display(order.receive_address) }}</div>
+        </div>
+    </div>
+    {% if order.shipped_code %}
+    <div class="g_status">
+        <div class="gs_info">物流公司：{{ CODE_CARRIER_DICT.get(order.carrier_code) }}</div>
+        <div class="gs_info">物流单号：{{ order.shipped_code }}</div>
+    </div>
+    {% end %}
+</li>
+{% end %}

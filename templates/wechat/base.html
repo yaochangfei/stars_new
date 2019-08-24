@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="yes" name="apple-touch-fullscreen">
+    {% block title %}
+    <title>中国科普研究所</title>
+    {% end %}
+    <link rel="stylesheet" href="{{ static_url('css/base_phone.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/default/wx_service.css') }}">
+    <link rel="stylesheet" href="{{ static_url('js/plugins/pop_ph/pop_ph.css') }}">
+    <link rel="stylesheet" href="{{ static_url('js/plugins/mescroll/mescroll.min.css') }}">
+
+    <script src="{{ static_url('js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ static_url('js/jquery.cookie.js') }}"></script>
+    <script src="{{ static_url('js/fastclick.js') }}"></script>
+    <script src="{{ static_url('js/plugins/pop_ph/pop_ph.js') }}"></script>
+    <script src="{{ static_url('js/clipboard.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/mescroll/mescroll.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+
+
+</head>
+<script>
+    $(function () {
+
+        FastClick.attach(document.body);
+
+    })
+</script>
+<body>
+{% block content %}
+{% end %}
+</body>
+</html>

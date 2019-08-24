@@ -1,0 +1,126 @@
+{% autoescape None %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="keywords" content="中国科普研究所登录">
+    <meta name="description" content="中国科普研究所登录">
+    <title>中国科普研究所登录</title>
+    <link rel="shortcut icon" href=" {{ static_url('images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ static_url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/default/login.css') }}">
+
+    <script src="{{ static_url('js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/jquery.cookie.1.4.1.min.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+</head>
+<body>
+<div class="container login_container">
+    <div class="login_content clear">
+        <div class="fl login_company_show">
+            <img src="{{ static_url('images/default/company_show.jpg') }}">
+        </div>
+        <div class="fl login_box">
+            <div class="company_logo"></div>
+            {# <div class="login_title">中国科普研究所</div>#}
+            <div class="login_error tc"></div>
+            <div class="mb30">
+                {% raw xsrf_form_html() %}
+                <div class="user mb20 tc pr">
+                    <input id="login_name" type="text" placeholder="请输入用户名">
+                    <i class="user_i"></i>
+                </div>
+                <div class="password tc pr">
+                    <input id="login_password" type="password" placeholder="请输入密码">
+                    <i class="pass_i"></i>
+                </div>
+            </div>
+            <div class="login_btn">立即登录</div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        var user_name = get_last_user_name();
+        if (user_name) {
+            $("#login_name").val(user_name);
+        }
+
+        $(".login_btn").click(function () {
+            login();
+        });
+
+        $(document).keyup(function (event) {
+            if (event && event.keyCode === 13) {
+                login();
+            }
+        });
+    });
+
+    function login() {
+        var login_name = $("#login_name").val();
+        var login_pwd = $("#login_password").val();
+        if (login_name && login_pwd) {
+            login_name = $.trim(login_name);
+            login_pwd = $.trim(login_pwd);
+            var data = {"login_name": login_name, "login_password": login_pwd};
+            if (check_login_name(login_name) && check_login_password(login_pwd)) {
+                ajaxPost("{{ reverse_url('backoffice_login') }}", data, function (result) {
+                    if (result.code === 0) {
+                        $('.login_error').html('您没有权限，请联系管理员！');
+                        $('#login_password').val("");
+                        $('#login_name').focus();
+                    } else if (result.code === -1) {
+                        $('.login_error').html('请输入用户名！');
+                        $('#login_name').focus();
+                    } else if (result.code === -2) {
+                        $('.login_error').html('请输入用户密码！');
+                        $('#login_password').focus();
+                    } else if (result.code === -3) {
+                        $('.login_error').html('用户不存在！');
+                        $('#login_name').focus();
+                    } else if (result.code === -4) {
+                        $('.login_error').html('用户密码错误！');
+                        $('#login_password').val("").focus();
+                    } else {
+                        save_last_user_name(login_name);
+                        window.location.href = result.url;
+                    }
+                });
+            }
+        }
+    }
+
+    function save_last_user_name(user_name) {
+        var cookie_id = "D6A7A55C-E8DF-4D37-9754-7FB2A534F5F0";
+        var exp_date = new Date();
+        exp_date.setTime(exp_date.getTime() + 1000 * 60 * 60 * 24 * 7);// 保存一周的时间
+        $.cookie(cookie_id, user_name, {
+            expires: 7,
+            path: '/backoffice/login/'
+        });
+    }
+
+    function get_last_user_name() {
+        var cookie_id = "D6A7A55C-E8DF-4D37-9754-7FB2A534F5F0";
+        var user_name = $.cookie(cookie_id);
+        if (user_name) {
+            return user_name;
+        }
+        return null;
+    }
+
+    function check_login_name() {
+        return true;
+    }
+
+    function check_login_password(password) {
+        if (password.length > 64 || password.length < 6) {
+            $('.login_error').html('密码长度只能为6~64位！');
+            return false;
+        }
+        return true;
+    }
+</script>
+</html>

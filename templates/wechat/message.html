@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>提示</title>
+{% end %}
+{% block content %}
+<div class="error_page">
+    <div class="error_page_body">
+        <div class="error_bg"></div>
+        <div class="error_info">{{ message }}</div>
+    </div>
+</div>
+{% end %}

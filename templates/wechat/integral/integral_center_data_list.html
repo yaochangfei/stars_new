@@ -1,0 +1,67 @@
+{% from db import CATEGORY_PRESENT_DICT, CATEGORY_PRESENT_DISCOUNT_COUPON, CATEGORY_PRESENT_REAL_GIFT, CATEGORY_PRESENT_WECHAT_LUCKY_MONEY %}
+{% for present in present_list %}
+<li>
+    <a href="{{ reverse_url('wechat_integral_present_detail') }}?present_id={{ present.oid }}">
+        <div class="goods_info">
+            <div class="goods_img">
+                {% if present.placard %}
+                <img src="{{ static_url(present.needless.get('placard_title')) }}">
+                {% else %}
+                <img src="" alt="">
+                {% end %}
+            </div>
+            {% if present.category == CATEGORY_PRESENT_DISCOUNT_COUPON %}
+            <div class="goods_label coupon">
+                <div>{{ CATEGORY_PRESENT_DICT.get(present.category) }}</div>
+            </div>
+            {% elif present.category == CATEGORY_PRESENT_REAL_GIFT %}
+            <div class="goods_label gift">
+                <div>{{ CATEGORY_PRESENT_DICT.get(present.category) }}</div>
+            </div>
+            {% elif present.category == CATEGORY_PRESENT_WECHAT_LUCKY_MONEY %}
+            <div class="goods_label red_packet">
+                <div>{{ CATEGORY_PRESENT_DICT.get(present.category) }}</div>
+            </div>
+            {% else %}
+            <div class="goods_label coupon">
+                <div>{{ CATEGORY_PRESENT_DICT.get(present.category) }}</div>
+            </div>
+            {% end %}
+            <!-- 售光 -->
+            {% if not present.inventory %}
+            <div class="sold_out"><span></span></div>
+            {% end %}
+        </div>
+        <div class="goods_name">{{ string_display(present.title) }}</div>
+        <div class="exchange_detail clear">
+            <div class="fl integral_num">{{ present.ex_integral }}</div>
+            {% if not present.inventory %}
+            <div class="fr"><a class="btn_exchange exchanged" href="javascript:void(0);">兑换</a></div>
+            {% else %}
+
+            {% if present.category == CATEGORY_PRESENT_DISCOUNT_COUPON %}
+            <div class="fr">
+                <a class="btn_exchange exchange_coupon" href="javascript:void(0);" present_id="{{ present.oid }}"
+                   present_integral="{{ present.ex_integral }}">兑换</a>
+            </div>
+            {% elif present.category == CATEGORY_PRESENT_REAL_GIFT %}
+            <div class="fr">
+                <a class="btn_exchange exchange_gift" href="javascript:void(0);" present_id="{{ present.oid }}"
+                   present_integral="{{ present.ex_integral }}">兑换</a>
+            </div>
+            {% elif present.category == CATEGORY_PRESENT_WECHAT_LUCKY_MONEY %}
+            <!-- 暂时不能兑换红包 -->
+            <!--<div class="fr"><a class="btn_exchange exchange_lucky_money" href="javascript:void(0);"-->
+            <!--present_id="{{ present.oid }}" present_integral="{{ present.ex_integral }}">兑换</a></div>-->
+            {% else %}
+            <div class="fr">
+                <a class="btn_exchange" href="javascript:void(0);" present_id="{{ present.oid }}"
+                   present_integral="{{ present.ex_integral }}">兑换</a>
+            </div>
+            {% end %}
+
+            {% end %}
+        </div>
+    </a>
+</li>
+{% end %}

@@ -1,0 +1,152 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>积分中心</title>
+{% end %}
+{% block content %}
+{% from db import CATEGORY_PRESENT_DICT, CATEGORY_PRESENT_DISCOUNT_COUPON, CATEGORY_PRESENT_REAL_GIFT, CATEGORY_PRESENT_WECHAT_LUCKY_MONEY %}
+<div class="container coupon_detail">
+    {% if present %}
+    <div class="coupon_goods clear">
+        <div class="fl coupon_goods_img">
+            {% if present.placard %}
+            <img src="{{ static_url(present.needless.get('placard_title')) }}">
+            {% else %}
+            <img src="" alt="">
+            {% end %}
+        </div>
+        <div class="fl">
+            <div class="goods_title">{{ string_display(present.title) }}</div>
+            <div class="goods_value">{{ present.ex_integral }}积分</div>
+        </div>
+    </div>
+    {% if present.category == CATEGORY_PRESENT_DISCOUNT_COUPON %}
+    <div class="exchange_rules">
+        {% if present.limit %}
+        <div class="rule1">每人限领<span>{{ present.limit }}</span>张</div>
+        {% end %}
+        <div class="rule2">有效期：
+            <span>
+                {{ datetime_format(present.start_date, '%Y-%m-%d') }} 至 {{ datetime_format(present.end_date, '%Y-%m-%d') }}
+            </span>
+        </div>
+    </div>
+    {% end %}
+    <div class="exchange_explain">
+        <div class="explain_title">兑换说明</div>
+        <ul class="explain_lists">
+            {% set detail = string_display(present.details) %}
+
+            {% if detail %}
+
+            {{ detail }}
+
+            {% else %}
+
+            暂无兑换说明！
+
+            {% end %}
+        </ul>
+    </div>
+    <div class="exchange_now clear">
+        <div class="fl">剩余<span>{{ present.inventory }}</span>件</div>
+        {% if present.inventory %}
+        {% if present.category == CATEGORY_PRESENT_DISCOUNT_COUPON %}
+        <div class="fr exchange_coupon" present_id="{{ present.oid }}">立即兑换</div>
+        {% elif present.category == CATEGORY_PRESENT_REAL_GIFT %}
+        <div class="fr exchange_gift" present_id="{{ present.oid }}">立即兑换</div>
+        {% elif present.category == CATEGORY_PRESENT_WECHAT_LUCKY_MONEY %}
+        <!-- 红包兑换暂无 -->
+        <!--<div class="fr exchange_lucky_money" present_id="{{ present.oid }}">立即兑换</div>-->
+        {% else %}
+        <div class="fr" present_id="{{ present.oid }}">立即兑换</div>
+        {% end %}
+        {% else %}
+        <div class="fr disabled">已抢完</div>
+        {% end %}
+    </div>
+    {% else %}
+    暂无礼品信息！
+    {% end %}
+</div>
+<script>
+    $(function () {
+        $(".exchange_coupon").on("click", function () {
+            var present_integral = parseInt("{{ present.ex_integral }}");
+            var member_integral = parseInt("{{ member.integral }}");
+
+            if (member_integral < present_integral) {
+                $.showAlert({
+                    title: "兑换失败",   //兑换成功
+                    content: '积分不够，请攒够积分再来兑换吧'
+                });
+            } else {
+                var present_id = $(this).attr('present_id');
+                $.showConfirm({
+                    title: "兑换",
+                    content: '确认兑换此物品吗？',
+                    sure: function () {
+                        $.post("{{ reverse_url('common_get_xsrf') }}", {}, function (res) {
+                            var url = "{{ reverse_url('wechat_integral_present_exchange_coupon') }}";
+                            var data = {
+                                'present_id': present_id,
+                                '_xsrf': res._xsrf
+                            };
+                            $.post(url, data, function (ret) {
+                                if (ret.code === 1) {
+                                    $.showAlert({
+                                        title: "兑换成功",
+                                        content: '兑换礼品成功，请至右上角"兑换记录"查看！',
+                                        sure: function () {
+                                            window.location.href = "{{ reverse_url('wechat_integral_present_coupons') }}";
+                                        }
+                                    })
+                                } else if (ret.code === -3) {
+                                    $.showAlert({
+                                        title: "兑换失败",
+                                        content: '您已超出兑换限制，不能再次兑换！'
+                                    })
+                                } else if (ret.code === -1) {
+                                    $.showAlert({
+                                        title: "兑换失败",
+                                        content: '积分不够，请攒够积分再来兑换吧！'
+                                    })
+                                } else if (ret.code === -2) {
+                                    $.showAlert({
+                                        title: "兑换失败",
+                                        content: '库存不够，请下次再来！'
+                                    })
+                                } else {
+                                    $.showAlert({
+                                        title: "兑换失败",
+                                        content: '系统错误，请联系客服！'
+                                    })
+                                }
+                            }, 'JSON');
+                        }, 'JSON');
+                    },
+                    //取消操作：
+                    cancel: function () {
+                    }
+                });
+            }
+        });
+
+        // 兑换实物礼品
+        $(".exchange_gift").on("click", function () {
+            var present_integral = parseInt("{{ present.ex_integral }}");
+            var member_integral = parseInt("{{ member.integral }}");
+            if (member_integral < present_integral) {
+                $.showAlert({
+                    title: "兑换失败",   //兑换成功
+                    content: '积分不够，请攒够积分再来兑换吧'
+                });
+            } else {
+                var present_id = $(this).attr('present_id');
+                var url = "{{ reverse_url('wechat_integral_present_exchange_gift') }}?present_id=" + present_id;
+                window.location.href = url;
+            }
+        });
+    })
+</script>
+{% end %}

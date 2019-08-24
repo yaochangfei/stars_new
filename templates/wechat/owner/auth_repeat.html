@@ -1,0 +1,22 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>认证车主信息</title>
+{% end %}
+{% block content %}
+<div class="car_owner">
+    <div class="car_owner_box">
+        <div class="success_icon"></div>
+        <div class="car_owner_info">您已成为车主</div>
+        <div class="submit_btn"><a href="">确定</a></div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('.submit_btn').on('click', function () {
+            WeixinJSBridge.call('closeWindow');
+
+        });
+    })
+</script>
+{% end %}

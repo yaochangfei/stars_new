@@ -1,0 +1,37 @@
+{% from db import STATUS_DISCOUNT_COUPON_UNUSED, STATUS_DISCOUNT_COUPON_USED, STATUS_DISCOUNT_COUPON_EXPIRED %}
+{% for coupon in coupon_list %}
+{% set present_list = coupon.present %}
+{% if present_list %}
+{% set present = present_list[0] %}
+<li class="clear coupon_li" cid="{{ coupon.present_cid }}">
+    <div class="coupon_img fl">
+        {% if present.get('placard') %}
+        <img src="{{ static_url(present.get('needless', {}).get('placard_title')) }}">
+        {% else %}
+        <img src="" alt="">
+        {% end %}
+    </div>
+    <div class="coupon_info">
+        <div class="exchange_time">
+            <div>{{ datetime_format(present.get('start_date'), '%Y-%m-%d') }}
+                至 {{ datetime_format(present.get('end_date'), '%Y-%m-%d') }}
+            </div>
+        </div>
+        <div class="coupon_name">{{ string_display(present.get('title')) }}</div>
+    </div>
+    {% if coupon.status == STATUS_DISCOUNT_COUPON_UNUSED %}
+    <div class="watch_code">
+        <a class="btn_watch view_serial_num" val="{{ string_display(coupon.serial_num, '') }}"
+           href="javascript:void(0);">查看券码</a>
+    </div>
+    {% elif coupon.status == STATUS_DISCOUNT_COUPON_USED %}
+    <div class="watch_code">
+        <a class="btn_watch watched" href="javascript:void(0);">已使用</a></div>
+    {% elif coupon.status == STATUS_DISCOUNT_COUPON_EXPIRED %}
+    <div class="watch_code"><a class="btn_watch watched" href="javascript:void(0);">已过期</a></div>
+    {% else %}
+    <div class="watch_code"><a class="btn_watch view_serial_num" href="javascript:void(0);">查看券码</a></div>
+    {% end %}
+</li>
+{% end %}
+{% end %}

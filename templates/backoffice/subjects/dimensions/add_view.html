@@ -1,0 +1,172 @@
+{% extends '../../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CATEGORY_SUBJECT_DIMENSION_WEIGHT, CATEGORY_SUBJECT_DIMENSION_WEIGHT_LIST, CATEGORY_SUBJECT_DIMENSION_WEIGHT_DICT %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_subject_dimension_list') }}" class="pl10 ml10">题目维度管理</a>
+        <span>&gt; 新增题目维度</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20">
+            <i class="back_i"></i>返回
+        </a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_dimension_manage">新增题目维度<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="form_add" name="form_add" method="post"
+              action="{{ reverse_url('backoffice_subject_dimension_add') }}">
+            {% raw xsrf_form_html() %}
+            <table class="table_form">
+                <tbody>
+                <tr>
+                    <th width="40%"><span class="necessary">*</span>维度编号</th>
+                    <td><input id="code" name="code" class="input_text" type="text" maxlength="32"></td>
+                </tr>
+                <tr>
+                    <th width="40%"><span class="necessary">*</span>维度名称</th>
+                    <td><input id="title" name="title" class="input_text" type="text" maxlength="256"></td>
+                </tr>
+                <tr>
+                    <th><span class="necessary">*</span>维度类别</th>
+                    <td class="category">
+                        <select id="category" name="category">
+                            <option value="">--请选择--</option>
+                            {% for code in CATEGORY_SUBJECT_DIMENSION_WEIGHT_LIST %}
+                            <option value="{{ code }}">{{ CATEGORY_SUBJECT_DIMENSION_WEIGHT_DICT.get(code) }}</option>
+                            {% end %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th width="40%"><span class="necessary">*</span>排序</th>
+                    <td><input id="ordered" name="ordered" class="input_text" type="text" maxlength="256"
+                               onkeyup="value=value.replace(/[^\d]/g,'')"></td>
+                </tr>
+                <tr>
+                    <th class="vt pt10">备注</th>
+                    <td>
+                        <textarea id="comment" name="comment" class="textarea">
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>状态</th>
+                    <td>
+                        <label class="table_switch">
+                            <input id="status" name="status" type="checkbox" checked="checked">
+                            <i></i>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <span id="error_msg" class="cl_danger"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <a href="javascript:;" id="submit" class="btn btn_primary btn_lg mt10">提交</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    $(function () {
+
+        $("#form_add").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("添加题目失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("题目添加成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_subject_dimension_list') }}";
+                    });
+                } else if (data.code === -1) {
+                    $("#error_msg").html("请输入维度名称！");
+                } else if (data.code === -2) {
+                    $("#error_msg").html("请选择维度类别！");
+                } else if (data.code === -4) {
+                    $("#error_msg").html("请输入排序！");
+                } else if (data.code === -5) {
+                    $("#error_msg").html("排序已存在！");
+                } else if (data.code === -6) {
+                    $("#error_msg").html("维度名称已存在！");
+                } else if (data.code === -7) {
+                    $("#error_msg").html("维度编号已存在！");
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+
+        $("#submit").click(function () {
+            $("#form_add").submit();
+        });
+
+        $(".radio_i").on("click", function () {
+            $(this).parents(".table_form").find(".radio_i").removeClass("checked").parent().find(".hide_f").val("");
+            $(this).addClass("checked").parent().find(".hide_f").val("1");
+        });
+    });
+
+    function check_form() {
+        var title = $.trim($("#title").val());
+        var ordered = $.trim($("#ordered").val());
+        var category = $.trim($("#category").val());
+        var code = $.trim($("#code").val());
+        if (code === "") {
+            $("#error_msg").html("请输入维度编号！");
+            return false;
+        }
+        if (title === "") {
+            $("#error_msg").html("请输入维度名称！");
+            return false;
+        }
+        if (category === "") {
+            $("#error_msg").html("请选择维度类别！");
+            return false;
+        }
+        if (ordered === "") {
+            $("#error_msg").html("请输入排序！");
+            return false;
+        }
+        var re = /^[0-9]*$/;
+        if (!re.test(ordered)) {
+            $("#error_msg").html("排序请输入数字！");
+            return false;
+        }
+        var re1 = /^[a-zA-Z0-9]*$/;
+        if (!re1.test(code) || code.length > 6) {
+            $("#error_msg").html("维度编号请输入小于等于6位的数字、字母、数字和字母组合！");
+            return false;
+        }
+
+        return true;
+    }
+
+</script>
+{% end %}

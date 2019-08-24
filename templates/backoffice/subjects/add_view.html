@@ -1,0 +1,399 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CODE_SUBJECT_DIFFICULTY_LIST, CODE_SUBJECT_DIFFICULTY_DICT, CATEGORY_SUBJECT_KNOWLEDGE_LIST, CATEGORY_SUBJECT_KNOWLEDGE_DICT, KNOWLEDGE_SECOND_LEVEL_DICT,KNOWLEDGE_SECOND_LEVEL_LIST,KNOWLEDGE_FIRST_LEVEL_DICT,KNOWLEDGE_FIRST_LEVEL_LIST, CATEGORY_SUBJECT_DICT, CATEGORY_SUBJECT_GENERAL %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_subject_list') }}" class="pl10 ml10">题目管理</a>
+        <span>&gt; 新增题目</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20">
+            <i class="back_i"></i>返回
+        </a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">新增题目<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="form_add" name="form_add" method="post" action="{{ reverse_url('backoffice_subject_add') }}">
+            {% raw xsrf_form_html() %}
+            <input type="hidden" value="" class="option_list" name="option_list">
+            <table class="table_form">
+                <tbody>
+                <tr>
+                    <th width="40%"><span class="necessary">*</span>题目ID</th>
+                    <td><input id="custom_code" name="custom_code" class="input_text" type="text" maxlength="256"></td>
+                </tr>
+                <tr>
+                    <th width="40%"><span class="necessary">*</span>题目</th>
+                    <td><input id="title" name="title" class="input_text" type="text" maxlength="256"></td>
+                </tr>
+
+                <tr class="option">
+                    <th><span class="necessary">*</span>选项1</th>
+                    <td class="pr">
+                        <input id="option_fir" name="" class="input_text" type="text" maxlength="256">
+                        <input id="is_correct_fir" name="" type="hidden" class="hide_f is_correct"
+                               value="">
+                        <i class="radio_i pa"></i>
+                        <span class="radio_remark">标记为正确答案</span>
+                    </td>
+                </tr>
+                <tr class="option">
+                    <th><span class="necessary">*</span>选项2</th>
+                    <td class="pr">
+                        <input id="option_sec" name="" class="input_text" type="text" maxlength="256">
+                        <input id="is_correct_sec" name="" type="hidden" class="hide_f is_correct"
+                               value="">
+                        <i class="radio_i pa"></i>
+                        <span class="radio_remark">标记为正确答案</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <a href="#" class="new_options">新增选项</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="pt10 vt">图片</th>
+                    <td class="clear">
+                        <div class="pic_show fl mr10">
+                            <img src="{{ static_url('images/default/upload_def.png') }}">
+                        </div>
+                        <div class="pic_upload_box fl">
+                            <div class="mt10">
+                                <a href="javascript:;" class="btn btn_warning_empty delete_pic_btn">删除图片</a>
+                            </div>
+                            <div class="pr mt10">
+                                <input name="image" type="file" id="upload_pic_btn" class="pa"
+                                       accept="image/jpeg,image/png,image/gif,image/jpg">
+                                <a href="javascript:;" class="btn btn_primary_empty upload_pic_btn">上传图片</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% for subject_dimension in  subject_dimension_list %}
+                <tr>
+                    <th>
+                        {% if subject_dimension.code != 'DFKX' %}
+                            <span class="necessary">*</span>
+                        {% end %}
+                        {{ subject_dimension.title }}
+                    </th>
+                    <td class="subject_diff">
+                        <select class="subject_dimension" name="subject_dimension">
+                            {% if subject_dimension.code != 'DFKX' %}
+                            <option value="">--请选择--</option>
+                            {% else %}
+                            <option value="DFKX">--请选择--</option>
+                            {% end %}
+                            {% for sub_subject_dimension in subject_dimension.sub_subject_dimension_list %}
+                            <option value="{{ subject_dimension.cid }}_{{ sub_subject_dimension.cid }}">{{ sub_subject_dimension.title }}</option>
+                            {% end %}
+                        </select>
+                    </td>
+                </tr>
+                {% end %}
+                {#                    <tr>#}
+                {#                        <th><span class="necessary">*</span>题目难度</th>#}
+                {#                        <td class="subject_diff">#}
+                {#                            <select id="difficulty" name="difficulty">#}
+                {#                                <option value="">--请选择--</option>#}
+                {#                                {% for code in CODE_SUBJECT_DIFFICULTY_LIST %}#}
+                {#                                <option value="{{ code }}">{{ CODE_SUBJECT_DIFFICULTY_DICT.get(code) }}</option>#}
+                {#                                {% end %}#}
+                {#                            </select>#}
+                {#                        </td>#}
+                {#                    </tr>#}
+                {#                    <tr>#}
+                {#                        <th><span class="necessary">*</span>学科部类</th>#}
+                {#                        <td class="subject_type">#}
+                {#                            <select id="category" name="category">#}
+                {#                                <option value="">--请选择--</option>#}
+                {#                                {% for code in CATEGORY_SUBJECT_KNOWLEDGE_LIST %}#}
+                {#                                <option value="{{ code }}">{{ CATEGORY_SUBJECT_KNOWLEDGE_DICT.get(code) }}</option>#}
+                {#                                {% end %}#}
+                {#                            </select>#}
+                {#                        </td>#}
+                {#                    </tr>#}
+                <tr>
+                    <th>一级知识点</th>
+                    <td class="subject_type">
+                        <select id="knowledge_first" name="knowledge_first">
+                            <option value="">--请选择--</option>
+                            {% for code in KNOWLEDGE_FIRST_LEVEL_LIST %}
+                            <option value="{{ code }}">{{ KNOWLEDGE_FIRST_LEVEL_DICT.get(code) }}</option>
+                            {% end %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>二级知识点</th>
+                    <td class="subject_type">
+                        <select id="knowledge_second" name="knowledge_second">
+                            <option value="">--请选择--</option>
+                            {% for code in KNOWLEDGE_SECOND_LEVEL_LIST %}
+                            <option value="{{ code }}">{{ KNOWLEDGE_SECOND_LEVEL_DICT.get(code) }}</option>
+                            {% end %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class="necessary">*</span>使用类别</th>
+                    <td class="subject_category_use">
+                        <select id="category_use" name="category_use">
+                            <option value="{{ CATEGORY_SUBJECT_GENERAL }}">{{ CATEGORY_SUBJECT_DICT[CATEGORY_SUBJECT_GENERAL] }}</option>
+                            {% for key in CATEGORY_SUBJECT_DICT.keys() %}
+                            <option value="{{ key }}" {% if key == CATEGORY_SUBJECT_GENERAL %} selected {% end %}>{{ CATEGORY_SUBJECT_DICT[key] }}</option>
+                            {% end %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="vt pt10"><span class="necessary">*</span>答案解析</th>
+                    <td>
+                        <textarea id="resolving" name="resolving" class="textarea"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="vt pt10">备注</th>
+                    <td>
+                        <textarea id="content" name="content" class="textarea">
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>题目启用状态</th>
+                    <td>
+                        <label class="table_switch">
+                            <input id="status" name="status" type="checkbox" checked="checked">
+                            <i></i>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <span id="error_msg" class="cl_danger"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <a href="javascript:;" id="submit" class="btn btn_primary btn_lg mt10">提交</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    $(function () {
+        //新增选项：
+        var i = 3;
+        $(".new_options").click(function () {
+            $(this).parents("tr").before('<tr class="can_delete_option option"><th>选项' + i + '</th><td class="pr"><input id="option_thr" name="" class="input_text" type="text" maxlength="256"><a href="#" class="delete_options"></a><input id="" name="is_correct_thr" type="hidden" class="hide_f is_correct" value=""> <i class="radio_i pa"></i><span class="radio_remark">标记为正确答案</span></td></tr>')
+            i++;
+        });
+        //删除选项：
+        $(document).on("click", ".delete_options", function () {
+            i--;
+            var current = $(this).parents("tr").find("th").text().trim().substring(2);
+            $(this).parents("tr").nextAll(".can_delete_option").each(function (i) {
+                $(this).find("th").text("选项" + (i + parseInt(current)))
+            });
+            $(this).parents("tr").remove();
+        });
+        img_review();
+
+        $("#form_add").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            beforeSerialize: function () {
+                set_value();
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("添加题目失败，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("题目添加成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_subject_list') }}";
+                    });
+                } else if (data.code === -1) {
+                    $("#error_msg").html("请输入题目内容！");
+                }
+                    {#                else if (data.code === -4) {#}
+                    {#                    $("#error_msg").html("请选择题目难度！");#}
+                    {#                } else if (data.code === -5) {#}
+                    {#                    $("#error_msg").html("请选择学科部类！");#}
+                    {#                }#}
+                else if (data.code === -6) {
+                    $("#error_msg").html("选项1、选项2内容不能同时为空！");
+                } else if (data.code === -7) {
+                    $("#error_msg").html("题目标题已存在，请换一个！");
+                } else if (data.code === -8) {
+                    $("#error_msg").html("请输入答案解析内容！");
+                } else if (data.code === -9) {
+                    $("#error_msg").html("题目ID请输入5到20位的数字、字母、数字和字母组合！");
+                } else if (data.code === -10) {
+                    $("#error_msg").html("题目ID已存在！");
+                } else if (data.code === -11) {
+                    $("#error_msg").html("请选择使用类别！");
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+
+        $("#submit").click(function () {
+            $("#form_add").submit();
+        });
+
+        $(document).on("click", ".radio_i", function () {
+            $(this).parents(".table_form").find(".radio_i").removeClass("checked").parent().find(".hide_f").val("");
+            $(this).addClass("checked").parent().find(".hide_f").val("1");
+        });
+    });
+
+
+    function check_form() {
+        var title = $.trim($("#title").val());
+        {#        var difficulty = $.trim($("#difficulty").val());#}
+        {#        var category = $.trim($("#category").val());#}
+        var subject_dimension = $(".subject_dimension");
+        var v_status = false;
+        var o_status = false;
+        var tag_correct = false;
+        var option_title_list = [];
+        var option_tr = $(".option");
+        var i = 0;
+        var custom_code = $.trim($("#custom_code").val());
+        var re = /^[a-zA-Z0-9]*$/;
+        if (custom_code === "" || !re.test(custom_code) || custom_code.length > 20 || custom_code.length < 5) {
+            $("#error_msg").html("题目ID请输入5到20位的数字、字母、数字和字母组合！");
+            return false;
+        }
+        if (title === "") {
+            $("#error_msg").html("请输入题目内容！");
+            return false;
+        }
+        option_tr.each(function () {
+            i++;
+            var option_content = $.trim($(this).find(".input_text").val());
+            var is_correct = $.trim($(this).find(".is_correct").val());
+            if (option_content === "") {
+                {#                if (i < 1) {#}
+                o_status = true;
+                $("#error_msg").html("请输入选项" + i + "内容！");
+                return false;
+                {#                }#}
+            } else {
+                if ($.inArray(option_content, option_title_list) > -1) {
+                    $("#error_msg").html("选项内容存在重复，请重新输入！");
+                    o_status = true;
+                    return false;
+                }
+                option_title_list.push(option_content);
+            }
+            if (is_correct !== "") {
+                tag_correct = true;
+            }
+        });
+        if (o_status) {
+            return false;
+        }
+        if (!tag_correct) {
+            $("#error_msg").html("请确定题目正确选项！");
+            return false;
+        }
+
+        subject_dimension.each(function () {
+            var obj_val = $.trim($(this).val());
+            if (obj_val === "") {
+                v_status = true;
+                $("#error_msg").html("请选择题目维度！");
+            }
+        });
+        if (v_status) {
+            return false;
+        }
+
+
+        {#        if (difficulty === "") {#}
+        {#            $("#error_msg").html("请选择题目难度！");#}
+        {#            return false;#}
+        {#        }#}
+        {#        if (category === "") {#}
+        {#            $("#error_msg").html("请选择学科部类！");#}
+        {#            return false;#}
+        {#        }#}
+        return true;
+    }
+
+    function set_value() {
+        var option_tr = $(".option");
+        var arr_list = [];
+        option_tr.each(function () {
+            var tag_correct = false;
+            var option_content = $(this).find(".input_text").val();
+            var is_correct = $(this).find(".is_correct").val();
+            if (is_correct !== "") {
+                tag_correct = true;
+            }
+            arr_list.push({
+                'content': option_content,
+                'is_correct': tag_correct
+            });
+        });
+        arr_list = JSON.stringify(arr_list);
+        $(".option_list").val(arr_list);
+    }
+
+    function img_review() {
+        var uploadPicBtn = $("#upload_pic_btn");
+        uploadPicBtn.on("mouseover", function () {
+            $(this).addClass("current");
+        });
+        uploadPicBtn.on("mouseup", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("mouseout", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("change", function () {
+            var file = this.files[0];
+            single_reads(file);
+        });
+        $(".delete_pic_btn").on("click", function () {
+            $("#upload_pic_btn").val("");
+            $(".pic_show img").attr("src", "{{ static_url('images/default/upload_def.png') }}");
+        })
+    }
+
+    function single_reads(file) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            $(".pic_show img").attr("src", reader.result);
+        };
+    }
+
+</script>
+{% end %}

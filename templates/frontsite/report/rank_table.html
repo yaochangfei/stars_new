@@ -1,0 +1,28 @@
+<table>
+    <tr>
+        <th>排名</th>
+        <th>名称</th>
+        <th>参赛人次</th>
+        <th>参赛人数</th>
+        <th>正确率</th>
+    </tr>
+    {% for index, d in enumerate(data) %}
+    <tr>
+        <td>
+            {% if index == 0 %}
+            <div class="rank_i first_i"></div>
+            {% elif index == 1 %}
+            <div class="rank_i second_i"></div>
+            {% elif index == 2%}
+            <div class="rank_i third_i"></div>
+            {% else %}
+            {{ index + 1}}
+            {% end %}
+        </td>
+        <td>{{ d.get('name', 0) }}</td>
+        <td>{{ d.get('times', 0) }}</td>
+        <td>{{ d.get('count', 0) }}</td>
+        <td>{{ d.get('accuracy', 0) }}</td>
+    </tr>
+    {% end %}
+</table>

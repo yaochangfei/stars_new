@@ -1,0 +1,139 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_USER_ACTIVE, STATUS_USER_INACTIVE %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_user_list') }}" class="pl10 ml10">用户列表</a>
+        <span> &gt; 新增用户</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">新增用户<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <table class="table_form">
+            <tr>
+                <th width="40%"><span class="necessary">*</span>账号</th>
+                <td><input class="input_text" type="text" name="user_name" id="user_name"></td>
+            </tr>
+            <tr>
+                <th width="40%"><span class="necessary">*</span>姓名</th>
+                <td><input class="input_text" type="text" name="name" id="name"></td>
+            </tr>
+            <tr>
+                <th><span class="necessary">*</span>手机号</th>
+                <td><input class="input_text" type="text" name="mobile" id="mobile"></td>
+            </tr>
+            <tr>
+                <th><span class="necessary">*</span>邮箱</th>
+                <td><input class="input_text" type="text" name="email" id="email"></td>
+            </tr>
+            <tr>
+                <th><span class="necessary">*</span>登录密码</th>
+                <td><input class="input_text" type="password" name="password" id="password"></td>
+            </tr>
+            <tr>
+                <th><span class="necessary">*</span>确认密码</th>
+                <td><input class="input_text" type="password" name="repassword" id="repassword"></td>
+            </tr>
+            <tr>
+                <th width="40%"><span class="necessary"></span>所在城市</th>
+                <td><input class="input_text" type="text" name="city" id="city" maxlength="16"></td>
+            </tr>
+            <tr>
+                <th width="40%"><span class="necessary"></span>所在省份</th>
+                <td><input class="input_text" type="text" name="province" id="province" maxlength="16"></td>
+            </tr>
+            <tr>
+                <th class="vt pt10">备注</th>
+                <td><textarea class="textarea" name="content" id="content"></textarea></td>
+            </tr>
+            <tr>
+                <th>账户启用状态</th>
+                <td>
+                    <label class="table_switch">
+                        <input type="checkbox" checked="checked" name="status" value="{{ STATUS_USER_ACTIVE }}"
+                               id="status">
+                        <i></i>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                        <span class="cl_danger">
+
+                        </span>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><a href="#" class="btn btn_primary mt15 btn_lg submit_btn">提交</a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+    $(function () {
+        // 提交表单
+        $('.submit_btn').on('click', function () {
+            var user_name = $('#user_name').val();
+            var name = $('#name').val();
+            var mobile = $('#mobile').val();
+            var email = $('#email').val();
+            var password = $('#password').val();
+            var repassword = $('#repassword').val();
+            var content = $('#content').val();
+            var city = $('#city').val();
+            var province = $("#province").val();
+            var status = $('#status').prop('checked') ? {{ STATUS_USER_ACTIVE }} :{{ STATUS_USER_INACTIVE }};
+
+            if (!(user_name && name && mobile && email && password && repassword)) {
+                $('.cl_danger').html('请填写必填信息！');
+                return false;
+            }
+            if (password != repassword) {
+                $('.cl_danger').html('请保证密码前后一致！');
+                return false;
+            }
+
+            var url = "{{ reverse_url('backoffice_user_add') }}";
+            var data = {
+                'user_name': user_name,
+                'name': name,
+                'mobile': mobile,
+                'email': email,
+                'password': password,
+                'repassword': repassword,
+                'content': content,
+                'status': status,
+                "city": city,
+                "province": province
+            };
+            display_loading();
+            ajaxPost(url, data, function (ret) {
+                if (ret.code == -3) {
+                    $('.cl_danger').html('填写完整信息！');
+                } else if (ret.code == -2) {
+                    $('.cl_danger').html('用户名已存在！');
+                } else if (ret.code == -1) {
+                    $('.cl_danger').html('两次密码不一致！');
+                } else if (ret.code == 1) {
+                    tip_msg("添加用户成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_user_list') }}";
+                    });
+                } else {
+                    $('.cl_danger').html('系统错误！');
+                }
+            });
+            remove_loading();
+        })
+    })
+</script>
+{% end %}

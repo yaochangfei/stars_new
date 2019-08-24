@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="keywords" content="中国科普研究所">
+    <meta name="description" content="中国科普研究所">
+    <title>中国科普研究所</title>
+    <link rel="shortcut icon" href="{{ static_url('images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ static_url('css/base.css') }}">
+    <script src="{{ static_url('js/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+</head>
+<body class="page_body">
+<div class="page_error pr">
+    <div class="pa">
+        <div class="error_info">
+            {% if forbidden_code == 1 %}
+            您好像还没有登录哦！
+            {% elif forbidden_code == 2 %}
+            您好像还没有权限访哦！
+            {% else %}
+            抱歉，系统好像开小差了，请联系系统管理员！
+            {% end %}
+        </div>
+        <div class="back_info"><span class="back_time"></span>秒后自动回到主页</div>
+        <a href="javascript:void (0);" onclick="skip_to('{{ to_url }}')" class="btn btn_lg btn_primary">回到主页</a>
+    </div>
+</div>
+<script>
+    $(function () {
+        var backTime = 5;
+        $(".back_time").html(backTime);
+        var timer = setInterval(function () {
+            backTime--;
+            $(".back_time").html(backTime);
+            if (backTime <= 0) {
+                clearInterval(timer);
+                skip_to("{{ to_url }}");
+            }
+        }, 1000)
+    });
+
+    function skip_to(url) {
+        display_loading();
+        setTimeout(function () {
+            window.location.href = url;
+        }, 500)
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>跳转中，请稍等...</title>
+{% end %}
+{% block content %}
+<div class="container loading_box">
+    <div class="loading_info">正在加载，请稍后...</div>
+</div>
+<script>
+    $(function () {
+        window.location.href = '{{ auth_url }}';
+    });
+</script>
+{% end %}

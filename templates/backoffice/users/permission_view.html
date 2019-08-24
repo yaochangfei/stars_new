@@ -1,0 +1,130 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from enums import ALL_PERMISSION_TYPE_DICT %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_user_list') }}" class="pl10 ml20">用户列表</a>
+        <span> &gt; 权限管理</span>
+    </div>
+    <div class="fr clear">
+        <a href="{{ reverse_url('backoffice_user_list') }}" class="fl back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info clear">
+    <div class="role_box fl">
+        <div class="list_title pr">
+            角色
+            <i class="role_i"></i>
+        </div>
+        <table class="table_list">
+            {% if role_list %}
+            {% for sub_roles in role_list %}
+            <tr>
+                {% for role in sub_roles %}
+                <td>
+                    <i code="{{ role.code }}"
+                       class="checkbox_i {% if role.code in manager.role_code_list %}checked{% end %}">
+
+                    </i>
+                    {{ string_display(role.title) }}
+                </td>
+                {% end %}
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="2">
+                    暂无角色信息。
+                </td>
+            </tr>
+            {% end %}
+        </table>
+    </div>
+    <div class="power_box fl">
+        <div class="list_title pr">
+            权限
+            <i class="power_i"></i>
+        </div>
+        {% for code, permission_list in all_permission_dict.items() %}
+        <table class="manage_table mb30">
+            <thead class="table_control">
+            <tr>
+                <th colspan="3">
+                    <i code="{{ code }}"
+                       class="checkbox_i choose_all {% if code in manager.permission_code_list %}checked{% end %}"></i>
+                    {{ string_display(ALL_PERMISSION_TYPE_DICT.get(code)) }}
+                </th>
+            </tr>
+            </thead>
+            <tbody class="table_list">
+            {% for sub_permission_list in permission_list %}
+            <tr>
+                {% for permission in sub_permission_list %}
+                <td>
+                    <i code="{{ permission }}"
+                       class="checkbox_i {% if permission in manager.permission_code_list %}checked{% end %}"></i>
+                    {{ string_display(ALL_PERMISSION_TYPE_DICT.get(permission)) }}
+                </td>
+                {% end %}
+            </tr>
+            {% end %}
+            </tbody>
+        </table>
+        {% end %}
+    </div>
+    <div class="pb20 pl20">
+        <a href="javascript:;" id="submit" class="btn btn_primary save_perm">保存</a>
+    </div>
+</div>
+<script>
+
+    $(function () {
+        $('.save_perm').on('click', function () {
+            var manager_id = "{{ manager.oid }}";
+            var perm_code_list = [];
+            var role_code_list = [];
+
+            var role_list = $('.role_box').find('.checkbox_i.checked');
+            for (var i = 0; i < role_list.length; i++) {
+                var role = role_list[i];
+                if ($(role).attr('code')) {
+                    role_code_list.push($(role).attr('code'));
+                }
+            }
+
+            var perm_list = $('.power_box').find('.checkbox_i.checked');
+            for (var i = 0; i < perm_list.length; i++) {
+                var perm = perm_list[i];
+                if ($(perm).attr('code')) {
+                    perm_code_list.push($(perm).attr('code'));
+                }
+            }
+
+            if (manager_id) {
+                var url = "{{ reverse_url('backoffice_user_permission') }}";
+                var data = {
+                    'manager_id': manager_id,
+                    'role_code_list': role_code_list,
+                    'perm_code_list': perm_code_list
+                };
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code === 1) {
+                        tip_msg("变更用户权限成功！", 2000, function () {
+                            window.location.href = "{{ reverse_url('backoffice_user_list') }}";
+                        });
+                    } else {
+                        tip_msg("变更用户权限失败！", 2000);
+                    }
+                });
+                remove_loading();
+            } else {
+                tip_msg("变更用户权限失败！", 2000);
+            }
+        });
+    })
+
+</script>
+{% end %}

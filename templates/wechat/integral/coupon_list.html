@@ -1,0 +1,92 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>兑换记录</title>
+{% end %}
+{% block content %}
+{% from db import STATUS_DISCOUNT_COUPON_UNUSED, STATUS_DISCOUNT_COUPON_USED, STATUS_DISCOUNT_COUPON_EXPIRED %}
+<div class="container">
+    <div class="tab_bar">
+        <ul class="clear">
+            <li class="my_coupon current"><a href="{{ reverse_url('wechat_integral_present_coupons') }}">我的优惠券</a></li>
+            <li class="my_gift"><a href="{{ reverse_url('wechat_integral_present_orders') }}">我的礼品</a></li>
+        </ul>
+    </div>
+    <div class="mescroll" id="mescroll">
+        <ul class="coupon_lists clear" id="coupon_list">
+        </ul>
+    </div>
+</div>
+<script>
+    $(function () {
+        $(document).on("click", ".coupon_li", function () {
+            var present_cid = $(this).attr('cid');
+            window.location.href = "{{ reverse_url('wechat_integral_present_detail') }}?present_cid=" + present_cid;
+        });
+
+        $(document).on("click", ".view_serial_num", function (e) {
+            e.stopPropagation();
+            var content = $(this).attr('val');
+            if (content) {
+                $.showConfirm({
+                    title: "券码",
+                    content: content,
+                    sure: function () {
+                        var content = this.content;
+                        var clipboard = new Clipboard('.sure_confirm', {
+                            text: function () {
+                                return content
+                            }
+                        });
+                        clipboard.on('success', function () {
+                            console.log("复制成功");
+                        });
+                        clipboard.on('error', function (e) {
+                            console.log(e);
+                        });
+                    },
+                    btn: ["取消", "复制"]
+                })
+            } else {
+                $.showAlert({
+                    title: "提示",
+                    content: "暂无券码，请联系客服！"
+                })
+            }
+        });
+
+        // 上拉加载js
+        var mescroll = new MeScroll("mescroll", {
+            down: {
+                auto: false,
+                callback: function () {
+                    window.location.reload();
+                }
+            },
+            up: {
+                isBounce: false,
+                callback: function (page) {
+                    $.post("{{ reverse_url('common_get_xsrf') }}", {}, function (r) {
+                        var url = "{{ reverse_url('wechat_integral_present_coupons') }}";
+                        var data = {
+                            pageNum: page.num,
+                            size: page.size,
+                            _xsrf: r._xsrf
+                        };
+                        set_xsrf(data);
+                        $.post(url, data, function (res) {
+                            if (!res.html && page.num === 1) {
+                                var empty_html = '<div class="tc">暂无优惠券信息！</div>';
+                                $('#coupon_list').html(empty_html);
+                            } else {
+                                $('#coupon_list').append(res.html);
+                            }
+                            mescroll.endBySize(res.current_length, res.totalSize);
+                        }, 'JSON');
+                    }, 'JSON');
+                }
+            }
+        });
+    });
+</script>
+{% end %}

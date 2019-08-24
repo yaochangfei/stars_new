@@ -1,0 +1,22 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>认证车主信息</title>
+{% end %}
+{% block content %}
+<div class="container">
+    <div class="auth_success">
+        <div class="success_icon"></div>
+        <div class="success_info">认证成功</div>
+        <div class="success_remark">现在可以使用平台车主专享服务</div>
+        <div class="submit_btn"><a href="">确定</a></div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('.submit_btn').on('click', function () {
+            WeixinJSBridge.call('closeWindow');
+        });
+    })
+</script>
+{% end %}

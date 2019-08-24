@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="yes" name="apple-touch-fullscreen">
+    <title>个人中心</title>
+    <link rel="stylesheet" href="{{ static_url('css/base_phone.css') }}">
+    <script src="{{ static_url('js/plugins/echarts.min.js') }}"></script>
+    <script>
+        (function(designWidth, maxWidth) {
+            var doc = document,
+            win = window,
+            docEl = doc.documentElement,
+            remStyle = document.createElement("style"),
+            tid;
+
+            function refreshRem() {
+                var width = docEl.getBoundingClientRect().width;
+                maxWidth = maxWidth || 540;
+                width>maxWidth && (width=maxWidth);
+                var rem = width * 100 / designWidth;
+                remStyle.innerHTML = 'html{font-size:' + rem + 'px;}';
+            }
+
+            if (docEl.firstElementChild) {
+                docEl.firstElementChild.appendChild(remStyle);
+            } else {
+                var wrap = doc.createElement("div");
+                wrap.appendChild(remStyle);
+                doc.write(wrap.innerHTML);
+                wrap = null;
+            }
+            //要等 wiewport 设置好后才能执行 refreshRem，不然 refreshRem 会执行2次；
+            refreshRem();
+
+            win.addEventListener("resize", function() {
+                clearTimeout(tid); //防止执行两次
+                tid = setTimeout(refreshRem, 300);
+            }, false);
+
+            win.addEventListener("pageshow", function(e) {
+                if (e.persisted) { // 浏览器后退的时候重新计算
+                    clearTimeout(tid);
+                    tid = setTimeout(refreshRem, 300);
+                }
+            }, false);
+
+            if (doc.readyState === "complete") {
+                doc.body.style.fontSize = "16px";
+            } else {
+                doc.addEventListener("DOMContentLoaded", function(e) {
+                    doc.body.style.fontSize = "16px";
+                }, false);
+            }
+        })(750, 960);
+    </script>
+    <style>
+        .container{
+            width: 100%;
+            height: 100%;
+            padding-top: 0.2rem;
+            padding-bottom: 0.6rem;
+            background: url("{{ static_url('images/games/rankgame_bg.jpg') }}") no-repeat center;
+            background-size: 100% 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .content{
+            width: 90%;
+            height: 100%;
+            background: rgba(19,63,146,0.8);
+            border-radius: 1.2rem;
+        }
+        .player{
+            width: 3.6rem;
+            margin: 0.64rem auto 0;
+        }
+        .player_pic{
+            width: 1.3rem;
+            height: 1.3rem;
+            margin: 0 auto;
+            border-radius: 50%;
+            border: 0.04rem solid #4672C8;
+        }
+        .player_pic img{
+            width: 100%;
+            height: 100%;
+        }
+        .player_name{
+            font-size: 0.32rem;
+            color: #FFFFFF;
+            text-align: center;
+            margin-top: 0.24rem;
+            margin-bottom: 0.36rem;
+        }
+        .player_info>div{
+            width: 100%;
+            height: 0.62rem;
+            line-height: 0.62rem;
+            border-radius: 0.62rem;
+            background-color: #1960AE;
+            margin-bottom: 0.16rem;
+            padding-left: 1.6rem;
+            font-size: 0.28rem;
+            color: #FFFE76;
+            background-repeat: no-repeat;
+        }
+        .diamonds{
+            background-image: url("{{ static_url('images/games/diamond.png') }}");
+            background-position: 1rem 0.18rem;
+            background-size: 0.3rem 0.3rem;
+        }
+        .title{
+            background-image: url("{{ static_url('images/games/ii.png') }}");
+            background-position: 0.98rem 0.18rem;
+            background-size: 0.32rem 0.32rem;
+        }
+        .trophy{
+            background-image: url("{{ static_url('images/games/i.png') }}");
+            background-position: 0.98rem 0.18rem;
+            background-size: 0.32rem 0.32rem;
+        }
+        .chart{
+            width: 100%;
+            height: 4.8rem;
+            margin: 1.1rem auto 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="player">
+                <div class="player_pic">
+                    {% if user_info.get('avatar') %}
+                    <img src="{{ user_info.get('avatar') }}">
+                    {% end %}
+                </div>
+                <div class="player_name">{{ string_display(user_info.get('wechat_nick_name')) }}</div>
+                <div class="player_info">
+                    <div class="diamonds">{{ user_info.get('diamond', '-') }}</div>
+                    <div class="title">{{ user_info.get('dan_grade', '-') }}</div>
+                    <div class="trophy">{{ user_info.get('highest_win_times', '-') }}</div>
+                </div>
+            </div>
+            <div class="chart" id="chart">
+
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+    {% if user_info.get('chart_data') %}
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('chart'));
+
+    // 指定图表的配置项和数据
+    var option = {
+        color: ['#FC7979', '#AF96FC', '#FAB66F', '#49D0AE'],
+        series: [
+            {
+                name: '访问来源',
+                type: 'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                // label: {
+                //     normal: {
+                //         show: false,
+                //         position: 'center'
+                //     },
+                //     emphasis: {
+                //         show: true,
+                //         textStyle: {
+                //             fontSize: '30',
+                //             fontWeight: 'bold'
+                //         }
+                //     }
+                // },
+                labelLine: {
+                    normal: {
+                        length: 10,
+                        length2: 10,
+                        smooth: 0.1
+                    }
+                },
+                data: JSON.parse('{{ user_info.get("chart_data") }}')
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    {% end %}
+
+</script>
+</html>

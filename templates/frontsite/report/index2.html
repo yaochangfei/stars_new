@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>贵州省科协活动报表</title>
+    <link rel="stylesheet" href="{{ static_url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/default/user_list.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/frontsite/index.css') }}">
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+    <script src="{{ static_url('js/jquery-1.10.2.js') }}"></script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header_title">
+            贵州省科协活动报表
+            <div class="title_i left_title_i"></div>
+            <div class="title_i right_title_i"></div>
+        </div>
+        <div class="user_info clear">
+            <div class="user_name fl">wangchenyi</div>
+            <div class="logout fl">注销</div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="chat_box">
+            <div class="content_title">
+                <ul class="tabs clear">
+                    <li class="fl">
+                        <a href="javascript:void(0)" class="active map_tab" data-name="人数">
+                            <div class="tabs_i person_i"></div>
+                            <div>参与人数</div>
+                            <div class="line"></div>
+                        </a>
+                    </li>
+                    <li class="fr">
+                        <a href="javascript:void(0)" class="map_tab" data-name="次数">
+                            <div class="tabs_i time_i map_tab"></div>
+                            <div>参与次数</div>
+                            <div class="line"></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="echart_box clear">
+                <div class="echart1 fl" id="map_statistics"></div>
+                <div class="echart2 fl">
+                    <div class="province_statistics_title tc">参与答题次数一览表
+                        <a href="javascript:void (0)" class="back_chart map_back fr dis_none"><i></i>返回</a>
+                    </div>
+
+                    <div class="province_statistics" id="province_statistics"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script src="{{ static_url('js/jquery-1.10.2.min.js') }}"></script>
+<script src="{{ static_url('js/plugins/jquery.cookie.1.4.1.min.js') }}"></script>
+<script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+<script src="{{ static_url('js/plugins/laydate/laydate.js') }}"></script>
+<script src="{{ static_url('js/public.js') }}"></script>
+<script src="{{ static_url('js/base_utils.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/echarts/echarts.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/echarts/map/js/china.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/echarts/map/js/all-province.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/report_charts/statistics_map_chart.js') }}"></script>
+{% from enums.variables import CHART_COLOR_LIST %}
+
+{#<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/chongqing.js') }}"></script>#}
+{#<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/shanghai.js') }}"></script>#}
+{#<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/taiwan.js') }}"></script>#}
+{#<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/xizang.js') }}"></script>#}
+{#<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/xinjiang.js') }}"></script>#}
+{#<script type="text/javascript" src="{{ static_url('js/echarts/map/js/province/beijing.js') }}"></script>#}
+<script>
+    var city_name = '{{ region_name if region_name else 'china' }}';
+
+    var backgroundColor = ''; //'#fff'
+    var areaColor = ''; // '#EAF3FF'
+    var d_info = [
+        {"size": 10, "color": "#e83232"},
+        {"size": 8, "color": "#FF5858"},
+        {"size": 6, "color": "#FF7878"},
+        {"size": 6, "color": "#FFB8B8"},
+        {"size": 6, "color": "#FFD3D3"},
+        {"size": 6, "color": "#FFD3D3"},
+        {"size": 6, "color": "#FFD3D3"},
+        {"size": 6, "color": "#FFD3D3"}
+    ];
+    var legend_data = [
+        {
+            name: '1',
+            icon: 'image://../../../../static/images/echarts/icons_rd1.png'
+        },
+        {
+            name: '2',
+            icon: 'image://../../../../static/images/echarts/icons_rd2.png'
+        },
+        {
+            name: '3',
+            icon: 'image://../../../../static/images/echarts/icons_rd3.png'
+        },
+        {
+            name: '4',
+            icon: 'image://../../../../static/images/echarts/icons_rd4.png'
+        },
+        {
+            name: '5',
+            icon: 'image://../../../../static/images/echarts/icons_rd5.png'
+        }
+    ];
+    var color_offset = ['#91C8FF', '#1F90FF'];
+    var emphasis_colors = ['#000', '#C0C0C0'];
+    var item_color = '#eee';
+
+    var geoCoordMap = {};
+    $.getJSON("{{ static_url('js/echarts/map/json/china_city.json') }}", function (data) {
+        $.each(data, function (i, item) {
+            if (item[3] === "上海") {
+                geoCoordMap["上海市"] = [item[1], item[2]];
+            } else if (item[3] === "北京") {
+                geoCoordMap["北京市"] = [item[1], item[2]];
+            } else if (item[3] === "天津") {
+                geoCoordMap["天津市"] = [item[1], item[2]];
+            } else if (item[3] === "重庆") {
+                geoCoordMap["重庆市"] = [item[1], item[2]];
+            } else {
+                geoCoordMap[item[0]] = [item[1], item[2]]
+            }
+        });
+    });
+
+    function show_map_statistics(data, city_name, label_type_name) {
+        if (data !== null) {
+            showMap(data, geoCoordMap, city_name, label_type_name);
+            showProvinceChart(data, city_name, label_type_name);
+        }
+    }
+
+    var cumulative_data = null;
+    function get_data_loop() {
+        /*
+        * 轮询次数数据
+        * */
+        var [call_back, ...args] = arguments;
+        if (cumulative_data == null) {
+            setTimeout(get_data_loop, 100, call_back, ...args)
+        } else {
+            call_back(cumulative_data, ...args)
+        }
+    }
+
+    ajaxPost("{{ reverse_url('frontsite_race_map') }}", {'race_cid': '{{ race_cid }}'}, function (result) {
+        if (result.code === 0) {
+            tip_msg("获取数据失败！", 2000);
+        } else if(result.code === 2){
+            get_cachekey_data(result.cache_key, function (data) {
+                cumulative_data = data
+            });
+        } else {
+            cumulative_data = result.data
+        }
+    });
+
+    var member_quantity_data = null;
+    ajaxPost("{{ reverse_url('frontsite_race_map') }}", {'race_cid': '{{ race_cid }}', 'stat_type': 'people_num'}, function (result) {
+        if (result.code === 0) {
+            tip_msg("获取数据失败！", 2000);
+        } else if(result.code === 2){
+            get_cachekey_data(result.cache_key, function (data) {
+                member_quantity_data = data
+            });
+        } else {
+            member_quantity_data = result.data
+        }
+    });
+
+    $(function () {
+        $(".map_tab").on("click", function () {
+            if (!$(this).hasClass("active")) {
+                $(this).addClass("active");
+                $(this).parent().siblings().find("a").removeClass("active");
+                var label_type_name = $(this).attr('data-name');
+
+                if (label_type_name === '人数') {
+                    data = member_quantity_data
+                } else {
+                    data = cumulative_data
+                }
+
+                show_map_statistics(data, city_name, label_type_name);
+
+            }
+        });
+
+        light_skin();
+        $('#map_statistics').ready(function () {
+            get_data_loop(show_map_statistics, city_name, '次数');
+        });
+
+        if (city_name === 'china') {
+            $('.map_back').addClass('dis_none');
+        }
+
+        //返回
+        $('.map_back').on("click", function () {
+            var label_type_name = $('.map_tab.active').attr('data-name');
+            city_name = 'china';
+
+            var data = null;
+            if (label_type_name === '人数') {
+                data = member_quantity_data
+            } else if (label_type_name === '次数') {
+                data = cumulative_data
+            }
+
+            show_map_statistics(data, city_name, label_type_name);
+            $('.map_back').addClass('dis_none');
+        });
+
+
+
+    });
+
+    function light_skin() {
+        backgroundColor = '#fff';
+        areaColor = '#EAF3FF';
+        d_info = [
+            {"size": 10, "color": "#e83232"},
+            {"size": 8, "color": "#FF5858"},
+            {"size": 6, "color": "#FF7878"},
+            {"size": 6, "color": "#FFB8B8"},
+            {"size": 6, "color": "#FFD3D3"},
+            {"size": 6, "color": "#FFD3D3"},
+            {"size": 6, "color": "#FFD3D3"},
+            {"size": 6, "color": "#FFD3D3"}
+        ];
+        legend_data = [
+            {
+                name: '1',
+                icon: 'image://../../../../static/images/echarts/icons_rd1.png'
+            },
+            {
+                name: '2',
+                icon: 'image://../../../../static/images/echarts/icons_rd2.png'
+            },
+            {
+                name: '3',
+                icon: 'image://../../../../static/images/echarts/icons_rd3.png'
+            },
+            {
+                name: '4',
+                icon: 'image://../../../../static/images/echarts/icons_rd4.png'
+            },
+            {
+                name: '5',
+                icon: 'image://../../../../static/images/echarts/icons_rd5.png'
+            }
+        ];
+        color_offset = ['#91C8FF', '#1F90FF'];
+        emphasis_colors = ['#000', '#C0C0C0'];
+        item_color = '#eee';
+    }
+
+</script>
+</body>
+</html>

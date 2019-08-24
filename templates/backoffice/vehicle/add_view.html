@@ -1,0 +1,255 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import CATEGORY_ATTRIBUTE_INFO_TYPE, CATEGORY_ATTRIBUTE_INFO_BRAND, CATEGORY_ATTRIBUTE_INFO_SERIES %}
+{% from db import CATEGORY_ATTRIBUTE_INFO_CFG, CATEGORY_ATTRIBUTE_INFO_COLOUR, CATEGORY_ATTRIBUTE_INFO_DISPLACEMENT %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_vehicle_list') }}" class="pl10 ml10">车型维护</a>
+        <span> &gt; 新增车型</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20">
+            <i class="back_i"></i>返回
+        </a>
+    </div>
+</div>
+<div class="edit_info m20 pl10 pr10">
+    <div>
+        <h3 class="list_title pr add_manage">新增车型<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="vehicle_add" name="vehicle_add" method="post"
+              action="{{ reverse_url('backoffice_vehicle_add') }}">
+            {% raw xsrf_form_html() %}
+            <table class="table_form">
+                <tbody>
+                <tr>
+                    <th width="40%"><span class="necessary">*</span>车型编码</th>
+                    <td><input id="code" name="code" class="input_text" type="text" maxlength="16"></td>
+                </tr>
+                <tr>
+                    <th width="40%"><span class="necessary">*</span>车型名称</th>
+                    <td><input id="title" name="title" class="input_text" type="text" max="32"></td>
+                </tr>
+                <tr>
+                    <th><span class="necessary">*</span>车辆类别</th>
+                    <td class="vehicle_type">
+                        <select id="category" name="category">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>品牌</th>
+                    <td class="vehicle_type">
+                        <select id="brand" name="brand">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>车系</th>
+                    <td class="vehicle_type">
+                        <select id="series" name="series">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>配置</th>
+                    <td class="vehicle_type">
+                        <select id="config" name="config">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>颜色</th>
+                    <td class="vehicle_type">
+                        <select id="colour" name="colour">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>排量</th>
+                    <td class="vehicle_type">
+                        <select id="displace" name="displace">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>车型启用状态</th>
+                    <td>
+                        <label class="table_switch">
+                            <input id="status" name="status" type="checkbox" checked="checked">
+                            <i></i>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <span id="error_msg" class="cl_danger"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><a href="javascript:;" id="submit" class="btn btn_primary mt10">提交</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script>
+    $(function () {
+        do_init_selection();
+
+        $("#submit").click(function () {
+            var _t_form = $("#vehicle_add");
+            var form_data = _t_form.serialize();
+            var code = $("#code").val();
+            var title = $("#title").val();
+            var category = $("#category").val();
+            var code_reg = /^[0-9a-zA-Z_]+$/;
+            debugger;
+            if ($.trim(code) === "") {
+                $("#error_msg").html("请输入车型编码！");
+                return;
+            }
+            if (!code_reg.test(code)) {
+                $("#error_msg").html("车型编码只能包含字母、数字和下划线！");
+                return;
+            }
+            if ($.trim(title) === "") {
+                $("#error_msg").html("请输入车型名称！");
+                return;
+            }
+            if ($.trim(category) === "") {
+                $("#error_msg").html("请选择入车型类别！");
+                return;
+            }
+            display_loading();
+            ajaxPost(_t_form.attr("action"), form_data, function (result) {
+                if (result.code === 0) {
+                    tip_msg("添加车型失败，请重试！", 2000);
+                } else if (result.code === 1) {
+                    tip_msg("车型添加成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_vehicle_list') }}";
+                    });
+                } else if (result.code === -1) {
+                    $("#error_msg").html("请输入车型编码！");
+                    $("#code").focus();
+                } else if (result.code === -2) {
+                    $("#error_msg").html("请输入车型名称！");
+                    $("#title").focus();
+                } else if (result.code === -3) {
+                    $("#error_msg").html("请选择入车型类别！");
+                } else if (result.code === -4) {
+                    $("#error_msg").html("车型编号已存在，请重新输入！");
+                    $("#code").focus();
+                }
+                remove_loading();
+            });
+        });
+    });
+
+    var new_dict = {};
+
+    function do_init_selection() {
+        var _t = $("#vehicle_add");
+        var category_dict = get_attribute_list({{ CATEGORY_ATTRIBUTE_INFO_TYPE }});
+        var brand_dict = get_attribute_list({{ CATEGORY_ATTRIBUTE_INFO_BRAND }});
+        var obj_category = _t.find("#category");
+        var obj_brand = _t.find("#brand");
+        init_selection(obj_category, category_dict);
+        init_selection(obj_brand, brand_dict);
+        initSelect(obj_brand);
+    }
+
+    function init_selection(obj, dict) {
+        var _obj = obj[0];
+        for (var i = 0; i < dict.length; i++) {
+            var c_dict = dict[i];
+            var c_code = c_dict.code;
+            var c_name = c_dict.title;
+            add_op(_obj, c_name, c_code);
+            new_dict[c_code] = c_dict["child_attr_list"];
+        }
+        if (dict[0].category === 1) {
+            return false;
+        }
+        obj.change(function () {
+            var val = $(this).val();
+            var next_obj = $("#series")[0];
+            empty_sel($(this));
+            if (val === "" || val === undefined) {
+                return false;
+            }
+            var this_dict = new_dict[val];
+            for (var n = 0; n < this_dict.length; n++) {
+                var t = this_dict[n].title;
+                var c = this_dict[n].code;
+                add_op(next_obj, t, c);
+                new_dict[c] = this_dict[n]["child_attr_list"];
+            }
+        });
+        $("#series").change(function () {
+            var val = $(this).val();
+            empty_sel($(this));
+            var p_sel = $("#config");
+            var c_sel = $("#colour");
+            var d_sel = $("#displace");
+            var this_dict = new_dict[val];
+            if (this_dict === "" || this_dict === undefined) {
+                return false;
+            }
+            for (var m = 0; m < this_dict.length; m++) {
+                var t = this_dict[m].title;
+                var c = this_dict[m].code;
+                var cate = this_dict[m].category;
+                if (cate === 4) {
+                    var obj = p_sel[0];
+                }
+                if (cate === 5) {
+                    var obj = c_sel[0];
+                }
+                if (cate === 6) {
+                    var obj = d_sel[0];
+                }
+                add_op(obj, t, c);
+            }
+        });
+    }
+
+    function add_op(obj, text, value) {
+        obj.add(new Option(text, value, status));
+    }
+
+    function empty_sel(obj) {
+        var form = $("#vehicle_edit");
+        var all_sel = form.find("select");
+        var index = all_sel.index(obj);
+        var next_all = form.find("select:gt(" + index + ")");
+        next_all.each(function () {
+            $(this).empty();
+            $(this)[0].add(new Option("--请选择--", ""));
+        });
+    }
+
+    function initSelect(obj) {
+        var form = $("#vehicle_edit");
+        var all_sel = form.find("select");
+        all_sel.each(function () {
+            var _t = $(this);
+            var code = _t.attr("code");
+            _t.val(code);
+            _t.trigger("change");
+        });
+    }
+
+</script>
+{% end %}

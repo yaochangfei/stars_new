@@ -1,0 +1,64 @@
+{% autoescape None %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="{{ static_url('css/base.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/frontsite/index.css') }}">
+    <script src="{{ static_url('js/jquery-1.10.2.js') }}"></script>
+    <script src="{{ static_url('js/plugins/jquery.cookie.1.4.1.min.js') }}"></script>
+    <script src="{{ static_url('js/plugins/layer/layer.js') }}"></script>
+    <script src="{{ static_url('js/base_utils.js') }}"></script>
+</head>
+<body>
+<div class="login_container">
+    <div class="login_box">
+        <div class="login_content">
+            <div class="login_bg"></div>
+            <div class="login_title">科协活动报表后台</div>
+            <div class="login_detail">
+                {% raw xsrf_form_html() %}
+                <input type="text" id="username" placeholder="请输入用户名">
+                <input type="password" id="password" placeholder="请输入密码">
+            </div>
+            <div class="error_info"></div>
+            <div class="login_btn">
+                <a href="javascript:;" id="submit">立即登录</a>
+            </div>
+        </div>
+        <div class="copy_info">Copyright © 科协活动报表 苏州众言 提供技术支持</div>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        url = "{{ reverse_url('frontsite_race_login') }}";
+
+        $("#submit").on("click", function () {
+            let username = $("#username").val();
+            let password = $('#password').val();
+            ajaxPost(url, {'username': username, "password": password}, function (ret) {
+                if (ret.code === 1) {
+                    tip_msg("登录成功", 2000, function () {
+                        window.location.href = "{{ reverse_url('frontsite_race_see_report') }}"
+                    })
+                } else if (ret.code === -1) {
+                    $('.error_info').html("用户名不正确，请检查！")
+                } else if (ret.code === -2) {
+                    $('.error_info').html("该用户不存在查看报表的权限!")
+                } else if (ret.code === -3) {
+                    $('.error_info').html("密码错误，请检查!")
+                } else if (ret.code === -4) {
+                    $(".error_info").html("用户名或者密码不能为空!")
+                }else if (ret.code === -5) {
+                    $(".error_info").html("请先设置用户城市信息!")
+                }
+                else {
+                    $('.error_info').html("系统繁忙, 请重试！")
+                }
+            })
+        })
+    })
+</script>
+</html>

@@ -1,0 +1,58 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>历史问卷</title>
+{% end %}
+{% block content %}
+<div class="container">
+    <div class="mescroll" id="mescroll">
+        <ul class="questionnaire_list" id="questionnaire_list">
+        </ul>
+    </div>
+</div>
+<script>
+    $(function () {
+        $(document).on("click",".questionnaire_info", function () {
+            var q_url = $(this).attr('q_url');
+            if (q_url) {
+                window.location.href = q_url;
+            } else {
+                $.showAlert({
+                    title: "跳转失败",
+                    content: '问卷链接已失效，请联系客服！'
+                });
+            }
+        });
+        // 上拉加载js
+        var mescroll = new MeScroll("mescroll", {
+            down: {
+                auto: false,
+                callback: function () {
+                    window.location.reload();
+                }
+            },
+            up: {
+                isBounce: false,
+                callback: function (page) {
+                    var url = "{{ reverse_url('wechat_survey_history') }}";
+                    var data = {
+                        pageNum: page.num,
+                        size: page.size
+                    };
+                    set_xsrf(data);
+                    $.post(url, data, function (res) {
+                        if (!res.html && page.num === 1) {
+                            var empty_html = '<div class="tc">暂无问卷信息！</div>';
+                            $('#questionnaire_list').html(empty_html);
+                        } else {
+                            $('#questionnaire_list').append(res.html);
+                        }
+                        mescroll.endBySize(res.current_length, res.totalSize);
+                    }, 'JSON');
+                }
+            }
+        });
+    });
+
+</script>
+{% end %}

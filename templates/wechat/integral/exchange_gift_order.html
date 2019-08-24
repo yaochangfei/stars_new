@@ -1,0 +1,176 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block title %}
+<title>确认订单</title>
+{% end %}
+{% block content %}
+<!-- 收货地址 -->
+<div class="container pt10 order_address">
+    <div class="receiving_item clear">
+        <div class="receiving_type fl">收货人</div>
+        <div class="receiving_info fl">
+            <input type="text" placeholder="请填写收货人姓名" id="receiver_name">
+        </div>
+    </div>
+    <div class="receiving_item clear">
+        <div class="receiving_type fl">联系手机</div>
+        <div class="receiving_info fl">
+            <input type="text" placeholder="请输入收货人的联系电话" class="only_num" id="receiver_mobile">
+        </div>
+    </div>
+    <div class="receiving_item location clear">
+        <i class="arrow_right"></i>
+        <div class="receiving_type fl">所在地区</div>
+        <div class="receiving_info fl">
+            <input type="text" id="choose_area" placeholder="请选择" readonly="">
+            <input type="hidden" id="receiver_area_codes">
+        </div>
+    </div>
+    <div class="receiving_item clear">
+        <div class="receiving_type fl">详细地址</div>
+        <div class="receiving_info fl">
+            <input type="text" placeholder="街道、门牌号等，不少于5个字" id="receiver_address">
+        </div>
+    </div>
+    <div class="error"></div>
+    <div class="submit_btn next_btn">
+        <a href="javascript:void(0);">下一步</a>
+    </div>
+</div>
+<!-- 确认订单 -->
+<div class="container confirmation_order pt10 dis_none">
+    <div class="user_info change_address">
+        <i class="arrow_right"></i>
+        <div class="basic_info">
+            <span class="name" id="receiver_name_confirm"></span>
+            <span class="telephone" id="receiver_mobile_confirm"></span>
+        </div>
+        <div class="address" id="receiver_address_confirm"></div>
+    </div>
+    <div class="coupon_goods clear">
+        <div class="fl coupon_goods_img">
+            {% if present.placard %}
+            <img src="{{ static_url(present.needless.get('placard_title')) }}">
+            {% else %}
+            <img src="" alt="">
+            {% end %}
+        </div>
+        <div class="fl">
+            <div class="goods_title">{{ string_display(present.title) }}</div>
+            <div class="goods_value">{{ present.ex_integral }}积分</div>
+        </div>
+    </div>
+    <div class="exchange_now clear">
+        <div class="fl need_integral"><span>{{ present.ex_integral }}</span>积分</div>
+        <div class="fr exchange_gift_confirm">确定兑换</div>
+    </div>
+</div>
+<link rel="stylesheet" href="{{ static_url('js/plugins/LArea/LArea.min.css') }}">
+<script src="{{ static_url('js/plugins/LArea/LArea.js') }}"></script>
+<script>
+    var data = JSON.parse('{{ json_s }}');
+    var area = new LArea();
+    area.value=[0,0,0];
+    area.init({
+        'trigger': '#choose_area',//name属性输出到该位置
+        "valueTo": '#receiver_area_codes', //id属性输出到该位置
+        'keys': {
+            id: 'code',
+            name: 'name'
+        },
+        'type': 1,
+        'data': data.division
+    });
+
+    $(function () {
+        $('.next_btn').on("click", function () {
+            var receiver_name = $('#receiver_name').val();
+            var receiver_mobile = $('#receiver_mobile').val();
+            var receiver_address = $('#receiver_address').val();
+            var receiver_area_codes = $('#receiver_area_codes').val();
+
+            var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+
+            if(receiver_name && receiver_mobile && receiver_address && receiver_area_codes) {
+                if (myreg.test(receiver_mobile)) {
+                    // 收货人
+                    $('#receiver_name_confirm').html(receiver_name);
+                    // 收货人手机号
+                    $('#receiver_mobile_confirm').html(receiver_mobile);
+                    // 收货地址
+                    $('#receiver_address_confirm').html($('#choose_area').val().replace(',', ''));
+                    $('#receiver_address_confirm').append(receiver_address);
+
+                    $('.confirmation_order').removeClass('dis_none');
+                    $('.order_address').addClass('dis_none');
+                }else{
+                    $('.error').html('请填写真实的手机号！');
+                }
+            }else{
+                $('.error').html('请填写完整信息！');
+            }
+        });
+
+        $('.change_address').on("click", function () {
+            $('.order_address').removeClass('dis_none');
+            $('.confirmation_order').addClass('dis_none');
+        });
+
+        $('.exchange_gift_confirm').on("click", function () {
+            $.showConfirm({
+                title: "兑换",
+                content: '确认兑换此物品吗？',
+                sure: function () {
+                    $.post("{{ reverse_url('common_get_xsrf') }}", {}, function (res) {
+                        var receiver_name = $('#receiver_name').val();
+                        var receiver_mobile = $('#receiver_mobile').val();
+                        var receiver_address = $('#receiver_address').val();
+                        var receiver_area_codes = $('#receiver_area_codes').val();
+                        var present_id = "{{ present.oid }}";
+
+                        var url = "{{ reverse_url('wechat_integral_present_exchange_gift') }}";
+                        var data = {
+                            'receiver_name': receiver_name,
+                            'receiver_mobile': receiver_mobile,
+                            'receiver_address': receiver_address,
+                            'present_id': present_id,
+                            'receiver_area_codes': receiver_area_codes,
+                            '_xsrf': res._xsrf
+                        };
+                        $.post(url, data, function (ret) {
+                            if (ret.code === 1) {
+                                $.showAlert({
+                                    title: "兑换成功",
+                                    content: '兑换礼品成功，请至右上角"兑换记录"查看！',
+                                    sure: function () {
+                                        window.location.href = "{{ reverse_url('wechat_integral_present_orders') }}";
+                                    }
+                                })
+                            }else if (ret.code === -1) {
+                                $.showAlert({
+                                    title: "兑换失败",
+                                    content: '积分不够，请攒够积分再来兑换吧！'
+                                })
+                            } else if (ret.code === -2) {
+                                $.showAlert({
+                                    title: "兑换失败",
+                                    content: '库存不够，请下次再来！'
+                                })
+                            } else {
+                                $.showAlert({
+                                    title: "兑换失败",
+                                    content: '系统错误，请联系客服！'
+                                })
+                            }
+                        }, 'JSON');
+                    }, 'JSON');
+                },
+                //取消操作：
+                cancel: function () {
+                }
+            });
+        });
+    })
+
+</script>
+{% end %}
