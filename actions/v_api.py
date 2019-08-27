@@ -16,7 +16,9 @@ from actions.applet import find_app_member_by_cid
 from motorengine import ASC, DESC
 from motorengine.stages import MatchStage, LookupStage, SortStage, SkipStage
 from motorengine.stages.limit_stage import LimitStage
-import datetime
+import datetime, random
+from commons import msg_utils
+import re
 
 logger = log_utils.get_logging()
 
@@ -98,7 +100,7 @@ class MemberAuthViewHandler(WechatAppletHandler):
                 if uuid:
                     count = await AppMember.count(dict(uuid=uuid))
                     if count > 0:
-                        member = await AppMember.find_one(dict(uuid=uuid, mobile=''))
+                        member = await AppMember.find_one(dict(uuid=uuid, is_register=0))
                         if member:
                             r_dict['member_cid'] = member.cid
                             r_dict['is_login'] = 0
@@ -202,7 +204,7 @@ class FilmsLatestGetViewHandler(WechatAppletHandler):
             new_films = []
             for film in films:
                 new_films.append({
-                    'id': film.id,
+                    'id': str(film.id),
                     'name': film.name,
                     'pic_url': film.pic_url,
                     'db_mark': film.db_mark,
@@ -215,6 +217,7 @@ class FilmsLatestGetViewHandler(WechatAppletHandler):
             r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
+        print(r_dict)
         return r_dict
 
 
@@ -260,7 +263,7 @@ class FilmsScoreGetViewHandler(WechatAppletHandler):
             new_films = []
             for film in films:
                 new_films.append({
-                    'id': film.id,
+                    'id': str(film.id),
                     'name': film.name,
                     'pic_url': film.pic_url,
                     'db_mark': film.db_mark,
@@ -276,6 +279,151 @@ class FilmsScoreGetViewHandler(WechatAppletHandler):
         return r_dict
 
 
+class FilmsDetailGetViewHandler(WechatAppletHandler):
+    """获取电影详情页面"""
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            film_id = self.get_i_argument('film_id', None)
+            if film_id:
+                film = await Films.get_by_id(oid=film_id)
+                if film:
+                    r_dict['film'] = film
+                    r_dict['code'] = 1000
+                else:
+                    r_dict['code'] = 1002
+            else:
+                r_dict['code'] = 1001
+        except Exception:
+            logger.error(traceback.format_exc())
+        return r_dict
+
+
+class SourceSearchGetViewHandler(WechatAppletHandler):
+    """app-电影，电视等搜索"""
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            search_name = self.get_i_argument('search_name', None)
+
+            if search_name:
+                r_dict['code'] = 1000
+        except Exception:
+            logger.error(traceback.format_exc())
+        return r_dict
+
+
+class BannersGetViewHandler(WechatAppletHandler):
+    """首页banner图获取"""
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            search_name = self.get_i_argument('search_name', None)
+
+            if search_name:
+                r_dict['code'] = 1000
+        except Exception:
+            logger.error(traceback.format_exc())
+        return r_dict
+
+
+class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
+    """电影个性推荐"""
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+
+            pageNum = int(self.get_i_argument('pageNum', 1))
+            if pageNum == 1:
+                exclude_list = []
+                RedisCache.delete('film_recommend')
+            else:
+                exclude_list = RedisCache.smembers('film_recommend')
+                if isinstance(exclude_list, (list, set)):
+                    exclude_list = list(exclude_list)
+
+            # print(pageNum,exclude_list)
+            # print(type(exclude_list))
+            size = int(self.get_i_argument('size', 10))
+            filter_dict = {
+                'db_mark': {'$ne': ''},
+                'release_time': {'$ne': ''},
+                'oid': {'$nin': exclude_list}
+            }
+            match = MatchStage(filter_dict)
+            films = await Films.aggregate([match]).to_list(None)
+            if films:
+                films = random.sample(films, size)
+            new_films = []
+            id_list = []
+            for film in films:
+                id_list.append(str(film.id))
+
+                if len(film.label) > 0:
+                    label = film.label[0:3]
+                else:
+                    label = []
+                new_films.append({
+                    'id': str(film.id),
+                    'name': film.name,
+                    'pic_url': film.pic_url,
+                    'db_mark': film.db_mark,
+                    'actor': film.actor,
+                    'label': label,
+                    'source_nums': len(film.download),
+                    'release_time': film.release_time.strftime('%Y/%m/%d')
+                })
+            r_dict['films'] = new_films
+            if id_list:
+                # print(id_list)
+                RedisCache.sadd('film_recommend', id_list)
+                # print(RedisCache.smembers('film_recommend'))
+            r_dict['code'] = 1000
+        except Exception:
+            logger.error(traceback.format_exc())
+        return r_dict
+
+
+class MobileValidateViewHandler(WechatAppletHandler):
+    """
+    发送验证码
+    """
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            mobile = self.get_i_argument('mobile', '')
+            ret = re.match(r"^1\d{10}$", mobile)
+            if mobile:
+                _, verify_code = msg_utils.send_digit_verify_code_new(mobile, valid_sec=600)
+                if verify_code:
+                    r_dict['code'] = 1000
+                    logger.info('mobile:%s,verify_code:%s' % (mobile, verify_code))
+                else:
+                    r_dict['code'] = 1003  # 验证码发送失败
+                if not ret:
+                    r_dict['code'] = 1002  # 手机号码格式不对
+            else:
+                r_dict['code'] = 1001  # 手机号为空
+        except Exception:
+            logger.error(traceback.format_exc())
+        return r_dict
+
+
 URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
     url(r'/api/member/auth/', MemberAuthViewHandler, name='api_member_auth'),
@@ -283,4 +431,9 @@ URL_MAPPING_LIST = [
     url(r'/api/tvs/latest/', TvsLatestGetViewHandler, name='api_tvs_latest'),
     url(r'/api/films/latest/', FilmsLatestGetViewHandler, name='api_films_latest'),
     url(r'/api/films/score/', FilmsScoreGetViewHandler, name='api_films_score'),
+    url(r'/api/films/detail/', FilmsDetailGetViewHandler, name='api_films_detail'),
+    url(r'/api/source/search/', SourceSearchGetViewHandler, name='api_source_search'),
+    url(r'/api/banners/get/', BannersGetViewHandler, name='api_banner_get'),
+    url(r'/api/films/personal_recommend/', FilmsPersonalRecommendGetViewHandler, name='api_films_personal_recommend'),
+    url(r'/api/send/msg/mobile/validate/', MobileValidateViewHandler, name='api_send_msg_mobile_validate'),
 ]

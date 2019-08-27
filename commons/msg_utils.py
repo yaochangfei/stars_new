@@ -6,7 +6,7 @@ from caches.redis_utils import RedisCache
 from logger import log_utils
 
 from tasks.instances.task_send_msg import send_sms
-
+from tasks.instances.task_send_msg_new import send_msg_new
 logger = log_utils.get_logging()
 
 
@@ -39,7 +39,18 @@ def check_digit_verify_code(mobile, verify_code):
             return True
     return False
 
-
+def send_digit_verify_code_new(mobile, valid_sec=600):
+    """
+    发送文本短信
+    :param mobile: 电话号码
+    :param valid_sec: 验证码有效期（单位：秒）
+    :return:
+    """
+    verify_code = random.randint(100000, 999999)
+    send_msg_new.delay(mobile=mobile, code=str(verify_code),time='10分钟')
+    # 放入缓存
+    RedisCache.set(mobile, verify_code, valid_sec)
+    return mobile, verify_code
 
 if __name__ == '__main__':
     print("123")
