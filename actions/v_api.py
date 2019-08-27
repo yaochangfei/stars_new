@@ -447,6 +447,54 @@ class MobileValidateViewHandler(WechatAppletHandler):
         return r_dict
 
 
+class SubmitMobileValidateViewHandler(WechatAppletHandler):
+    """
+    提交手机号码，提交验证码注册用户或者登陆
+    """
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        member_cid = self.get_i_argument('member_cid', None)
+        mobile = self.get_i_argument('mobile', None)
+        v_code = self.get_i_argument('v_code', '')
+        if not member_cid:
+            r_dict['code'] = 1001
+            return r_dict
+
+        member = await find_app_member_by_cid(member_cid)
+        if not member:
+            r_dict['code'] = 1002
+        if not mobile:
+            r_dict['code'] = 1003
+            return r_dict
+        try:
+            if msg_utils.check_digit_verify_code(mobile, v_code):
+                r_dict['code'] = 1000
+            else:
+                r_dict['code'] = 1004
+                return r_dict
+            count = await AppMember.count({'mobile': mobile})
+            if count == 0:
+                new_member = AppMember(id=ObjectId(),
+                                       code=get_increase_code(KEY_INCREASE_MEMBER_CODE), uuid=member.uuid,
+                                       mobile=mobile,
+                                       )
+                new_member.is_register = 1
+                new_member.is_login = 1
+                await new_member.save()
+
+                r_dict['member_cid'] = new_member.cid
+            else:
+                r_dict['member_cid'] = member.cid
+
+            r_dict['code'] = 1000
+        except Exception:
+            logger.error(traceback.format_exc())
+        return r_dict
+
+
 URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
     url(r'/api/member/auth/', MemberAuthViewHandler, name='api_member_auth'),
@@ -459,4 +507,5 @@ URL_MAPPING_LIST = [
     url(r'/api/banners/get/', BannersGetViewHandler, name='api_banner_get'),
     url(r'/api/films/personal_recommend/', FilmsPersonalRecommendGetViewHandler, name='api_films_personal_recommend'),
     url(r'/api/send/msg/mobile/validate/', MobileValidateViewHandler, name='api_send_msg_mobile_validate'),
+    url(r'/api/submit/mobile/validate/', SubmitMobileValidateViewHandler, name='api_submit_mobile_validate'),
 ]
