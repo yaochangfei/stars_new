@@ -346,9 +346,13 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
         try:
 
             pageNum = int(self.get_i_argument('pageNum', 1))
+            member_cid = self.get_i_argument('member_cid', None)
+            if not member_cid:
+                r_dict['code'] = 1001
+                return r_dict
             if pageNum == 1:
                 exclude_list = []
-                RedisCache.delete('film_recommend')
+                RedisCache.delete('%s_film_recommend' % member_cid)
             else:
                 exclude_list = RedisCache.smembers('film_recommend')
                 if isinstance(exclude_list, (list, set)):
@@ -375,6 +379,23 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                     label = film.label[0:3]
                 else:
                     label = []
+                articulation = ''
+                if len(film.download) > 0:
+                    d_name = film.download[0].get('downloadname', '')
+                    if d_name:
+                        d_name = d_name.upper()
+                        if '720' in d_name:
+                            articulation = '720P'
+                        elif '1080' in d_name:
+                            articulation = '1080P'
+                        elif '2K' in d_name:
+                            articulation = '2K'
+                        elif '4K' in d_name:
+                            articulation = '4K'
+                        elif 'BD' in d_name:
+                            articulation = 'BD'
+                        elif 'HD' in d_name:
+                            articulation = 'HD'
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
@@ -383,12 +404,14 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                     'actor': film.actor,
                     'label': label,
                     'source_nums': len(film.download),
-                    'release_time': film.release_time.strftime('%Y/%m/%d')
+                    'release_time': film.release_time.strftime('%Y/%m/%d'),
+                    'articulation': articulation,
+                    'recommend_info': '123456789'
                 })
             r_dict['films'] = new_films
             if id_list:
                 # print(id_list)
-                RedisCache.sadd('film_recommend', id_list)
+                RedisCache.sadd('%s_film_recommend' % member_cid, id_list)
                 # print(RedisCache.smembers('film_recommend'))
             r_dict['code'] = 1000
         except Exception:
