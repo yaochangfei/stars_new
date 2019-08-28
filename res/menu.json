@@ -278,6 +278,7 @@
       "path": null,
       "context": null,
       "weight": 5,
+      "disabled": false,
       "belong_path_list": [],
       "permission_code_list": [],
       "style_name_list": [],
@@ -605,6 +606,7 @@
       "path": null,
       "context": null,
       "weight": 80,
+      "disabled": true,
       "belong_path_list": [],
       "permission_code_list": [],
       "style_name_list": [],
@@ -774,6 +776,102 @@
               "flags": []
             }
           ]
+        }
+      ]
+    },
+    {
+      "code": "B06",
+      "title": "APP",
+      "path": null,
+      "context": null,
+      "weight": 6,
+      "belong_path_list": [],
+      "permission_code_list": [
+        "B06000000",
+        "B06010000",
+        "B06020000",
+        "B06030000"
+      ],
+      "style_name_list": [],
+      "flags": [],
+      "sub_menu_list": [
+        {
+          "code": "B0601",
+          "title": "电影管理",
+          "path": "/backoffice/film/list/",
+          "context": null,
+          "weight": 11,
+          "belong_path_list": [
+            "/backoffice/user/add/",
+            "/backoffice/user/edit/",
+            "/backoffice/user/permission/"
+          ],
+          "permission_code_list": [
+            "B06010000"
+          ],
+          "style_name_list": [
+            "manager_list_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0602",
+          "title": "电视剧管理",
+          "path": "/backoffice/role/list/",
+          "context": null,
+          "weight": 12,
+          "belong_path_list": [
+            "/backoffice/role/add/",
+            "/backoffice/role/edit/(R)/",
+            "/backoffice/role/perm_assign/(R)/"
+          ],
+          "permission_code_list": [
+            "B06020000"
+          ],
+          "style_name_list": [
+            "role_list_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0603",
+          "title": "综艺管理",
+          "path": "/backoffice/member/list/",
+          "context": null,
+          "weight": 13,
+          "belong_path_list": [
+            "/backoffice/member/add/",
+            "/backoffice/member/edit/",
+            "/backoffice/member/detail/"
+          ],
+          "permission_code_list": [
+            "B06030000"
+          ],
+          "style_name_list": [
+            "user_list_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0604",
+          "title": "音乐管理",
+          "path": "/backoffice/game_member_source/list/",
+          "context": null,
+          "weight": 14,
+          "belong_path_list": [
+            "/backoffice/game_member_source/add/",
+            "/backoffice/game_member_source/edit/(R)/",
+            "/backoffice/game_member_source/delete/(R)/",
+            "/backoffice/game_member_source/status/change/",
+            "/backoffice/game_member_source/qr/download/(R)/"
+          ],
+          "permission_code_list": [
+            "B06040000"
+          ],
+          "style_name_list": [
+            "member_source_i"
+          ],
+          "flags": []
         }
       ]
     }

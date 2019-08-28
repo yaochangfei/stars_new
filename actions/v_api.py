@@ -141,8 +141,8 @@ class MemberInfoViewHandler(WechatAppletHandler):
                 else:
                     r_dict.update({
                         'member_cid': member_cid,
-                        'nick_name': member.nick_name,
-                        'head_picture': member.head_picture,
+                        'nick_name': member.nick_name if member.nick_name else '',
+                        'head_picture':member.head_picture if member.head_picture else '',
                         'code': member.code
 
                     })
@@ -151,6 +151,7 @@ class MemberInfoViewHandler(WechatAppletHandler):
                 r_dict['code'] = 1001  # member_cid为空
         except Exception:
             logger.error(traceback.format_exc())
+        print(r_dict)
         return r_dict
 
 
@@ -217,6 +218,7 @@ class FilmsLatestGetViewHandler(WechatAppletHandler):
             r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
+        print('latest')
         print(r_dict)
         return r_dict
 
@@ -276,6 +278,8 @@ class FilmsScoreGetViewHandler(WechatAppletHandler):
             r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
+        print('score')
+        print(r_dict)
         return r_dict
 
 
@@ -327,10 +331,17 @@ class BannersGetViewHandler(WechatAppletHandler):
     async def post(self):
         r_dict = {'code': 0}
         try:
-            search_name = self.get_i_argument('search_name', None)
+            films = await Films.find(dict(status=1, banner_status=1)).to_list(None)
+            banners = []
+            for film in films:
+                banners.append({
+                    'id': str(film.oid),
+                    'banner_pic': film.banner_pic,
+                    's_type': 'film'
+                })
 
-            if search_name:
-                r_dict['code'] = 1000
+            r_dict['banners'] = banners
+            r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
         return r_dict
@@ -344,7 +355,7 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
     async def post(self):
         r_dict = {'code': 0}
         try:
-
+            # print(datetime.datetime.now())
             pageNum = int(self.get_i_argument('pageNum', 1))
             member_cid = self.get_i_argument('member_cid', None)
             if not member_cid:
@@ -354,7 +365,7 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                 exclude_list = []
                 RedisCache.delete('%s_film_recommend' % member_cid)
             else:
-                exclude_list = RedisCache.smembers('film_recommend')
+                exclude_list = RedisCache.smembers('%s_film_recommend'%member_cid)
                 if isinstance(exclude_list, (list, set)):
                     exclude_list = list(exclude_list)
 
@@ -416,6 +427,9 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                 RedisCache.sadd('%s_film_recommend' % member_cid, id_list)
                 # print(RedisCache.smembers('film_recommend'))
             r_dict['code'] = 1000
+            # print(datetime.datetime.now())
+            print('recommend')
+            print(r_dict)
         except Exception:
             logger.error(traceback.format_exc())
         return r_dict

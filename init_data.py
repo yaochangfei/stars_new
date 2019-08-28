@@ -30,7 +30,10 @@ async def init_indexes():
     attributes = vars(models)
     if attributes:
         for name, attribute in attributes.items():
-            if name not in ['SyncDocument', 'AsyncDocument', 'Document', 'BaseModel'] \
+            # if name not in ['SyncDocument', 'AsyncDocument', 'Document', 'BaseModel'] \
+            #         and attribute.__class__ == DocumentMetaclass:
+            #     model_list.append((name, attribute))
+            if name in ['Films', 'Tvs', 'AppMember', 'User', 'InstantSms'] \
                     and attribute.__class__ == DocumentMetaclass:
                 model_list.append((name, attribute))
     if model_list:
@@ -240,8 +243,9 @@ async def init_dan_grade():
 
 
 task_list = [
+    init_indexes(),
     # init_administrative_division()
-    init_users(),
+    # init_users(),
     # init_administrative_division(),
     # init_attribute(),
 ]
