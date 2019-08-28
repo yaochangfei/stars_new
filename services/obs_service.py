@@ -4,7 +4,7 @@
 # 引入模块
 from obs import ObsClient
 import calendar, time
-import datetime
+import datetime, os, settings
 
 ACCESS_KEY_ID = 'EOKVJSN4CMZ6DGNRESMN'
 SECRET_ACCESS_KEY = '2qiY4bnPCLVHaPsQrbcudV8Ccg2slDah806SGESL'
@@ -22,9 +22,9 @@ obsClient = ObsClient(
 # 上传文件流
 def upload_file_to_obs(file, file_name):
     # resp = obsClient.putContent(BUCKET_NAME, '文本', content='Hello OBS')
-    # content = open('/Users/yaochangfei/Downloads/%s' % file_name, 'rb')
-    content = file.body
-    file_name = str(calendar.timegm(time.gmtime())) + '_' + file_name
+    content = open(file, 'rb')
+    # content = file.body
+    # file_name = str(calendar.timegm(time.gmtime())) + '_' + file_name
     # print(content)
     # print(type(content))
     # print(datetime.datetime.now())
@@ -38,6 +38,20 @@ def upload_file_to_obs(file, file_name):
     #     print('errorCode:', resp.errorCode)
     #     print('errorMessage:', resp.errorMessage)
     return resp
+
+
+# 上传文件到本地
+def upload_file_to_local(file, file_name):
+    file_name = str(calendar.timegm(time.gmtime())) + '_' + file_name
+    final_name = os.path.join(settings.UPLOAD_FILES_PATH, file_name)
+    try:
+        upload_file = open(final_name, 'wb')
+        with upload_file:
+            upload_file.write(file.body)
+    finally:
+        if upload_file:
+            upload_file.close()
+    return final_name, file_name
 
 
 if __name__ == '__main__':

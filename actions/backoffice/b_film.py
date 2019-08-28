@@ -4,6 +4,7 @@
 import collections
 import copy
 import traceback
+import os
 from datetime import datetime
 
 from bson import ObjectId
@@ -80,8 +81,14 @@ class FilmEditViewHandler(BaseHandler):
             banner_file = banner_files[0]
             banner_file_name = banner_file.filename
             print(datetime.now())
-            resp = obs_service.upload_file_to_obs(banner_file, banner_file_name)
+            # resp = obs_service.upload_file_to_obs(banner_file, banner_file_name)
+            local_path, f_name = obs_service.upload_file_to_local(banner_file, banner_file_name)
             print(datetime.now())
+            print(local_path, f_name)
+            resp = obs_service.upload_file_to_obs(local_path, f_name)
+            # film.banner_pic = resp
+            # await film.save()
+            # res['code']=1
             # 上传成功
             if resp.status < 300:
                 film.banner_pic = resp.body.objectUrl
@@ -90,6 +97,9 @@ class FilmEditViewHandler(BaseHandler):
             else:
                 # 上传失败
                 res['code'] = -1
+
+            if os.path.exists(local_path):
+                os.remove(local_path)
         else:
             res['code'] = -2
         return res
@@ -151,6 +161,7 @@ class FilmBannerStatusEditViewHandler(BaseHandler):
             except Exception:
                 logger.error(traceback.format_exc())
         return res
+
 
 class UserDeleteViewHandler(BaseHandler):
     """
