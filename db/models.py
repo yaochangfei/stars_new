@@ -28,7 +28,8 @@ from db import STATUS_USER_LIST, SEX_LIST, STATUS_ROLE_LIST, STATUS_USER_ACTIVE,
     STATUS_UNIT_MANAGER_LIST, \
     STATUS_REDPACKET_AWARD_LIST, CAN_NOT_SEE_ALL_RACE, STATUS_LIST, CATEGORY_REDPACKET_RULE_LIST, \
     CATEGORY_REDPACKET_LIST, STATUS_REDPACKET_NOT_AWARDED, CATEGORY_MEMBER_COMMUNITY_RESIDENT, \
-    MEMBER_TYPE_LIST, MEMBER_TYPE_NORMAL, TV_STATUS_LIST, TV_STATUS_ACTIVE
+    MEMBER_TYPE_LIST, MEMBER_TYPE_NORMAL, TV_STATUS_LIST, TV_STATUS_ACTIVE, FILM_STATUS_LIST, FILM_STATUS_ACTIVE, \
+    FILM_STATUS_INACTIVE
 from motorengine import DESC
 from motorengine.document import AsyncDocument, SyncDocument
 from motorengine.fields import IntegerField, StringField, DateTimeField, ListField, BooleanField, DictField, FloatField
@@ -1579,13 +1580,13 @@ class Films(BaseModel):
     db_mark = FloatField()  # 豆瓣打分
     pic_url = StringField()  # 图片url
     fullname = StringField()  # 全名
-    al_name = StringField()  # 又名
+    al_name = ListField()  # 又名
     area = StringField()  # 区域
     language = StringField()  # 语言
     type = ListField()  # 类型
     year = StringField()  # 年份
     screen_time = StringField()  # 上映时间&地点
-    release_time = StringField()  # 发布时间
+    release_time = DateTimeField()  # 发布时间
     length = StringField()  # 片长
     director = ListField()  # 导演
     actor = ListField()  # 主演
@@ -1593,5 +1594,8 @@ class Films(BaseModel):
     summary = StringField()  # 剧情简介
     basetitle = StringField()  # 暂时无用
     download = ListField()  # 下载bt
-    status = IntegerField(choice=TV_STATUS_LIST, default=TV_STATUS_ACTIVE)  # 状态（是否有效）
-    _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label']
+    status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_ACTIVE)  # 状态（是否有效）
+    banner_pic = StringField()  # 暂时无用
+    banner_status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_INACTIVE)  # 状态（是否有效）
+
+    _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label', 'status', 'banner_status']

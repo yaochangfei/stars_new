@@ -396,6 +396,8 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                             articulation = 'BD'
                         elif 'HD' in d_name:
                             articulation = 'HD'
+                        elif 'TS' in d_name:
+                            articulation = 'TS'
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
@@ -432,8 +434,22 @@ class MobileValidateViewHandler(WechatAppletHandler):
             mobile = self.get_i_argument('mobile', '')
             ret = re.match(r"^1\d{10}$", mobile)
             if mobile:
+                has_send_count = RedisCache.get(mobile + '_count')
+                # 同一手机号码每天限制发送验证码10次（成功）
+                if has_send_count and int(has_send_count) >= 10:
+                    r_dict['code'] = 1004
+                    return r_dict
                 _, verify_code = msg_utils.send_digit_verify_code_new(mobile, valid_sec=600)
                 if verify_code:
+                    if has_send_count:
+                        has_send_count = int(has_send_count) + 1
+                    else:
+                        has_send_count = 1
+                    today = datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d")
+                    tomorrow = today + datetime.timedelta(days=1)
+                    now = datetime.datetime.now()
+                    RedisCache.set(mobile + '_count', has_send_count, (tomorrow - now).seconds)
+
                     r_dict['code'] = 1000
                     logger.info('mobile:%s,verify_code:%s' % (mobile, verify_code))
                 else:
