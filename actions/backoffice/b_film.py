@@ -92,6 +92,8 @@ class FilmEditViewHandler(BaseHandler):
             # 上传成功
             if resp.status < 300:
                 film.banner_pic = resp.body.objectUrl
+                if film.al_name == '':
+                    film.al_name = []
                 await film.save()
                 res['code'] = 1
             else:

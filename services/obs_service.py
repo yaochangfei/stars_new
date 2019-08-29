@@ -25,11 +25,7 @@ def upload_file_to_obs(file, file_name):
     content = open(file, 'rb')
     # content = file.body
     # file_name = str(calendar.timegm(time.gmtime())) + '_' + file_name
-    # print(content)
-    # print(type(content))
-    # print(datetime.datetime.now())
     resp = obsClient.putContent(BUCKET_NAME, file_name, content=content)
-    # print(datetime.datetime.now())
     print(resp)
     # if resp.status < 300:
     #     print('requestId:', resp.requestId)
