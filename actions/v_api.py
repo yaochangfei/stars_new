@@ -14,11 +14,12 @@ from commons.common_utils import get_increase_code
 from enums import KEY_INCREASE_MEMBER_CODE
 from actions.applet import find_app_member_by_cid
 from motorengine import ASC, DESC
-from motorengine.stages import MatchStage, LookupStage, SortStage, SkipStage
+from motorengine.stages import MatchStage, LookupStage, SortStage, SkipStage, SampleStage
 from motorengine.stages.limit_stage import LimitStage
 import datetime, random
 from commons import msg_utils
 import re
+import time
 
 logger = log_utils.get_logging()
 
@@ -142,7 +143,7 @@ class MemberInfoViewHandler(WechatAppletHandler):
                     r_dict.update({
                         'member_cid': member_cid,
                         'nick_name': member.nick_name if member.nick_name else '',
-                        'head_picture':member.head_picture if member.head_picture else '',
+                        'head_picture': member.head_picture if member.head_picture else '',
                         'code': member.code
 
                     })
@@ -355,7 +356,7 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
     async def post(self):
         r_dict = {'code': 0}
         try:
-            # print(datetime.datetime.now())
+            # d1 = time.time()
             pageNum = int(self.get_i_argument('pageNum', 1))
             member_cid = self.get_i_argument('member_cid', None)
             if not member_cid:
@@ -365,7 +366,7 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                 exclude_list = []
                 RedisCache.delete('%s_film_recommend' % member_cid)
             else:
-                exclude_list = RedisCache.smembers('%s_film_recommend'%member_cid)
+                exclude_list = RedisCache.smembers('%s_film_recommend' % member_cid)
                 if isinstance(exclude_list, (list, set)):
                     exclude_list = list(exclude_list)
 
@@ -378,9 +379,14 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                 'oid': {'$nin': exclude_list}
             }
             match = MatchStage(filter_dict)
-            films = await Films.aggregate([match]).to_list(None)
-            if films:
-                films = random.sample(films, size)
+            sample = SampleStage(size)
+            # d2 = time.time()
+            # print(d2 - d1)
+            films = await Films.aggregate([match, sample]).to_list(None)
+            # d3 = time.time()
+            # print(d3 - d2)
+            # if films:
+            #     films = random.sample(films, size)
             new_films = []
             id_list = []
             for film in films:
@@ -427,7 +433,9 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                 RedisCache.sadd('%s_film_recommend' % member_cid, id_list)
                 # print(RedisCache.smembers('film_recommend'))
             r_dict['code'] = 1000
-            # print(datetime.datetime.now())
+            # d4 = time.time()
+            # print(d4 - d3)
+            # print(d4 - d1)
             print('recommend')
             print(r_dict)
         except Exception:
@@ -525,6 +533,33 @@ class SubmitMobileValidateViewHandler(WechatAppletHandler):
         return r_dict
 
 
+class MemberInfoUpdateViewHandler(WechatAppletHandler):
+    """更新用户头像昵称信息"""
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            member_cid = self.get_i_argument('member_cid', None)
+            m_type = self.get_i_argument('m_type', None)
+
+            if member_cid and m_type:
+                member = await find_app_member_by_cid(member_cid)
+                if not member:
+                    r_dict['code'] = 1002  # 没有匹配到用户
+                else:
+                    member.m_type = m_type
+                    await member.save()
+                    r_dict['code'] = 1000
+            else:
+                r_dict['code'] = 1001  # member_cid 或者 m_type为空
+        except Exception:
+            logger.error(traceback.format_exc())
+        print(r_dict)
+        return r_dict
+
+
 URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
     url(r'/api/member/auth/', MemberAuthViewHandler, name='api_member_auth'),
@@ -538,4 +573,5 @@ URL_MAPPING_LIST = [
     url(r'/api/films/personal_recommend/', FilmsPersonalRecommendGetViewHandler, name='api_films_personal_recommend'),
     url(r'/api/send/msg/mobile/validate/', MobileValidateViewHandler, name='api_send_msg_mobile_validate'),
     url(r'/api/submit/mobile/validate/', SubmitMobileValidateViewHandler, name='api_submit_mobile_validate'),
+    url(r'/api/member/info/update/', MemberInfoUpdateViewHandler, name='api_member_info_update'),
 ]

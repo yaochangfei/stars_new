@@ -1539,6 +1539,7 @@ class AppMember(BaseModel):
     uuid = StringField()  # 唯一标识符
     device_id = StringField()  # 设备标识符
     device_info = DictField()  # 设备信息
+    m_type = StringField()  # 头像昵称组合类型
     member_type = IntegerField(required=True, choice=MEMBER_TYPE_LIST, default=MEMBER_TYPE_NORMAL)  # 用户类型
 
     _indexes = ['code', 'name', 'mobile', 'is_register', 'is_login', 'member_type']
@@ -1598,4 +1599,5 @@ class Films(BaseModel):
     banner_pic = StringField()  # 暂时无用
     banner_status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_INACTIVE)  # 状态（是否有效）
 
-    _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label', 'status', 'banner_status']
+    _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label', 'status', 'banner_status', 'db_mark',
+                'release_time']
