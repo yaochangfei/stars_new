@@ -316,9 +316,45 @@ class SourceSearchGetViewHandler(WechatAppletHandler):
         r_dict = {'code': 0}
         try:
             search_name = self.get_i_argument('search_name', None)
-
-            if search_name:
-                r_dict['code'] = 1000
+            member_cid = self.get_i_argument('member_cid', None)
+            if not member_cid:
+                r_dict['code'] = 1001  # member_cid为空
+                return r_dict
+            if not search_name:
+                r_dict['code'] = 1002  # 检索名称为空
+                return r_dict
+            pageNum = int(self.get_i_argument('pageNum', 1))
+            size = int(self.get_i_argument('size', 10))
+            skip = (pageNum - 1) * size if (pageNum - 1) * size > 0 else 0
+            filter_dict = {
+                'db_mark': {'$ne': ''},
+                'release_time': {'$ne': ''},
+                'status': 1,
+                '$or': [{'name': {'$regex': search_name}},
+                        {'actor': {'$regex': search_name}},
+                        {'director': {'$regex': search_name}},
+                        {'label': {'$regex': search_name}},
+                        ]
+            }
+            match = MatchStage(filter_dict)
+            skip = SkipStage(skip)
+            sort = SortStage([('db_mark', DESC)])
+            limit = LimitStage(int(size))
+            films_count = await Films.count(filter_dict)
+            films = await Films.aggregate([match, sort, skip, limit]).to_list(None)
+            new_films = []
+            for film in films:
+                new_films.append({
+                    'id': str(film.id),
+                    'name': film.name,
+                    'pic_url': film.pic_url,
+                    's_type': 'film'
+                })
+            r_dict['films'] = new_films
+            r_dict['films_count'] = films_count
+            r_dict['tvs'] = []
+            r_dict['tvs_count'] = 0
+            r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
         return r_dict
