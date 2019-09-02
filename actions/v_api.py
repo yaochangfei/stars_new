@@ -95,6 +95,7 @@ class MemberAuthViewHandler(WechatAppletHandler):
                         r_dict['is_login'] = 1
                     else:
                         r_dict['is_login'] = 0
+                    r_dict['m_type']= member.m_type if member.m_type else ''
                     r_dict['code'] = 1000
             else:
                 # app端没有登陆信息
@@ -562,7 +563,7 @@ class SubmitMobileValidateViewHandler(WechatAppletHandler):
                 r_dict['member_cid'] = new_member.cid
             else:
                 r_dict['member_cid'] = member.cid
-
+            r_dict['m_type'] = member.m_type if member.m_type else ''
             r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
@@ -596,6 +597,20 @@ class MemberInfoUpdateViewHandler(WechatAppletHandler):
         return r_dict
 
 
+class HotSearchListViewHandler(WechatAppletHandler):
+    """热门搜索信息列表"""
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            r_dict['code']=1000
+        except Exception:
+            logger.error(traceback.format_exc())
+        print(r_dict)
+        return r_dict
+
 URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
     url(r'/api/member/auth/', MemberAuthViewHandler, name='api_member_auth'),
@@ -610,4 +625,6 @@ URL_MAPPING_LIST = [
     url(r'/api/send/msg/mobile/validate/', MobileValidateViewHandler, name='api_send_msg_mobile_validate'),
     url(r'/api/submit/mobile/validate/', SubmitMobileValidateViewHandler, name='api_submit_mobile_validate'),
     url(r'/api/member/info/update/', MemberInfoUpdateViewHandler, name='api_member_info_update'),
+    url(r'/api/hot/search/list/', HotSearchListViewHandler, name='api_hot_search_list'),
+
 ]
