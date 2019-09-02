@@ -212,7 +212,7 @@ class FilmsLatestGetViewHandler(WechatAppletHandler):
                     'db_mark': film.db_mark,
                     'actor': film.actor,
                     'source_nums': len(film.download),
-                    'release_time': film.release_time.strftime('%Y/%m/%d')
+                    'release_time': film.release_time.strftime('%Y-%m-%d')
                 })
             r_dict['films'] = new_films
             r_dict['count'] = count
@@ -272,7 +272,7 @@ class FilmsScoreGetViewHandler(WechatAppletHandler):
                     'db_mark': film.db_mark,
                     'actor': film.actor,
                     'source_nums': len(film.download),
-                    'release_time': film.release_time.strftime('%Y/%m/%d')
+                    'release_time': film.release_time.strftime('%Y-%m-%d')
                 })
             r_dict['films'] = new_films
             r_dict['count'] = count
@@ -459,7 +459,7 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                     'actor': film.actor,
                     'label': label,
                     'source_nums': len(film.download),
-                    'release_time': film.release_time.strftime('%Y/%m/%d'),
+                    'release_time': film.release_time.strftime('%Y-%m-%d'),
                     'articulation': articulation,
                     'recommend_info': '123456789'
                 })
