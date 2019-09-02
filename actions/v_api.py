@@ -5,8 +5,9 @@ import traceback
 from tornado.web import url
 from caches.redis_utils import RedisCache
 from commons.common_utils import get_random_str, md5
-from db import STATUS_USER_ACTIVE
-from db.models import User, AppMember, Tvs, Films
+from db import STATUS_USER_ACTIVE, LIKE_STATUS_ACTIVE, LIKE_STATUS_INACTIVE, COLLECTION_STATUS_ACTIVE, \
+    COLLECTION_STATUS_INACTIVE
+from db.models import User, AppMember, Tvs, Films, MyCollection, MyLike, HotSearch
 from logger import log_utils
 from web import decorators, NonXsrfBaseHandler, WechatAppletHandler
 from bson import ObjectId
@@ -95,7 +96,7 @@ class MemberAuthViewHandler(WechatAppletHandler):
                         r_dict['is_login'] = 1
                     else:
                         r_dict['is_login'] = 0
-                    r_dict['m_type']= member.m_type if member.m_type else ''
+                    r_dict['m_type'] = member.m_type if member.m_type else ''
                     r_dict['code'] = 1000
             else:
                 # app端没有登陆信息
@@ -545,13 +546,12 @@ class SubmitMobileValidateViewHandler(WechatAppletHandler):
             r_dict['code'] = 1003
             return r_dict
         try:
-            if msg_utils.check_digit_verify_code(mobile, v_code):
-                r_dict['code'] = 1000
-            else:
+            if not msg_utils.check_digit_verify_code(mobile, v_code):
+
                 r_dict['code'] = 1004
                 return r_dict
-            count = await AppMember.count({'mobile': mobile})
-            if count == 0:
+            phone_member = await AppMember.find_one({'mobile': mobile})
+            if not phone_member:
                 new_member = AppMember(id=ObjectId(),
                                        code=get_increase_code(KEY_INCREASE_MEMBER_CODE), uuid=member.uuid,
                                        mobile=mobile,
@@ -559,11 +559,12 @@ class SubmitMobileValidateViewHandler(WechatAppletHandler):
                 new_member.is_register = 1
                 new_member.is_login = 1
                 await new_member.save()
-
+                r_dict['m_type'] = new_member.m_type if new_member.m_type else ''
                 r_dict['member_cid'] = new_member.cid
             else:
-                r_dict['member_cid'] = member.cid
-            r_dict['m_type'] = member.m_type if member.m_type else ''
+                r_dict['member_cid'] = phone_member.cid
+                r_dict['m_type'] = phone_member.m_type if phone_member.m_type else ''
+
             r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
@@ -605,11 +606,136 @@ class HotSearchListViewHandler(WechatAppletHandler):
     async def post(self):
         r_dict = {'code': 0}
         try:
-            r_dict['code']=1000
+            hot_search_list = await HotSearch.find(dict(status=1)).to_list(None)
+            r_dict['hot_search_list'] = hot_search_list
+            r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
         print(r_dict)
         return r_dict
+
+
+class SourceCollectViewHandler(WechatAppletHandler):
+    """
+    收藏资源(包括电影，电视等)
+    """
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            member_cid = self.get_i_argument('member_cid', None)
+            source_id = self.get_i_argument('source_id', None)
+            s_type = self.get_i_argument('s_type', None)
+            if member_cid and source_id and s_type:
+                member = await find_app_member_by_cid(member_cid)
+                if not member:
+                    r_dict['code'] = 1002  # 没有匹配到用户
+                else:
+                    my_collection = await MyCollection.find_one(member_cid=member_cid, source_id=source_id)
+                    if my_collection:
+                        if my_collection.status == COLLECTION_STATUS_ACTIVE:
+                            my_collection.status == COLLECTION_STATUS_INACTIVE
+                        else:
+                            my_collection.status == COLLECTION_STATUS_ACTIVE
+                    else:
+                        my_collection = MyLike(member_cid=member_cid, source_id=source_id,
+                                               status=COLLECTION_STATUS_ACTIVE)
+                        my_collection.s_type = s_type
+                    await my_collection.save()
+                    r_dict['status'] = my_collection.status  # 1代表收藏 0代表取消收藏
+                    r_dict['code'] = 1000
+            else:
+                r_dict['code'] = 1001  # member_cid为空，或者资源id为空，或者资源类型为空
+        except Exception:
+            logger.error(traceback.format_exc())
+        print(r_dict)
+        return r_dict
+
+
+class SourceLikeViewHandler(WechatAppletHandler):
+    """
+    点赞资源(包括电影，电视等)
+    """
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            member_cid = self.get_i_argument('member_cid', None)
+            source_id = self.get_i_argument('source_id', None)
+            s_type = self.get_i_argument('s_type', None)
+            if member_cid and source_id and s_type:
+                member = await find_app_member_by_cid(member_cid)
+                if not member:
+                    r_dict['code'] = 1002  # 没有匹配到用户
+                else:
+                    my_like = await MyLike.find_one(member_cid=member_cid, source_id=source_id)
+                    if my_like:
+                        if my_like.status == LIKE_STATUS_ACTIVE:
+                            my_like.status == LIKE_STATUS_INACTIVE
+                        else:
+                            my_like.status == LIKE_STATUS_ACTIVE
+                    else:
+                        my_like = MyLike(member_cid=member_cid, source_id=source_id,
+                                         status=LIKE_STATUS_ACTIVE)
+                        my_like.s_type = s_type
+                    await my_like.save()
+                    r_dict['status'] = my_like.status  # 1代表 点赞 0代表取消点赞
+                    r_dict['code'] = 1000
+            else:
+                r_dict['code'] = 1001  # member_cid为空，或者资源id为空，或者资源类型为空
+        except Exception:
+            logger.error(traceback.format_exc())
+        print(r_dict)
+        return r_dict
+
+
+class MyCollectListViewHandler(WechatAppletHandler):
+    """
+    我的收藏列表(包括电影，电视等)
+    """
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            member_cid = self.get_i_argument('member_cid', None)
+            pageNum = int(self.get_i_argument('pageNum', 1))
+            size = int(self.get_i_argument('size', 10))
+            skip = (pageNum - 1) * size if (pageNum - 1) * size > 0 else 0
+            if member_cid:
+                member = await find_app_member_by_cid(member_cid)
+                if not member:
+                    r_dict['code'] = 1002  # 没有匹配到用户
+                else:
+                    filter_dict = {
+                        'member_cid': member_cid,
+                        'status': COLLECTION_STATUS_ACTIVE
+                    }
+                    match = MatchStage(filter_dict)
+                    skip = SkipStage(skip)
+                    sort = SortStage([('updated_dt', DESC)])
+                    limit = LimitStage(int(size))
+                    my_collect_list = await MyCollection.aggregate([match, sort, skip, limit]).to_list(None)
+                    show_my_list = []
+                    for my_collect in my_collect_list:
+                        if my_collect.s_type == 'film':
+                            film = await Films.find_by_id(my_collect.source_id)
+                            show_my_list.append(
+                                {'id': str(film.id), 'name': film.name, 'pic_url': film.pic_url, 's_type': 'film'})
+                    r_dict['my_collect_list'] = show_my_list
+                    r_dict['code'] = 1000
+            else:
+                r_dict['code'] = 1001  # member_cid为空
+        except Exception:
+            logger.error(traceback.format_exc())
+        print(r_dict)
+        return r_dict
+
 
 URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
@@ -626,5 +752,8 @@ URL_MAPPING_LIST = [
     url(r'/api/submit/mobile/validate/', SubmitMobileValidateViewHandler, name='api_submit_mobile_validate'),
     url(r'/api/member/info/update/', MemberInfoUpdateViewHandler, name='api_member_info_update'),
     url(r'/api/hot/search/list/', HotSearchListViewHandler, name='api_hot_search_list'),
+    url(r'/api/source/collect/', SourceCollectViewHandler, name='api_source_collect'),
+    url(r'/api/source/like/', SourceLikeViewHandler, name='api_source_like'),
+    url(r'/api/my/collect/list/', MyCollectListViewHandler, name='api_my_collect_list'),
 
 ]

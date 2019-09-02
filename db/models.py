@@ -28,11 +28,14 @@ from db import STATUS_USER_LIST, SEX_LIST, STATUS_ROLE_LIST, STATUS_USER_ACTIVE,
     STATUS_UNIT_MANAGER_LIST, \
     STATUS_REDPACKET_AWARD_LIST, CAN_NOT_SEE_ALL_RACE, STATUS_LIST, CATEGORY_REDPACKET_RULE_LIST, \
     CATEGORY_REDPACKET_LIST, STATUS_REDPACKET_NOT_AWARDED, CATEGORY_MEMBER_COMMUNITY_RESIDENT, \
-    MEMBER_TYPE_LIST, MEMBER_TYPE_NORMAL, TV_STATUS_LIST, TV_STATUS_ACTIVE, FILM_STATUS_LIST, FILM_STATUS_ACTIVE, \
-    FILM_STATUS_INACTIVE
+    MEMBER_TYPE_LIST, MEMBER_TYPE_NORMAL, TV_STATUS_LIST, TV_STATUS_ACTIVE, TV_STATUS_INACTIVE, FILM_STATUS_LIST, \
+    FILM_STATUS_ACTIVE, \
+    FILM_STATUS_INACTIVE, HOT_SEARCH_STATUS_LIST, HOT_SEARCH_STATUS_ACTIVE, COLLECTION_STATUS_LIST, \
+    COLLECTION_STATUS_ACTIVE, LIKE_STATUS_LIST, LIKE_STATUS_ACTIVE
 from motorengine import DESC
 from motorengine.document import AsyncDocument, SyncDocument
-from motorengine.fields import IntegerField, StringField, DateTimeField, ListField, BooleanField, DictField, FloatField
+from motorengine.fields import IntegerField, StringField, DateTimeField, ListField, BooleanField, DictField, FloatField, \
+    ObjectIdField
 
 
 class BaseModel(AsyncDocument, SyncDocument):
@@ -1551,16 +1554,16 @@ class Tvs(BaseModel):
     """
     name = StringField()  # 电视剧名称
     dis_page_url = StringField()  # 网址链接
-    db_mark = StringField()  # 豆瓣打分
+    db_mark = FloatField()  # 豆瓣打分
     pic_url = StringField()  # 图片url
     fullname = StringField()  # 全名
-    al_name = StringField()  # 又名
+    al_name = ListField()  # 又名
     area = StringField()  # 区域
     language = StringField()  # 语言
     type = ListField()  # 类型
     year = StringField()  # 年份
     screen_time = StringField()  # 上映时间&地点
-    release_time = StringField()  # 发布时间
+    release_time = DateTimeField()  # 发布时间
     set_num = StringField()  # 集数
     director = ListField()  # 导演
     actor = ListField()  # 主演
@@ -1569,6 +1572,8 @@ class Tvs(BaseModel):
     basetitle = StringField()  # 暂时无用
     download = ListField()  # 下载bt
     status = IntegerField(choice=TV_STATUS_LIST, default=TV_STATUS_ACTIVE)  # 状态（是否有效）
+    banner_pic = StringField()  #
+    banner_status = IntegerField(choice=TV_STATUS_LIST, default=TV_STATUS_INACTIVE)  # 状态（是否有效）
     _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label']
 
 
@@ -1596,8 +1601,43 @@ class Films(BaseModel):
     basetitle = StringField()  # 暂时无用
     download = ListField()  # 下载bt
     status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_ACTIVE)  # 状态（是否有效）
-    banner_pic = StringField()  # 暂时无用
+    banner_pic = StringField()  #
     banner_status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_INACTIVE)  # 状态（是否有效）
 
     _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label', 'status', 'banner_status', 'db_mark',
                 'release_time']
+
+
+class HotSearch(BaseModel):
+    """
+        热门搜索
+    """
+    name = StringField()  # 热门搜索名称
+    status = IntegerField(choice=HOT_SEARCH_STATUS_LIST, default=HOT_SEARCH_STATUS_ACTIVE)  # 状态（是否有效）
+    show_order = IntegerField()  # 热度排序
+
+    _indexes = ['status', 'show_order']
+
+
+class MyCollection(BaseModel):
+    """
+        我的收藏
+    """
+    member_cid = StringField()
+    source_id = StringField()
+    s_type = StringField()
+    status = IntegerField(choice=COLLECTION_STATUS_LIST, default=COLLECTION_STATUS_ACTIVE)  # 状态（是否有效）
+
+    _indexes = ['member_cid', 'source_id', 's_type', 'status']
+
+
+class MyLike(BaseModel):
+    """
+        我的点赞
+    """
+    member_cid = StringField()
+    source_id = StringField()
+    s_type = StringField()
+    status = IntegerField(choice=LIKE_STATUS_LIST, default=LIKE_STATUS_ACTIVE)  # 状态（是否有效）
+
+    _indexes = ['member_cid', 'source_id', 's_type', 'status']
