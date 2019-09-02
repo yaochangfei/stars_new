@@ -461,7 +461,7 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                     'source_nums': len(film.download),
                     'release_time': film.release_time.strftime('%Y-%m-%d'),
                     'articulation': articulation,
-                    'recommend_info': '123456789'
+                    'recommend_info': '这部神片值得一看。'
                 })
             r_dict['films'] = new_films
             if id_list:
