@@ -144,10 +144,9 @@ class MemberInfoViewHandler(WechatAppletHandler):
                 else:
                     r_dict.update({
                         'member_cid': member_cid,
-                        'nick_name': member.nick_name if member.nick_name else '',
-                        'head_picture': member.head_picture if member.head_picture else '',
+                        'mobile': member.mobile if member.mobile else '',
+                        'm_type': member.m_type if member.m_type else '',
                         'code': member.code
-
                     })
                     r_dict['code'] = 1000
             else:
@@ -547,7 +546,6 @@ class SubmitMobileValidateViewHandler(WechatAppletHandler):
             return r_dict
         try:
             if not msg_utils.check_digit_verify_code(mobile, v_code):
-
                 r_dict['code'] = 1004
                 return r_dict
             phone_member = await AppMember.find_one({'mobile': mobile})
@@ -633,6 +631,9 @@ class SourceCollectViewHandler(WechatAppletHandler):
                 if not member:
                     r_dict['code'] = 1002  # 没有匹配到用户
                 else:
+                    if not member.is_register:
+                        r_dict['code'] = 1003  # 用户未登陆不能收藏资源
+                        return r_dict
                     my_collection = await MyCollection.find_one(member_cid=member_cid, source_id=source_id)
                     if my_collection:
                         if my_collection.status == COLLECTION_STATUS_ACTIVE:
@@ -672,6 +673,9 @@ class SourceLikeViewHandler(WechatAppletHandler):
                 if not member:
                     r_dict['code'] = 1002  # 没有匹配到用户
                 else:
+                    if not member.is_register:
+                        r_dict['code'] = 1003  # 用户未登陆不能点赞
+                        return r_dict
                     my_like = await MyLike.find_one(member_cid=member_cid, source_id=source_id)
                     if my_like:
                         if my_like.status == LIKE_STATUS_ACTIVE:
@@ -712,6 +716,9 @@ class MyCollectListViewHandler(WechatAppletHandler):
                 if not member:
                     r_dict['code'] = 1002  # 没有匹配到用户
                 else:
+                    if not member.is_register:
+                        r_dict['code'] = 1003  # 用户未登陆不展示收藏列表
+                        return r_dict
                     filter_dict = {
                         'member_cid': member_cid,
                         'status': COLLECTION_STATUS_ACTIVE
