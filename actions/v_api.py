@@ -145,8 +145,7 @@ class MemberInfoViewHandler(WechatAppletHandler):
                     r_dict.update({
                         'member_cid': member_cid,
                         'mobile': member.mobile if member.mobile else '',
-                        'm_type': member.m_type if member.m_type else '',
-                        'code': member.code
+                        'm_type': member.m_type if member.m_type else ''
                     })
                     r_dict['code'] = 1000
             else:
@@ -587,6 +586,7 @@ class MemberInfoUpdateViewHandler(WechatAppletHandler):
                 else:
                     member.m_type = m_type
                     await member.save()
+                    RedisCache.delete(member_cid)  # 头像信息更新清除redis缓存
                     r_dict['code'] = 1000
             else:
                 r_dict['code'] = 1001  # member_cid 或者 m_type为空
