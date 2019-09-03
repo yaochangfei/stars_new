@@ -205,6 +205,10 @@ class FilmsLatestGetViewHandler(WechatAppletHandler):
             films = await Films.aggregate([match, sort, skip, limit]).to_list(None)
             new_films = []
             for film in films:
+                if len(film.label) > 0:
+                    label = film.label[0:3]
+                else:
+                    label = []
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
@@ -212,7 +216,9 @@ class FilmsLatestGetViewHandler(WechatAppletHandler):
                     'db_mark': film.db_mark,
                     'actor': film.actor,
                     'source_nums': len(film.download),
-                    'release_time': film.release_time.strftime('%Y-%m-%d')
+                    'release_time': film.release_time.strftime('%Y-%m-%d'),
+                    'recommend_info': '这部神片值得一看。',
+                    'label': label
                 })
             r_dict['films'] = new_films
             r_dict['count'] = count
@@ -265,6 +271,10 @@ class FilmsScoreGetViewHandler(WechatAppletHandler):
             films = await Films.aggregate([match, sort, skip, limit]).to_list(None)
             new_films = []
             for film in films:
+                if len(film.label) > 0:
+                    label = film.label[0:3]
+                else:
+                    label = []
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
@@ -272,7 +282,9 @@ class FilmsScoreGetViewHandler(WechatAppletHandler):
                     'db_mark': film.db_mark,
                     'actor': film.actor,
                     'source_nums': len(film.download),
-                    'release_time': film.release_time.strftime('%Y-%m-%d')
+                    'release_time': film.release_time.strftime('%Y-%m-%d'),
+                    'recommend_info': '这部神片值得一看。',
+                    'label': label
                 })
             r_dict['films'] = new_films
             r_dict['count'] = count
@@ -748,7 +760,7 @@ URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
     url(r'/api/member/auth/', MemberAuthViewHandler, name='api_member_auth'),
     url(r'/api/member/info/', MemberInfoViewHandler, name='api_member_info'),
-    url(r'/api/tvs/latest/', TvsLatestGetViewHandler, name='api_tvs_latest'),
+    # url(r'/api/tvs/latest/', TvsLatestGetViewHandler, name='api_tvs_latest'),
     url(r'/api/films/latest/', FilmsLatestGetViewHandler, name='api_films_latest'),
     url(r'/api/films/score/', FilmsScoreGetViewHandler, name='api_films_score'),
     url(r'/api/films/detail/', FilmsDetailGetViewHandler, name='api_films_detail'),
