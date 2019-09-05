@@ -807,6 +807,49 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
             logger.error(traceback.format_exc())
         return r_dict
 
+class SourceSearchRelatedGetViewHandler(WechatAppletHandler):
+    """app-搜索关联词"""
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            search_name = self.get_i_argument('search_name', None)
+            member_cid = self.get_i_argument('member_cid', None)
+            if not member_cid:
+                r_dict['code'] = 1001  # member_cid为空
+                return r_dict
+            if not search_name:
+                r_dict['code'] = 1002  # 检索名称为空
+                return r_dict
+            pageNum = int(self.get_i_argument('pageNum', 1))
+            size = int(self.get_i_argument('size', 20))
+            skip = (pageNum - 1) * size if (pageNum - 1) * size > 0 else 0
+            filter_dict = {
+                'db_mark': {'$ne': ''},
+                'release_time': {'$ne': ''},
+                'status': 1,
+                'name': {'$regex': '^%s'%search_name}
+
+            }
+            match = MatchStage(filter_dict)
+            skip = SkipStage(skip)
+            sort = SortStage([('db_mark', DESC)])
+            limit = LimitStage(int(size))
+            films = await Films.aggregate([match, sort, skip, limit]).to_list(None)
+            sources = []
+            for film in films:
+                sources.append(film.name)
+            tvs = await Tvs.aggregate([match, sort, skip, limit]).to_list(None)
+            for tv in tvs:
+                sources.append(tv.name)
+            r_dict['names']=sources[:20]
+            r_dict['code'] = 1000
+        except Exception:
+            logger.error(traceback.format_exc())
+        return r_dict
+
 URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
     url(r'/api/member/auth/', MemberAuthViewHandler, name='api_member_auth'),
@@ -827,5 +870,5 @@ URL_MAPPING_LIST = [
     url(r'/api/my/collect/list/', MyCollectListViewHandler, name='api_my_collect_list'),
 
     url(r'/api/source/more_search/', SourceMoreSearchGetViewHandler, name='api_source_more_search'),
-
+    url(r'/api/source/search_related/', SourceSearchRelatedGetViewHandler, name='api_source_search_related'),
 ]
