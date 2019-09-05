@@ -1614,9 +1614,9 @@ class HotSearch(BaseModel):
     """
     name = StringField()  # 热门搜索名称
     status = IntegerField(choice=HOT_SEARCH_STATUS_LIST, default=HOT_SEARCH_STATUS_ACTIVE)  # 状态（是否有效）
-    show_order = IntegerField()  # 热度排序
+    hot_num = IntegerField()  # 热度
 
-    _indexes = ['status', 'show_order']
+    _indexes = ['status', 'hot_num']
 
 
 class MyCollection(BaseModel):

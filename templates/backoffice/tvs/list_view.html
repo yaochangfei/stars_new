@@ -1,0 +1,353 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import TV_STATUS_ACTIVE, TV_STATUS_INACTIVE %}
+<div class="ml10 mr10 pt8 pb8 clear">
+    <!--<a href="{{ reverse_url('backoffice_user_add') }}" class="btn btn_i btn_primary btn_lg pr fl">新增用户<i-->
+            <!--class="add_manage_i"></i></a>-->
+    <a href="javascript:window.location.reload();" class="refresh_btn pl20 mr20 fr mt10">
+        <i class="refresh_i"></i>刷新
+    </a>
+</div>
+<div class="filter_box clear">
+    <div class="filter_condition fl">
+        <span>筛选条件：</span>
+        <input id="search_name" type="text" class="account" placeholder="名称，演员"
+               value="{{ string_display(search_name, '') }}">
+    </div>
+    <div class="filter_btn fr">
+        <a href="#" class="btn btn_i btn_primary pr mr5 search_data">查询<i class="btn_search"></i></a>
+        <a href="{{ reverse_url('backoffice_tv_list') }}" class="btn btn_default">取消筛选</a>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">数据列表<i class="list_title_i"></i></h3>
+        </div>
+        <div class="fr">
+            <select>
+                <option value="排列方式">排列方式</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <table class="table_list">
+            <tr>
+                <th width="50"></th>
+                <th>电视剧名称</th>
+                <th>年份</th>
+                <th>上映时间</th>
+                <th>语言</th>
+                <th>地区</th>
+                <th>评分</th>
+                <th>资源数量</th>
+                <th>状态</th>
+                <th>是否banner</th>
+                <th>操作</th>
+            </tr>
+            {% set tv_list = paging.page_items %}
+            {% if tv_list %}
+            {% for tv in tv_list %}
+            <tr>
+                <td class="tc">
+                    <i class="checkbox_i" oid="{{ tv.oid }}"></i>
+                </td>
+                <td>{{ string_display(tv.name) }}</td>
+                <td>{{ string_display(tv.year) }}</td>
+                <td>{{ datetime_format(tv.release_time,dt_format='%Y-%m-%d') }}</td>
+                <td>{{ string_display(tv.language) }}</td>
+                <td>{{ string_display(tv.area) }}</td>
+                <td>{{ tv.db_mark }}</td>
+                <td>{{len(tv.download)}}</td>
+                <td>
+                    <label class="table_switch">
+                        <input oid="{{ tv.oid }}" class="status_switch" type="checkbox"
+                               {% if tv.status == TV_STATUS_ACTIVE %}checked="checked"{% end %}>
+                        <i></i>
+                    </label>
+                </td>
+                <td>
+                    <label class="table_switch">
+                        <input oid="{{ tv.oid }}" class="status_switch2" type="checkbox"
+                               {% if tv.banner_status == TV_STATUS_ACTIVE %}checked="checked"{% end %}>
+                        <i></i>
+                    </label>
+                </td>
+                <td class="tools">
+
+                    <a href="{{ reverse_url('backoffice_tv_edit',tv.oid) }}"
+                       class="edit_i fl tips" data-name="编辑"></a>
+
+                    <a href="#" class="delete_i fl delete_manager tips" oid="{{ tv.oid }}" data-name="删除"></a>
+                </td>
+            </tr>
+            {% end %}
+            {% else %}
+            <tr>
+                <td colspan="10" align="center">没有相关记录！</td>
+            </tr>
+            {% end %}
+        </table>
+        <div class="table_control clear">
+            <div class="fl"><i class="checkbox_i mr25 ml15"></i>全选</div>
+            <div class="fl ml20">
+                <select id="selected_operation">
+                    <option value="active">启用</option>
+                    <option value="inactive">停用</option>
+                    <option value="delete">删除</option>
+                </select>
+            </div>
+            <div class="fl">
+                <a href="#" class="btn btn_primary ml20 btn_sm selected_change">确定</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="fix_page clear {% if not tv_list %}dis_none{% end %}">
+    <div class="fr">
+        <span>跳至</span>
+        <input id="jump_num" type="text" class="jump_num" onkeyup="do_jump_2_page(event, this.value);">
+        <span>页</span>
+    </div>
+    <div class="paging fr mr10">
+        <a href="javascript:;" onclick="do_jump_2_page(event, 1);"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>首页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.previous_page_num }});"
+           {% if paging.current_page_num== 1 %}class="btn_disabled" {% end %}>上一页</a>
+        {{ paging.other_pages_html }}
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.next_page_num }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>下一页</a>
+        <a href="javascript:;" onclick="do_jump_2_page(event, {{ paging.total_pages }});"
+           {% if paging.current_page_num== paging.total_pages %}class="btn_disabled" {% end %}>尾页</a>
+    </div>
+    <div class="fr mr20">
+        共
+        <span class="page_all">{{ paging.total_pages }}</span>
+        页/
+        <span class="data_all">{{ paging.total_items }}</span>
+        条数据
+    </div>
+    <div class="fr mr15">
+        <span>每页</span>
+        <select id="per_page_quantity" name="per_page_quantity" onchange="do_jump_2_page(event, 1);">
+            {% for num in [10, 20, 50, 100, 200] %}
+            <option value="{{ num }}" {% if paging.per_page_quantity== num %}selected{% end %}>{{ num }}</option>
+            {% end %}
+        </select>
+        <span>条</span>
+    </div>
+</div>
+<script>
+    function do_jump_2_page(event, to_page_num) {
+        if (event) {
+            var is_checked = false;
+            if (event.type === "keyup" && event.keyCode !== 13) {
+                is_checked = true;
+            }
+            if (is_checked) {
+                $("#jump_num").val(to_page_num.replace(/[^\d]/g, ''));
+            } else {
+                // 填充请求参数
+                display_loading();
+                var params = {
+                    'page': to_page_num,
+                    'per_page_quantity': $('#per_page_quantity').val() || {{ per_page_quantity }},
+                    'search_name': $('#search_name').val(),
+                };
+                window.location.href = "{{ reverse_url('backoffice_tv_list') }}?" + dict_2_url_params(params);
+            }
+        }
+    }
+</script>
+<script>
+    function checkedNum() {
+        var checked_num = $(".city_box .checkbox_i.checked");
+        if (checked_num.length > 0) {
+            $(".province_box li.active").find(".city_num").removeClass("dis_none").html(checked_num.length);
+        }
+        else {
+            $(".province_box li.active").find(".city_num").addClass("dis_none");
+        }
+    }
+    function initNum(arr) {
+        var p_box = $(".province_box");
+        for(var i = 0;i<arr.length;i++){
+            var obj = p_box.find("li[data-code='" + arr[i].substring(3,5)+"0000']").find(".city_num");
+            obj.removeClass("dis_none");
+            obj.html(parseInt(obj.html()==""?0:obj.html())+1);
+        }
+    }
+    
+    $(function () {
+
+        $('.selected_change').on('click', function () {
+            var operation = $('#selected_operation').val();
+            var selected_manager_ids = [];
+            var obj_list = $('.table_list').find('.checkbox_i.checked');
+            for (var i = 0; i < obj_list.length; i++) {
+                var obj = obj_list[i];
+                if ($(obj).attr('oid')) {
+                    selected_manager_ids.push($(obj).attr('oid'));
+                }
+            }
+            if (selected_manager_ids.length > 0) {
+                var data = {
+                    'manager_ids': selected_manager_ids
+                };
+                if (operation === 'delete') {
+                    confirm_dialog('警告', '确认删除电影？', function () {
+                        display_loading();
+                        var url = "{{ reverse_url('backoffice_user_delete') }}";
+                        ajaxPost(url, data, function (ret) {
+                            if (ret.code == 1) {
+                                tip_msg("删除电视剧成功！", 2000, function () {
+                                    window.location.href = "{{ reverse_url('backoffice_tv_list') }}";
+                                });
+                            } else {
+                                tip_msg("删除电视剧失败！", 2000);
+                            }
+                        });
+                        remove_loading();
+                    });
+
+                } else if (operation === 'active' || operation === 'inactive') {
+
+                    data['target_status'] = operation === 'active' ? {{ TV_STATUS_ACTIVE }} :{{ TV_STATUS_INACTIVE }};
+                    var url = "{{ reverse_url('backoffice_tv_status') }}";
+
+                    confirm_dialog('警告', '确认变更电视剧状态？', function () {
+                        display_loading();
+                        ajaxPost(url, data, function (ret) {
+                            if (ret.code !== 1) {
+                                tip_msg("变更电视剧状态失败！", 2000);
+                            } else {
+                                tip_msg("变更电视剧状态成功！", 2000, function () {
+                                    window.location.href = "{{ reverse_url('backoffice_film_list') }}";
+                                });
+
+                            }
+                        });
+                        remove_loading();
+                    });
+
+                } else {
+                    tip_msg("批量操作失败！", 2000);
+                }
+            } else {
+                tip_msg("请选择数据！", 2000);
+            }
+
+        });
+
+        $('.status_switch').on('click', function () {
+            var obj = $(this);
+            var manager_id = $(this).attr('oid');
+            var target_status = $(this).prop('checked') ? {{ TV_STATUS_ACTIVE }} :{{ TV_STATUS_INACTIVE }};
+            if (manager_id && target_status) {
+                var data = {
+                    'manager_ids': [manager_id],
+                    'target_status': target_status
+                };
+                var url = "{{ reverse_url('backoffice_tv_status') }}";
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code !== 1) {
+                        tip_msg("变更电视剧状态失败！", 2000, function () {
+                            if (target_status === {{ TV_STATUS_ACTIVE }}) {
+                                obj.prop('checked', '')
+                            } else {
+                                obj.prop('checked', 'checked')
+                            }
+                        });
+                    } else {
+                        tip_msg("变更电视剧状态成功！", 2000);
+                    }
+                });
+                remove_loading();
+
+            } else {
+                tip_msg("变更电视剧状态失败！", 2000, function () {
+                    if (target_status === {{ TV_STATUS_ACTIVE }}) {
+                        obj.prop('checked', '')
+                    } else {
+                        obj.prop('checked', 'checked')
+                    }
+                });
+            }
+        });
+
+        $('.delete_manager').on('click', function () {
+            var manager_id = $(this).attr('oid');
+            if (manager_id) {
+                var data = {
+                    'manager_ids': [manager_id]
+                };
+                var url = "{{ reverse_url('backoffice_user_delete') }}";
+                confirm_dialog('警告', '确认删除电视剧？', function () {
+                    display_loading();
+                    ajaxPost(url, data, function (ret) {
+                        if (ret.code === 1) {
+                            tip_msg("删除电视剧成功！", 2000, function () {
+                                window.location.href = "{{ reverse_url('backoffice_tv_list') }}";
+                            });
+                        } else {
+                            tip_msg("删除电视剧失败！", 2000);
+                        }
+                    });
+                    remove_loading();
+                });
+            }
+        });
+
+        $('.search_data').on('click', function () {
+            var param_dict = {
+                'search_name': $('#search_name').val(),
+                'per_page_quantity': $('#per_page_quantity').val()
+            };
+            window.location.href = "{{ reverse_url('backoffice_tv_list') }}?" + dict_2_url_params(param_dict);
+        });
+
+        $('.status_switch2').on('click', function () {
+            var obj = $(this);
+            var manager_id = $(this).attr('oid');
+            var target_status = $(this).prop('checked') ? {{ TV_STATUS_ACTIVE }} :{{ TV_STATUS_INACTIVE }};
+            console.log(manager_id)
+            console.log(target_status)
+            if (manager_id) {
+                console.log("xxx")
+                var data = {
+                    'manager_ids': [manager_id],
+                    'target_status': target_status
+                };
+                var url = "{{ reverse_url('backoffice_tv_banner_status') }}";
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code !== 1) {
+                        tip_msg("变更电视剧banner状态失败！", 2000, function () {
+                            if (target_status === {{ TV_STATUS_ACTIVE }}) {
+                                obj.prop('checked', '')
+                            } else {
+                                obj.prop('checked', 'checked')
+                            }
+                        });
+                    } else {
+                        tip_msg("变更电视剧banner状态成功！", 2000);
+                    }
+                });
+                remove_loading();
+
+            } else {
+                console.log("yyy")
+                tip_msg("变更电视剧banner状态失败！", 2000, function () {
+                    if (target_status === {{ TV_STATUS_ACTIVE }}) {
+                        obj.prop('checked', '')
+                    } else {
+                        obj.prop('checked', 'checked')
+                    }
+                });
+            }
+        });
+    })
+</script>
+{% end %}

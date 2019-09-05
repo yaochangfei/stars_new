@@ -72,27 +72,6 @@
             "user_list_i"
           ],
           "flags": []
-        },
-        {
-          "code": "B0104",
-          "title": "来源管理",
-          "path": "/backoffice/game_member_source/list/",
-          "context": null,
-          "weight": 14,
-          "belong_path_list": [
-            "/backoffice/game_member_source/add/",
-            "/backoffice/game_member_source/edit/(R)/",
-            "/backoffice/game_member_source/delete/(R)/",
-            "/backoffice/game_member_source/status/change/",
-            "/backoffice/game_member_source/qr/download/(R)/"
-          ],
-          "permission_code_list": [
-            "B01040000"
-          ],
-          "style_name_list": [
-            "member_source_i"
-          ],
-          "flags": []
         }
       ]
     },
@@ -278,7 +257,7 @@
       "path": null,
       "context": null,
       "weight": 5,
-      "disabled": false,
+      "disabled": true,
       "belong_path_list": [],
       "permission_code_list": [],
       "style_name_list": [],
@@ -802,9 +781,7 @@
           "context": null,
           "weight": 11,
           "belong_path_list": [
-            "/backoffice/user/add/",
-            "/backoffice/user/edit/",
-            "/backoffice/user/permission/"
+            "/backoffice/film/edit/(R)/"
           ],
           "permission_code_list": [
             "B06010000"
@@ -817,13 +794,11 @@
         {
           "code": "B0602",
           "title": "电视剧管理",
-          "path": "/backoffice/role/list/",
+          "path": "/backoffice/tv/list/",
           "context": null,
           "weight": 12,
           "belong_path_list": [
-            "/backoffice/role/add/",
-            "/backoffice/role/edit/(R)/",
-            "/backoffice/role/perm_assign/(R)/"
+            "/backoffice/tv/edit/(R)/"
           ],
           "permission_code_list": [
             "B06020000"
@@ -864,6 +839,24 @@
             "/backoffice/game_member_source/delete/(R)/",
             "/backoffice/game_member_source/status/change/",
             "/backoffice/game_member_source/qr/download/(R)/"
+          ],
+          "permission_code_list": [
+            "B06040000"
+          ],
+          "style_name_list": [
+            "member_source_i"
+          ],
+          "flags": []
+        },
+        {
+          "code": "B0605",
+          "title": "热门管理",
+          "path": "/backoffice/hot_search/list/",
+          "context": null,
+          "weight": 14,
+          "belong_path_list": [
+            "/backoffice/hot_search/add/",
+            "/backoffice/hot_search/edit/(R)/"
           ],
           "permission_code_list": [
             "B06040000"

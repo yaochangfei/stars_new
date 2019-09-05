@@ -18,7 +18,7 @@ from motorengine import ASC, DESC
 from motorengine.stages import MatchStage, LookupStage, SortStage, SkipStage, SampleStage
 from motorengine.stages.limit_stage import LimitStage
 import datetime, random
-from commons import msg_utils
+from commons import msg_utils,api_utils
 import re
 import time
 
@@ -82,8 +82,6 @@ class MemberAuthViewHandler(WechatAppletHandler):
         try:
             args_dict = json.loads(self.request.body)
             uuid = args_dict.get('uuid', None)
-            # device_id = args_dict.get('device_id', None)
-            device_info = args_dict.get('device_info', {})
             member_cid = args_dict.get('member_cid', None)
             if member_cid:
 
@@ -114,7 +112,6 @@ class MemberAuthViewHandler(WechatAppletHandler):
                         member = AppMember(id=ObjectId(),
                                            code=get_increase_code(KEY_INCREASE_MEMBER_CODE), uuid=uuid,
                                            )
-                        member.device_info = device_info
                         await member.save()
                         r_dict['member_cid'] = member.cid
                         r_dict['is_login'] = 0
@@ -156,30 +153,6 @@ class MemberInfoViewHandler(WechatAppletHandler):
         return r_dict
 
 
-class TvsLatestGetViewHandler(WechatAppletHandler):
-    """获取最新的电视剧列表"""
-
-    @decorators.render_json
-    @decorators.wechat_applet_authenticated
-    async def post(self):
-        r_dict = {'code': 0}
-        try:
-            member_cid = self.get_i_argument('member_cid', None)
-            if member_cid:
-                member = await find_app_member_by_cid(member_cid)
-                if not member:
-                    r_dict['code'] = 1002  # 没有匹配到用户
-                else:
-                    tvs = await Tvs.find(dict(year='2019')).to_list(None)
-                    r_dict['tvs'] = tvs
-                    r_dict['code'] = 1000
-            else:
-                r_dict['code'] = 1001  # member_cid为空
-        except Exception:
-            logger.error(traceback.format_exc())
-        return r_dict
-
-
 class FilmsLatestGetViewHandler(WechatAppletHandler):
     """获取最新的电影列表"""
 
@@ -205,10 +178,10 @@ class FilmsLatestGetViewHandler(WechatAppletHandler):
             films = await Films.aggregate([match, sort, skip, limit]).to_list(None)
             new_films = []
             for film in films:
-                if len(film.label) > 0:
-                    label = film.label[0:3]
-                else:
-                    label = []
+                # if len(film.label) > 0:
+                #     label = film.label[0:3]
+                # else:
+                #     label = []
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
@@ -218,7 +191,8 @@ class FilmsLatestGetViewHandler(WechatAppletHandler):
                     'source_nums': len(film.download),
                     'release_time': film.release_time.strftime('%Y-%m-%d'),
                     'recommend_info': '这部神片值得一看。',
-                    'label': label
+                    # 'label': label
+                    'label':api_utils.get_show_source_label(film)
                 })
             r_dict['films'] = new_films
             r_dict['count'] = count
@@ -271,10 +245,10 @@ class FilmsScoreGetViewHandler(WechatAppletHandler):
             films = await Films.aggregate([match, sort, skip, limit]).to_list(None)
             new_films = []
             for film in films:
-                if len(film.label) > 0:
-                    label = film.label[0:3]
-                else:
-                    label = []
+                # if len(film.label) > 0:
+                #     label = film.label[0:3]
+                # else:
+                #     label = []
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
@@ -284,7 +258,8 @@ class FilmsScoreGetViewHandler(WechatAppletHandler):
                     'source_nums': len(film.download),
                     'release_time': film.release_time.strftime('%Y-%m-%d'),
                     'recommend_info': '这部神片值得一看。',
-                    'label': label
+                    # 'label': label
+                    'label':api_utils.get_show_source_label(film)
                 })
             r_dict['films'] = new_films
             r_dict['count'] = count
@@ -364,8 +339,18 @@ class SourceSearchGetViewHandler(WechatAppletHandler):
                 })
             r_dict['films'] = new_films
             r_dict['films_count'] = films_count
-            r_dict['tvs'] = []
-            r_dict['tvs_count'] = 0
+            tvs_count = await Tvs.count(filter_dict)
+            tvs = await Tvs.aggregate([match, sort, skip, limit]).to_list(None)
+            new_tvs = []
+            for tv in tvs:
+                new_tvs.append({
+                    'id': str(tv.id),
+                    'name': tv.name,
+                    'pic_url': tv.pic_url,
+                    's_type': 'tv'
+                })
+            r_dict['tvs'] = new_tvs
+            r_dict['tvs_count'] = tvs_count
             r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
@@ -404,7 +389,6 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
     async def post(self):
         r_dict = {'code': 0}
         try:
-            # d1 = time.time()
             pageNum = int(self.get_i_argument('pageNum', 1))
             member_cid = self.get_i_argument('member_cid', None)
             if not member_cid:
@@ -417,9 +401,6 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                 exclude_list = RedisCache.smembers('%s_film_recommend' % member_cid)
                 if isinstance(exclude_list, (list, set)):
                     exclude_list = list(exclude_list)
-
-            # print(pageNum,exclude_list)
-            # print(type(exclude_list))
             size = int(self.get_i_argument('size', 10))
             filter_dict = {
                 'db_mark': {'$ne': ''},
@@ -428,62 +409,53 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
             }
             match = MatchStage(filter_dict)
             sample = SampleStage(size)
-            # d2 = time.time()
-            # print(d2 - d1)
             films = await Films.aggregate([match, sample]).to_list(None)
-            # d3 = time.time()
-            # print(d3 - d2)
-            # if films:
-            #     films = random.sample(films, size)
             new_films = []
             id_list = []
             for film in films:
                 id_list.append(str(film.id))
 
-                if len(film.label) > 0:
-                    label = film.label[0:3]
-                else:
-                    label = []
-                articulation = ''
-                if len(film.download) > 0:
-                    d_name = film.download[0].get('downloadname', '')
-                    if d_name:
-                        d_name = d_name.upper()
-                        if '720' in d_name:
-                            articulation = '720P'
-                        elif '1080' in d_name:
-                            articulation = '1080P'
-                        elif '2K' in d_name:
-                            articulation = '2K'
-                        elif '4K' in d_name:
-                            articulation = '4K'
-                        elif 'BD' in d_name:
-                            articulation = 'BD'
-                        elif 'HD' in d_name:
-                            articulation = 'HD'
-                        elif 'TS' in d_name:
-                            articulation = 'TS'
+                # if len(film.label) > 0:
+                #     label = film.label[0:3]
+                # else:
+                #     label = []
+                # articulation = ''
+                # if len(film.download) > 0:
+                #     d_name = film.download[0].get('downloadname', '')
+                #     if d_name:
+                #         d_name = d_name.upper()
+                #         if '720' in d_name:
+                #             articulation = '720P'
+                #         elif '1080' in d_name:
+                #             articulation = '1080P'
+                #         elif '2K' in d_name:
+                #             articulation = '2K'
+                #         elif '4K' in d_name:
+                #             articulation = '4K'
+                #         elif 'BD' in d_name:
+                #             articulation = 'BD'
+                #         elif 'HD' in d_name:
+                #             articulation = 'HD'
+                #         elif 'TS' in d_name:
+                #             articulation = 'TS'
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
                     'pic_url': film.pic_url,
                     'db_mark': film.db_mark,
                     'actor': film.actor,
-                    'label': label,
+                    # 'label': label,
+                    'label':api_utils.get_show_source_label(film),
                     'source_nums': len(film.download),
                     'release_time': film.release_time.strftime('%Y-%m-%d'),
-                    'articulation': articulation,
+                    # 'articulation': articulation,
+                    'articulation':api_utils.get_show_source_articulation(film),
                     'recommend_info': '这部神片值得一看。'
                 })
             r_dict['films'] = new_films
             if id_list:
-                # print(id_list)
                 RedisCache.sadd('%s_film_recommend' % member_cid, id_list)
-                # print(RedisCache.smembers('film_recommend'))
             r_dict['code'] = 1000
-            # d4 = time.time()
-            # print(d4 - d3)
-            # print(d4 - d1)
             print('recommend')
             print(r_dict)
         except Exception:
@@ -756,6 +728,85 @@ class MyCollectListViewHandler(WechatAppletHandler):
         return r_dict
 
 
+class SourceMoreSearchGetViewHandler(WechatAppletHandler):
+    """app-电影，电视等搜索 更多"""
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            search_name = self.get_i_argument('search_name', None)
+            member_cid = self.get_i_argument('member_cid', None)
+            s_type=self.get_i_argument('s_type', None)
+            if not member_cid:
+                r_dict['code'] = 1001  # member_cid为空
+                return r_dict
+            if not search_name:
+                r_dict['code'] = 1002  # 检索名称为空
+                return r_dict
+            if not s_type:
+                r_dict['code'] = 1003  # 资源类型为空
+                return r_dict
+            pageNum = int(self.get_i_argument('pageNum', 1))
+            size = int(self.get_i_argument('size', 10))
+            skip = (pageNum - 1) * size if (pageNum - 1) * size > 0 else 0
+            filter_dict = {
+                'db_mark': {'$ne': ''},
+                'release_time': {'$ne': ''},
+                'status': 1,
+                '$or': [{'name': {'$regex': search_name}},
+                        {'actor': {'$regex': search_name}},
+                        {'director': {'$regex': search_name}},
+                        {'label': {'$regex': search_name}},
+                        ]
+            }
+            match = MatchStage(filter_dict)
+            skip = SkipStage(skip)
+            sort = SortStage([('db_mark', DESC)])
+            limit = LimitStage(int(size))
+            if s_type=='film':
+                films = await Films.aggregate([match, sort, skip, limit]).to_list(None)
+                new_films = []
+                for film in films:
+                    new_films.append({
+                        'id': str(film.id),
+                        'name': film.name,
+                        'pic_url': film.pic_url,
+                        's_type': 'film',
+                        'label':api_utils.get_show_source_label(film),
+                        'articulation':api_utils.get_show_source_articulation(film),
+                        'db_mark': film.db_mark,
+                        'actor': film.actor,
+                        'source_nums': len(film.download),
+                        'release_time': film.release_time.strftime('%Y-%m-%d'),
+                        'recommend_info': '这部神片值得一看。'
+                    })
+                r_dict['sources'] = new_films
+            elif s_type=='tv':
+                tvs = await Tvs.aggregate([match, sort, skip, limit]).to_list(None)
+                new_tvs = []
+                for tv in tvs:
+                    new_tvs.append({
+                        'id': str(tv.id),
+                        'name': tv.name,
+                        'pic_url': tv.pic_url,
+                        's_type': 'tv',
+                        'label': api_utils.get_show_source_label(tv),
+                        'articulation': api_utils.get_show_source_articulation(tv),
+                        'db_mark': tv.db_mark,
+                        'actor': tv.actor,
+                        'source_nums': len(tv.download),
+                        'release_time': tv.release_time.strftime('%Y-%m-%d'),
+                        'recommend_info': '这部神剧值得一看。'
+                    })
+                r_dict['sources'] = new_tvs
+
+            r_dict['code'] = 1000
+        except Exception:
+            logger.error(traceback.format_exc())
+        return r_dict
+
 URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
     url(r'/api/member/auth/', MemberAuthViewHandler, name='api_member_auth'),
@@ -774,5 +825,7 @@ URL_MAPPING_LIST = [
     url(r'/api/source/collect/', SourceCollectViewHandler, name='api_source_collect'),
     url(r'/api/source/like/', SourceLikeViewHandler, name='api_source_like'),
     url(r'/api/my/collect/list/', MyCollectListViewHandler, name='api_my_collect_list'),
+
+    url(r'/api/source/more_search/', SourceMoreSearchGetViewHandler, name='api_source_more_search'),
 
 ]

@@ -1,0 +1,142 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_USER_ACTIVE, STATUS_USER_INACTIVE %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_tv_list') }}" class="pl10 ml10">电视剧列表</a>
+        <span> &gt; 编辑电视剧</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">编辑电视剧<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <form id="form_add" name="form_add" method="post" enctype="multipart/form-data"
+              action="{{ reverse_url('backoffice_tv_edit',tv.oid) }}">
+            {% raw xsrf_form_html() %}
+            <table class="table_form">
+            <tr>
+                <th width="40%"><span class="necessary">*</span>电视剧名称</th>
+                <td>{{ tv.name }}</td>
+            </tr>
+            <tr>
+                    <th class="pt10 vt">banner 图片</th>
+                    <td class="clear">
+                        <div class="pic_show fl mr10">
+                            {% if tv.banner_pic %}
+                            <img src="{{ tv.banner_pic }}">
+                            {%else%}
+                            <img src="{{ static_url('images/default/upload_def.png') }}">
+                            {%end%}
+                        </div>
+                        <div class="pic_upload_box fl">
+                            <div class="mt10">
+                                <a href="javascript:;" class="btn btn_warning_empty delete_pic_btn">删除图片</a>
+                            </div>
+                            <div class="pr mt10">
+
+                                <input name="banner_pic" type="file" id="upload_pic_btn" class="pa"
+                                       accept="image/jpeg,image/png,image/gif,image/jpg">
+                                <a href="javascript:;" class="btn btn_primary_empty upload_pic_btn">上传图片</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            <tr>
+                <td></td>
+                <td>
+                        <span class="cl_danger">
+
+                        </span>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><a href="javascript:;" id="submit" class="btn btn_primary mt15 btn_lg submit_btn">提交</a></td>
+            </tr>
+        </table>
+            </form>
+    </div>
+</div>
+<script type="text/javascript" src='{{ static_url("js/plugins/form/jquery.form.min.js") }}'></script>
+<script>
+    $(function () {
+        img_review();
+
+        $("#form_add").ajaxForm({
+            beforeSubmit: function () {
+                display_loading();
+                if (!check_form()) {
+                    remove_loading();
+                    return false;
+                }
+            },
+            success: function (data) {
+                if (data.code === 0) {
+                    tip_msg("服务器异常，请重试！", 2000);
+                } else if (data.code === 1) {
+                    tip_msg("上传成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_tv_list') }}";
+                    });
+                }else if (data.code === -1) {
+                    tip_msg("上传失败！", 2000);
+                }else if (data.code === -2) {
+                    tip_msg("没有选择图片！", 2000);
+                }
+                remove_loading();
+            },
+            error: function () {
+                $("#error_msg").html("操作失败，请重试！");
+                remove_loading();
+                return false;
+            },
+            resetForm: false,
+            dataType: 'json'
+        });
+
+        $("#submit").click(function () {
+            $("#form_add").submit();
+        });
+
+
+    });
+
+    function check_form() {
+
+        return true;
+    }
+
+    function img_review() {
+        var uploadPicBtn = $("#upload_pic_btn");
+        uploadPicBtn.on("mouseover", function () {
+            $(this).addClass("current");
+        });
+        uploadPicBtn.on("mouseup", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("mouseout", function () {
+            $(this).removeClass("current");
+        });
+        uploadPicBtn.on("change", function () {
+            $("#image_cid").val("");
+            var file = this.files[0];
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                $(".pic_show img").attr("src", reader.result);
+            };
+        });
+        $(".delete_pic_btn").on("click", function () {
+            $("#upload_pic_btn").val("");
+            $("#image_cid").val("");
+            $(".pic_show img").attr("src", "{{ static_url('images/default/upload_def.png') }}");
+        })
+    }
+</script>
+{% end %}
