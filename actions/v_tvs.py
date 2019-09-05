@@ -59,7 +59,8 @@ class TvsLatestGetViewHandler(WechatAppletHandler):
                     'source_nums': len(tv.download),
                     'release_time': tv.release_time.strftime('%Y-%m-%d'),
                     'label': api_utils.get_show_source_label(tv),
-                    'recommend_info': '这部神剧值得一看。'
+                    'recommend_info': '这部神剧值得一看。',
+                    'set_num':tv.set_num if tv.set_num else ''
                 })
             r_dict['tvs'] = new_tvs
             r_dict['count'] = count
@@ -121,7 +122,8 @@ class TvsScoreGetViewHandler(WechatAppletHandler):
                     'source_nums': len(tv.download),
                     'release_time': tv.release_time.strftime('%Y-%m-%d'),
                     'label': api_utils.get_show_source_label(tv),
-                    'recommend_info': '这部神剧值得一看。'
+                    'recommend_info': '这部神剧值得一看。',
+                    'set_num': tv.set_num if tv.set_num else ''
                 })
             r_dict['tvs'] = new_tvs
             r_dict['count'] = count
@@ -225,7 +227,8 @@ class TvsPersonalRecommendGetViewHandler(WechatAppletHandler):
                     'release_time': tv.release_time.strftime('%Y-%m-%d'),
                     # 'articulation': articulation,
                     'articulation':api_utils.get_show_source_articulation(tv),
-                    'recommend_info': '这部神剧值得一看。'
+                    'recommend_info': '这部神剧值得一看。',
+                    'set_num': tv.set_num if tv.set_num else ''
                 })
             r_dict['tvs'] = new_tvs
             if id_list:
