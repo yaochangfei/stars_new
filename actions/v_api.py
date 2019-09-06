@@ -18,7 +18,7 @@ from motorengine import ASC, DESC
 from motorengine.stages import MatchStage, LookupStage, SortStage, SkipStage, SampleStage
 from motorengine.stages.limit_stage import LimitStage
 import datetime, random
-from commons import msg_utils,api_utils
+from commons import msg_utils, api_utils
 import re
 import time
 
@@ -190,9 +190,12 @@ class FilmsLatestGetViewHandler(WechatAppletHandler):
                     'actor': film.actor,
                     'source_nums': len(film.download),
                     'release_time': film.release_time.strftime('%Y-%m-%d'),
-                    'recommend_info': '这部神片值得一看。',
+                    # 'recommend_info': '这部神片值得一看。',
+                    'recommend_info': film.recommend_info if film.recommend_info else '这部神片值得一看。',
                     # 'label': label
-                    'label':api_utils.get_show_source_label(film)
+                    'label': api_utils.get_show_source_label(film),
+                    's_type': 'film'
+
                 })
             r_dict['films'] = new_films
             r_dict['count'] = count
@@ -257,9 +260,11 @@ class FilmsScoreGetViewHandler(WechatAppletHandler):
                     'actor': film.actor,
                     'source_nums': len(film.download),
                     'release_time': film.release_time.strftime('%Y-%m-%d'),
-                    'recommend_info': '这部神片值得一看。',
+                    # 'recommend_info': '这部神片值得一看。',
+                    'recommend_info': film.recommend_info if film.recommend_info else '这部神片值得一看。',
                     # 'label': label
-                    'label':api_utils.get_show_source_label(film)
+                    'label': api_utils.get_show_source_label(film),
+                    's_type': 'film'
                 })
             r_dict['films'] = new_films
             r_dict['count'] = count
@@ -284,6 +289,7 @@ class FilmsDetailGetViewHandler(WechatAppletHandler):
                 film = await Films.get_by_id(oid=film_id)
                 if film:
                     r_dict['film'] = film
+                    r_dict['s_type'] = 'film'
                     r_dict['code'] = 1000
                 else:
                     r_dict['code'] = 1002
@@ -445,12 +451,14 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                     'db_mark': film.db_mark,
                     'actor': film.actor,
                     # 'label': label,
-                    'label':api_utils.get_show_source_label(film),
+                    'label': api_utils.get_show_source_label(film),
                     'source_nums': len(film.download),
                     'release_time': film.release_time.strftime('%Y-%m-%d'),
                     # 'articulation': articulation,
-                    'articulation':api_utils.get_show_source_articulation(film),
-                    'recommend_info': '这部神片值得一看。'
+                    'articulation': api_utils.get_show_source_articulation(film),
+                    # 'recommend_info': '这部神片值得一看。',
+                    'recommend_info': film.recommend_info if film.recommend_info else '这部神片值得一看。',
+                    's_type': 'film'
                 })
             r_dict['films'] = new_films
             if id_list:
@@ -738,7 +746,7 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
         try:
             search_name = self.get_i_argument('search_name', None)
             member_cid = self.get_i_argument('member_cid', None)
-            s_type=self.get_i_argument('s_type', None)
+            s_type = self.get_i_argument('s_type', None)
             if not member_cid:
                 r_dict['code'] = 1001  # member_cid为空
                 return r_dict
@@ -765,7 +773,7 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
             skip = SkipStage(skip)
             sort = SortStage([('db_mark', DESC)])
             limit = LimitStage(int(size))
-            if s_type=='film':
+            if s_type == 'film':
                 films = await Films.aggregate([match, sort, skip, limit]).to_list(None)
                 new_films = []
                 for film in films:
@@ -774,16 +782,17 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
                         'name': film.name,
                         'pic_url': film.pic_url,
                         's_type': 'film',
-                        'label':api_utils.get_show_source_label(film),
-                        'articulation':api_utils.get_show_source_articulation(film),
+                        'label': api_utils.get_show_source_label(film),
+                        'articulation': api_utils.get_show_source_articulation(film),
                         'db_mark': film.db_mark,
                         'actor': film.actor,
                         'source_nums': len(film.download),
                         'release_time': film.release_time.strftime('%Y-%m-%d'),
-                        'recommend_info': '这部神片值得一看。'
+                        # 'recommend_info': '这部神片值得一看。',
+                        'recommend_info': film.recommend_info if film.recommend_info else '这部神片值得一看。'
                     })
                 r_dict['sources'] = new_films
-            elif s_type=='tv':
+            elif s_type == 'tv':
                 tvs = await Tvs.aggregate([match, sort, skip, limit]).to_list(None)
                 new_tvs = []
                 for tv in tvs:
@@ -806,6 +815,7 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
         except Exception:
             logger.error(traceback.format_exc())
         return r_dict
+
 
 class SourceSearchRelatedGetViewHandler(WechatAppletHandler):
     """app-搜索关联词"""
@@ -830,7 +840,7 @@ class SourceSearchRelatedGetViewHandler(WechatAppletHandler):
                 'db_mark': {'$ne': ''},
                 'release_time': {'$ne': ''},
                 'status': 1,
-                'name': {'$regex': '^%s'%search_name}
+                'name': {'$regex': '^%s' % search_name}
 
             }
             match = MatchStage(filter_dict)
@@ -844,11 +854,12 @@ class SourceSearchRelatedGetViewHandler(WechatAppletHandler):
             tvs = await Tvs.aggregate([match, sort, skip, limit]).to_list(None)
             for tv in tvs:
                 sources.append(tv.name)
-            r_dict['names']=sources[:20]
+            r_dict['names'] = sources[:20]
             r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
         return r_dict
+
 
 URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),

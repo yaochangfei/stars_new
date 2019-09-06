@@ -1544,8 +1544,8 @@ class AppMember(BaseModel):
     device_info = DictField()  # 设备信息
     m_type = StringField()  # 头像昵称组合类型
     member_type = IntegerField(required=True, choice=MEMBER_TYPE_LIST, default=MEMBER_TYPE_NORMAL)  # 用户类型
-
-    _indexes = ['code', 'name', 'mobile', 'is_register', 'is_login', 'member_type']
+    status = IntegerField(default=STATUS_USER_ACTIVE, choice=STATUS_USER_LIST)  # 状态
+    _indexes = ['code', 'name', 'mobile', 'is_register', 'is_login', 'member_type', 'status']
 
 
 class Tvs(BaseModel):
@@ -1603,7 +1603,7 @@ class Films(BaseModel):
     status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_ACTIVE)  # 状态（是否有效）
     banner_pic = StringField()  #
     banner_status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_INACTIVE)  # 状态（是否有效）
-
+    recommend_info = StringField()  # 星友推荐
     _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label', 'status', 'banner_status', 'db_mark',
                 'release_time']
 
@@ -1641,3 +1641,62 @@ class MyLike(BaseModel):
     status = IntegerField(choice=LIKE_STATUS_LIST, default=LIKE_STATUS_ACTIVE)  # 状态（是否有效）
 
     _indexes = ['member_cid', 'source_id', 's_type', 'status']
+
+
+class DouBanFilms(BaseModel):
+    """
+        豆瓣电影
+    """
+    name = StringField()  # 电影名称
+    dis_page_url = StringField()  # 网址链接
+    db_mark = FloatField()  # 豆瓣打分
+    pic_url = StringField()  # 图片url
+    fullname = StringField()  # 全名
+    al_name = ListField()  # 又名
+    area = ListField()  # 区域
+    language = ListField()  # 语言
+    type = ListField()  # 类型
+    year = StringField()  # 年份
+    screen_time = StringField()  # 上映时间&地点
+    release_time = DateTimeField()  # 发布时间
+    length = StringField()  # 片长
+    director = ListField()  # 导演
+    actor = ListField()  # 主演
+    label = ListField()  # 标签
+    summary = StringField()  # 剧情简介
+    basetitle = StringField()  # 豆瓣唯一编号
+    download = ListField()  # 下载bt
+    status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_ACTIVE)  # 状态（是否有效）
+    banner_pic = StringField()  #
+    banner_status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_INACTIVE)  # 状态（是否有效）
+
+    _indexes = ['name', 'director', 'actor', 'label', 'status', 'banner_status', 'db_mark',
+                'release_time', 'basetitle']
+
+
+class DouBanFilmPhotos(BaseModel):
+    """
+        豆瓣电影剧照
+    """
+    basetitle = StringField()  # 豆瓣唯一编号
+    douban_id = StringField()  # 豆瓣编号
+    category = StringField()  # 类型
+    sign = StringField()  # 签名
+    photos = ListField()  # 剧照
+    status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_ACTIVE)  # 状态（是否有效）
+
+    _indexes = ['basetitle', 'status']
+
+
+class DouBanFilmComments(BaseModel):
+    """
+        豆瓣电影星友推荐
+    """
+    basetitle = StringField()  # 豆瓣唯一编号
+    douban_id = StringField()  # 豆瓣编号
+    category = StringField()  # 类型
+    sign = StringField()  # 签名
+    comments = ListField()  # 评论
+    status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_ACTIVE)  # 状态（是否有效）
+
+    _indexes = ['basetitle', 'status']

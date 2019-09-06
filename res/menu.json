@@ -57,13 +57,13 @@
         {
           "code": "B0103",
           "title": "会员管理",
-          "path": "/backoffice/member/list/",
+          "path": "/backoffice/app_member/list/",
           "context": null,
           "weight": 13,
           "belong_path_list": [
-            "/backoffice/member/add/",
-            "/backoffice/member/edit/",
-            "/backoffice/member/detail/"
+            "/backoffice/app_member/add/",
+            "/backoffice/app_member/edit/",
+            "/backoffice/app_member/detail/"
           ],
           "permission_code_list": [
             "B01030000"

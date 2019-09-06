@@ -1,0 +1,118 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import SOURCE_TYPE_MEMBER_DICT %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_member_list') }}" class="pl10 ml10">会员列表</a>
+        <span> &gt; 会员详情</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="user_detail clear">
+    <div class="fl mr30">
+        <div class="user_image"><img src="{{ member.avatar }}"></div>
+        <div class="user_detail_name">{{ string_display(member.nick_name) }}</div>
+    </div>
+    <div class="user_detail_info">
+        <table class="table_detail">
+            <tr>
+                <th width="15%">会员ID</th>
+                <td width="35%" value="{{ member.union_id }}">{{ string_display(member.code) }}</td>
+                <th>平台注册时间</th>
+                <td>{{ datetime_format(member.register_datetime) }}</td>
+                {#                    <th width="15%">汽车品牌</th>#}
+                {#                    <td>{{ string_display(member.vehicle_code) }}</td>#}
+            </tr>
+            <tr>
+                <th>积分</th>
+                <td>{{ string_display(member.integral) }}</td>
+                <th>会员来源</th>
+                <td>{{ string_display(member.source) }}</td>
+                {#                    <th>购入年月</th>#}
+                {#                    <td>{{ datetime_format(member.purchase_datetime, dt_format='%Y-%m') }}</td>#}
+            </tr>
+            <tr>
+                <th>手机号码</th>
+                <td>{{ string_display(member.mobile) }}</td>
+
+            </tr>
+            <tr>
+                <th>所在城市</th>
+                {% if member.needless %}
+                {% set city_display = '%s%s' % (string_display(member.needless.get('province')), string_display(member.needless.get('city'))) %}
+                {% else %}
+                {% set city_display = '-' %}
+                {% end %}
+                <td>{{ city_display }}</td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="data_list pr">
+    <div class="clear">
+        <div class="fl">
+            <h3 class="list_title pr">统计信息<i class="statistics_info_i"></i></h3>
+        </div>
+    </div>
+    <div class="box_statistics">
+        <table class="table_statistics">
+            <tr>
+                <th width="20%">
+                    <div>登录次数</div>
+                </th>
+                <th width="20%">
+                    <div>最近登录时间</div>
+                </th>
+                <th width="20%">
+                    <div>答问卷次数</div>
+                </th>
+                <th width="20%">
+                    <div>问卷回收率</div>
+                </th>
+                <th width="20%">
+                    <div>小程序分享次数</div>
+                </th>
+            </tr>
+            <tr>
+                <td>{{ string_display(member.login_times) }}</td>
+                <td>
+                    <div>{{ datetime_format(member.login_datetime, '%Y-%m-%d') }}</div>
+                    <div>{{ datetime_format(member.login_datetime, '%H:%M:%S') }}</div>
+                </td>
+                <td>{{ string_display(member.survey_times) }}</td>
+                <td>100%</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <th>
+                    <div>段位</div>
+                </th>
+                <th>
+                    <div>排位次数</div>
+                </th>
+                <th>
+                    <div>胜率</div>
+                </th>
+                <th>
+                    <div>胜场</div>
+                </th>
+                <th>
+                    <div>最高连胜次数</div>
+                </th>
+            </tr>
+            <tr>
+                <td>{{ string_display(member.dan_grade) }}</td>
+                <td>{{ string_display(member.fight_times) }}</td>
+                <td>{{ string_display(member.win_percent) }}</td>
+                <td>{{ string_display(member.win_times) }}</td>
+                <td>{{ string_display(member.highest_win_times) }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% end %}

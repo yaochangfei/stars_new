@@ -60,7 +60,8 @@ class TvsLatestGetViewHandler(WechatAppletHandler):
                     'release_time': tv.release_time.strftime('%Y-%m-%d'),
                     'label': api_utils.get_show_source_label(tv),
                     'recommend_info': '这部神剧值得一看。',
-                    'set_num':tv.set_num if tv.set_num else ''
+                    'set_num': tv.set_num if tv.set_num else '',
+                    's_type': 'tv'
                 })
             r_dict['tvs'] = new_tvs
             r_dict['count'] = count
@@ -109,7 +110,7 @@ class TvsScoreGetViewHandler(WechatAppletHandler):
             sort = SortStage([('db_mark', DESC)])
             limit = LimitStage(int(size))
             count = await Tvs.count({'db_mark': {'$ne': ''},
-                                       'release_time': {'$ne': ''}})
+                                     'release_time': {'$ne': ''}})
             tvs = await Tvs.aggregate([match, sort, skip, limit]).to_list(None)
             new_tvs = []
             for tv in tvs:
@@ -123,7 +124,8 @@ class TvsScoreGetViewHandler(WechatAppletHandler):
                     'release_time': tv.release_time.strftime('%Y-%m-%d'),
                     'label': api_utils.get_show_source_label(tv),
                     'recommend_info': '这部神剧值得一看。',
-                    'set_num': tv.set_num if tv.set_num else ''
+                    'set_num': tv.set_num if tv.set_num else '',
+                    's_type': 'tv'
                 })
             r_dict['tvs'] = new_tvs
             r_dict['count'] = count
@@ -148,6 +150,7 @@ class TvsDetailGetViewHandler(WechatAppletHandler):
                 tv = await Tvs.get_by_id(oid=tv_id)
                 if tv:
                     r_dict['tv'] = tv
+                    r_dict['s_type'] = 'tv'
                     r_dict['code'] = 1000
                 else:
                     r_dict['code'] = 1002
@@ -222,13 +225,14 @@ class TvsPersonalRecommendGetViewHandler(WechatAppletHandler):
                     'db_mark': tv.db_mark,
                     'actor': tv.actor,
                     # 'label': label,
-                    'label':api_utils.get_show_source_label(tv),
+                    'label': api_utils.get_show_source_label(tv),
                     'source_nums': len(tv.download),
                     'release_time': tv.release_time.strftime('%Y-%m-%d'),
                     # 'articulation': articulation,
-                    'articulation':api_utils.get_show_source_articulation(tv),
+                    'articulation': api_utils.get_show_source_articulation(tv),
                     'recommend_info': '这部神剧值得一看。',
-                    'set_num': tv.set_num if tv.set_num else ''
+                    'set_num': tv.set_num if tv.set_num else '',
+                    's_type': 'tv'
                 })
             r_dict['tvs'] = new_tvs
             if id_list:

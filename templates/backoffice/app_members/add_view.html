@@ -1,0 +1,232 @@
+{% extends '../base.html' %}
+{% autoescape None %}
+{% block content %}
+{% from db import STATUS_USER_ACTIVE, STATUS_USER_INACTIVE %}
+<div class="main_header pt10 pb10 clear">
+    <div class="fl bread_nav">
+        <a href="{{ reverse_url('backoffice_member_list') }}" class="pl10 ml10">会员列表</a>
+        <span> &gt; 新增会员</span>
+    </div>
+    <div class="fr clear">
+        <a href="javascript:void(0);" onclick="self.location=document.referrer;" class="fl back_btn pl20 mr20"><i
+                class="back_i"></i>返回</a>
+    </div>
+</div>
+<div class="edit_info">
+    <div>
+        <h3 class="list_title pr add_manage">新增会员<i class="add_i_txt"></i></h3>
+    </div>
+    <div class="edit_info_detail">
+        <table class="table_form">
+            <tr>
+                <th width="40%"><span class="necessary">*</span>手机号</th>
+                <td><input class="input_text" type="text" name="mobile" id="mobile"></td>
+            </tr>
+            <tr>
+                <th><span class="necessary">*</span>邮箱</th>
+                <td><input class="input_text" type="text" name="email" id="email"></td>
+            </tr>
+            <tr>
+                <th><span class="necessary">*</span>姓名</th>
+                <td><input class="input_text" type="text" name="name" id="name"></td>
+            </tr>
+            <tr>
+                <th>性别</th>
+                <td class="sex_type">
+                    <a href="javascript:void (0)" class="btn btn_i pr checked push_now_btn push_sex"
+                       value="1">男<i class="radio_i"></i></a>
+                    <a href="javascript:void (0)" class="btn btn_i pr push_delay_btn push_sex"
+                       value="2">女<i class="radio_i"></i></a>
+                </td>
+            </tr>
+            <tr>
+                <th>生日</th>
+                <td>
+                        <span class="fl">
+                            <input type="text" class="input_text birthday_txt time_i" id='birthday_txt'
+                                   placeholder="请选择时间">
+                        </span>
+                </td>
+            </tr>
+            <tr>
+                <th>所在城市</th>
+                <td>
+                    <select id="province_select" title="省份" class="mr10">
+                        <option value="">--请选择--</option>
+                        {% for province in province_list %}
+                        <option value="{{ string_display(province.code) }}">{{ string_display(province.title) }}</option>
+                        {% end %}
+                    </select>
+                    <select id="city_select" title="城市">
+                        <option value="">--请选择--</option>
+                        {% for city in city_list %}
+                        <option value="{{ string_display(city.code) }}">
+                            {{ string_display(city.title) }}
+                        </option>
+                        {% end %}
+                    </select>
+                </td>
+            </tr>
+            {#                <tr>#}
+            {#                    <th>车辆信息</th>#}
+            {#                    <td>#}
+            {#                        <select class="mr10" id="vehicle_select" title="车辆信息">#}
+            {#                            <option value="">--请选择--</option>#}
+            {#                            {% for vehicle in vehicle_list %}#}
+            {#                            {% if vehicle.needless %}#}
+            {#                            {% set vehicle_display = '%s (%s)' %(vehicle.title, vehicle.code) %}#}
+            {#                            <option value="{{ vehicle.code }}">#}
+            {#                                {{ <vehicle></vehicle>_display }}#}
+            {#                            </option>#}
+            {#                            {% end %}#}
+            {#                            {% end %}#}
+            {#                        </select>#}
+            {#                    </td>#}
+            {#                </tr>#}
+            {#                <tr>#}
+            {#                    <th>车辆购入时间</th>#}
+            {#                    <td>#}
+            {#                        <span>#}
+            {#                            <input id="purchase_datetime" type="text" class="input_text purchase_datetime time_i"#}
+            {#                                   value="" placeholder="选择购车时间">#}
+            {#                        </span>#}
+            {#                    </td>#}
+            {#                </tr>#}
+            <tr>
+                <th class="vt pt10">备注</th>
+                <td>
+                    <textarea class="textarea" id="content" title="备注"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>账户启用状态</th>
+                <td>
+                    <label class="table_switch">
+                        <input id="status" type="checkbox" checked="checked" name="status" id="status">
+                        <i></i>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                        <span class="cl_danger">
+
+                        </span>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><a href="#" class="btn btn_primary mt15 btn_lg submit_btn">提交</a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+    $(function () {
+        // 生日
+        laydate.render({
+            elem: '.birthday_txt', //指定元素
+            trigger: 'click', //采用click弹出
+            format: 'yyyy-MM-dd',
+            type: 'date'
+        });
+
+        // 购车日期
+        laydate.render({
+            elem: '.purchase_datetime',
+            trigger: 'click',
+            type: 'month'
+        });
+
+        $(".sex_type a").on("click", function () {
+            if ($(this).hasClass("checked")) {
+                $(this).siblings().removeClass("checked");
+            }
+            else {
+                $(this).siblings().removeClass("checked");
+                $(this).addClass("checked");
+            }
+        });
+
+        // 提交表单
+        $('.submit_btn').on('click', function () {
+            var sex = $('.push_sex.checked').eq(0).attr('value');
+            var name = $('#name').val();
+            var mobile = $('#mobile').val();
+            var email = $('#email').val();
+            var birthday = $('#birthday_txt').val();
+            var province_code = $('#province_select').val();
+            var city_code = $('#city_select').val();
+            var vehicle_code = $('#vehicle_select').val();
+            var purchase_datetime = $('#purchase_datetime').val();
+            var content = $('#content').val();
+            var status = $('#status').prop('checked') ? {{ STATUS_USER_ACTIVE }} :{{ STATUS_USER_INACTIVE }};
+
+            if (!(name && mobile && email)) {
+                $('.cl_danger').html('请填写必填信息！');
+                return false;
+            }
+
+            var url = "{{ reverse_url('backoffice_member_add') }}";
+            var data = {
+                'sex': sex,
+                'name': name,
+                'mobile': mobile,
+                'email': email,
+                'birthday': birthday,
+                'province_code': province_code,
+                'city_code': city_code,
+                'vehicle_code': vehicle_code,
+                'purchase_datetime': purchase_datetime,
+                'content': content,
+                'status': status
+            };
+            display_loading();
+            ajaxPost(url, data, function (ret) {
+                if (ret.code === -4) {
+                    $('.cl_danger').html('邮箱格式错误！');
+                } else if (ret.code === -3) {
+                    $('.cl_danger').html('邮箱已存在！');
+                } else if (ret.code === -2) {
+                    $('.cl_danger').html('手机号已存在！');
+                } else if (ret.code === -1) {
+                    $('.cl_danger').html('填写完整信息！');
+                } else if (ret.code === 1) {
+                    tip_msg("添加用户成功！", 2000, function () {
+                        window.location.href = "{{ reverse_url('backoffice_member_list') }}";
+                    });
+                } else {
+                    $('.cl_danger').html('系统错误！');
+                }
+            });
+            remove_loading();
+        });
+
+        $('#province_select').on('change', function () {
+            var province_code = $('#province_select').val();
+            $('#city_select').empty();
+            var obj = document.getElementById('city_select');
+            obj.options.add(new Option('请选择', ''));
+
+            if (province_code) {
+
+                var url = "{{ reverse_url('common_admin_division') }}";
+                var data = {'post_code': province_code};
+                display_loading();
+                ajaxPost(url, data, function (ret) {
+                    if (ret.code === 1) {
+                        for (var i = 0; i < ret.division_list.length; i++) {
+                            obj.options.add(new Option(ret.division_list[i]['title'], ret.division_list[i]["code"])); //这个兼容IE与firefox
+                        }
+                    } else {
+                        tip_msg("选择城市失败！", 2000);
+                    }
+                });
+                remove_loading();
+            }
+
+        });
+    })
+</script>
+{% end %}
