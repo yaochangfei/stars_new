@@ -146,16 +146,32 @@ class TvsDetailGetViewHandler(WechatAppletHandler):
         r_dict = {'code': 0}
         try:
             tv_id = self.get_i_argument('tv_id', None)
+            member_cid = self.get_i_argument('member_cid', None)
+            if not member_cid:
+                r_dict['code'] = 1001  # member_cid为空
+                return r_dict
             if tv_id:
                 tv = await Tvs.get_by_id(oid=tv_id)
                 if tv:
+                    my_collect = await MyCollection.find_one(
+                        {'status': COLLECTION_STATUS_ACTIVE, 'member_cid': member_cid, 'source_id': tv_id})
+                    my_like = await MyLike.find_one(
+                        {'status': LIKE_STATUS_ACTIVE, 'member_cid': member_cid, 'source_id': tv_id})
+                    if my_like:
+                        r_dict['my_like'] = 1
+                    else:
+                        r_dict['my_like'] = 0
+                    if my_collect:
+                        r_dict['my_collect'] = 1
+                    else:
+                        r_dict['my_collect'] = 0
                     r_dict['tv'] = tv
                     r_dict['s_type'] = 'tv'
                     r_dict['code'] = 1000
                 else:
-                    r_dict['code'] = 1002
+                    r_dict['code'] = 1003
             else:
-                r_dict['code'] = 1001
+                r_dict['code'] = 1002
         except Exception:
             logger.error(traceback.format_exc())
         return r_dict

@@ -285,16 +285,32 @@ class FilmsDetailGetViewHandler(WechatAppletHandler):
         r_dict = {'code': 0}
         try:
             film_id = self.get_i_argument('film_id', None)
+            member_cid = self.get_i_argument('member_cid', None)
+            if not member_cid:
+                r_dict['code'] = 1001  # member_cid为空
+                return r_dict
             if film_id:
                 film = await Films.get_by_id(oid=film_id)
                 if film:
+                    my_collect = await MyCollection.find_one(
+                        {'status': COLLECTION_STATUS_ACTIVE, 'member_cid': member_cid, 'source_id': film_id})
+                    my_like = await MyLike.find_one(
+                        {'status': LIKE_STATUS_ACTIVE, 'member_cid': member_cid, 'source_id': film_id})
+                    if my_like:
+                        r_dict['my_like']=1
+                    else:
+                        r_dict['my_like'] = 0
+                    if my_collect:
+                        r_dict['my_collect']=1
+                    else:
+                        r_dict['my_collect'] = 0
                     r_dict['film'] = film
                     r_dict['s_type'] = 'film'
                     r_dict['code'] = 1000
                 else:
-                    r_dict['code'] = 1002
+                    r_dict['code'] = 1003
             else:
-                r_dict['code'] = 1001
+                r_dict['code'] = 1002
         except Exception:
             logger.error(traceback.format_exc())
         return r_dict
@@ -371,16 +387,22 @@ class BannersGetViewHandler(WechatAppletHandler):
     async def post(self):
         r_dict = {'code': 0}
         try:
-            films = await Films.find(dict(status=1, banner_status=1)).to_list(None)
             banners = []
+            films = await Films.find(dict(status=1, banner_status=1)).to_list(None)
             for film in films:
                 banners.append({
                     'id': str(film.oid),
                     'banner_pic': film.banner_pic,
                     's_type': 'film'
                 })
-
-            r_dict['banners'] = banners
+            tvs = await Tvs.find(dict(status=1, banner_status=1)).to_list(None)
+            for tv in tvs:
+                banners.append({
+                    'id': str(tv.oid),
+                    'banner_pic': tv.banner_pic,
+                    's_type': 'tv'
+                })
+            r_dict['banners'] = banners[:5]
             r_dict['code'] = 1000
         except Exception:
             logger.error(traceback.format_exc())
