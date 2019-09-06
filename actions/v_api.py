@@ -648,7 +648,7 @@ class SourceCollectViewHandler(WechatAppletHandler):
                     if not member.is_register:
                         r_dict['code'] = 1003  # 用户未登陆不能收藏资源
                         return r_dict
-                    my_collection = await MyCollection.find_one(member_cid=member_cid, source_id=source_id)
+                    my_collection = await MyCollection.find_one(dict(member_cid=member_cid, source_id=source_id))
                     if my_collection:
                         if my_collection.status == COLLECTION_STATUS_ACTIVE:
                             my_collection.status == COLLECTION_STATUS_INACTIVE
@@ -690,7 +690,7 @@ class SourceLikeViewHandler(WechatAppletHandler):
                     if not member.is_register:
                         r_dict['code'] = 1003  # 用户未登陆不能点赞
                         return r_dict
-                    my_like = await MyLike.find_one(member_cid=member_cid, source_id=source_id)
+                    my_like = await MyLike.find_one(dict(member_cid=member_cid, source_id=source_id))
                     if my_like:
                         if my_like.status == LIKE_STATUS_ACTIVE:
                             my_like.status == LIKE_STATUS_INACTIVE
