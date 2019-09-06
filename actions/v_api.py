@@ -297,11 +297,11 @@ class FilmsDetailGetViewHandler(WechatAppletHandler):
                     my_like = await MyLike.find_one(
                         {'status': LIKE_STATUS_ACTIVE, 'member_cid': member_cid, 'source_id': film_id})
                     if my_like:
-                        r_dict['my_like']=1
+                        r_dict['my_like'] = 1
                     else:
                         r_dict['my_like'] = 0
                     if my_collect:
-                        r_dict['my_collect']=1
+                        r_dict['my_collect'] = 1
                     else:
                         r_dict['my_collect'] = 0
                     r_dict['film'] = film
@@ -655,8 +655,8 @@ class SourceCollectViewHandler(WechatAppletHandler):
                         else:
                             my_collection.status == COLLECTION_STATUS_ACTIVE
                     else:
-                        my_collection = MyLike(member_cid=member_cid, source_id=source_id,
-                                               status=COLLECTION_STATUS_ACTIVE)
+                        my_collection = MyCollection(member_cid=member_cid, source_id=source_id,
+                                                     status=COLLECTION_STATUS_ACTIVE)
                         my_collection.s_type = s_type
                     await my_collection.save()
                     r_dict['status'] = my_collection.status  # 1代表收藏 0代表取消收藏
