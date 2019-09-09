@@ -718,9 +718,13 @@ class MyCollectListViewHandler(WechatAppletHandler):
                     show_my_list = []
                     for my_collect in my_collect_list:
                         if my_collect.s_type == 'film':
-                            film = await Films.find_by_id(my_collect.source_id)
+                            film = await Films.find_one({'_id': ObjectId(my_collect.source_id)})
                             show_my_list.append(
                                 {'id': str(film.id), 'name': film.name, 'pic_url': film.pic_url, 's_type': 'film'})
+                        elif my_collect.s_type == 'tv':
+                            tv = await Tvs.find_one({'_id': ObjectId(my_collect.source_id)})
+                            show_my_list.append(
+                                {'id': str(tv.id), 'name': tv.name, 'pic_url': tv.pic_url, 's_type': 'tv'})
                     r_dict['my_collect_list'] = show_my_list
                     r_dict['code'] = 1000
             else:
