@@ -651,9 +651,9 @@ class SourceCollectViewHandler(WechatAppletHandler):
                     my_collection = await MyCollection.find_one(dict(member_cid=member_cid, source_id=source_id))
                     if my_collection:
                         if my_collection.status == COLLECTION_STATUS_ACTIVE:
-                            my_collection.status == COLLECTION_STATUS_INACTIVE
+                            my_collection.status = COLLECTION_STATUS_INACTIVE
                         else:
-                            my_collection.status == COLLECTION_STATUS_ACTIVE
+                            my_collection.status = COLLECTION_STATUS_ACTIVE
                     else:
                         my_collection = MyCollection(member_cid=member_cid, source_id=source_id,
                                                      status=COLLECTION_STATUS_ACTIVE)
@@ -693,9 +693,9 @@ class SourceLikeViewHandler(WechatAppletHandler):
                     my_like = await MyLike.find_one(dict(member_cid=member_cid, source_id=source_id))
                     if my_like:
                         if my_like.status == LIKE_STATUS_ACTIVE:
-                            my_like.status == LIKE_STATUS_INACTIVE
+                            my_like.status = LIKE_STATUS_INACTIVE
                         else:
-                            my_like.status == LIKE_STATUS_ACTIVE
+                            my_like.status = LIKE_STATUS_ACTIVE
                     else:
                         my_like = MyLike(member_cid=member_cid, source_id=source_id,
                                          status=LIKE_STATUS_ACTIVE)
