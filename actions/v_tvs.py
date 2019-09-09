@@ -4,23 +4,15 @@ import json
 import traceback
 from tornado.web import url
 from caches.redis_utils import RedisCache
-from commons.common_utils import get_random_str, md5
-from db import STATUS_USER_ACTIVE, LIKE_STATUS_ACTIVE, LIKE_STATUS_INACTIVE, COLLECTION_STATUS_ACTIVE, \
-    COLLECTION_STATUS_INACTIVE
-from db.models import User, AppMember, Tvs, Films, MyCollection, MyLike, HotSearch
+from db import LIKE_STATUS_ACTIVE, COLLECTION_STATUS_ACTIVE
+from db.models import Tvs, MyCollection, MyLike
 from logger import log_utils
-from web import decorators, NonXsrfBaseHandler, WechatAppletHandler
-from bson import ObjectId
-from commons.common_utils import get_increase_code
-from enums import KEY_INCREASE_MEMBER_CODE
-from actions.applet import find_app_member_by_cid
+from web import decorators, WechatAppletHandler
 from motorengine import ASC, DESC
 from motorengine.stages import MatchStage, LookupStage, SortStage, SkipStage, SampleStage
 from motorengine.stages.limit_stage import LimitStage
 import datetime, random
 from commons import api_utils
-import re
-import time
 
 logger = log_utils.get_logging()
 
@@ -210,41 +202,15 @@ class TvsPersonalRecommendGetViewHandler(WechatAppletHandler):
             id_list = []
             for tv in tvs:
                 id_list.append(str(tv.id))
-
-                # if len(tv.label) > 0:
-                #     label = tv.label[0:3]
-                # else:
-                #     label = []
-                # articulation = ''
-                # if len(tv.download) > 0:
-                #     d_name = tv.download[0].get('downloadname', '')
-                #     if d_name:
-                #         d_name = d_name.upper()
-                #         if '720' in d_name:
-                #             articulation = '720P'
-                #         elif '1080' in d_name:
-                #             articulation = '1080P'
-                #         elif '2K' in d_name:
-                #             articulation = '2K'
-                #         elif '4K' in d_name:
-                #             articulation = '4K'
-                #         elif 'BD' in d_name:
-                #             articulation = 'BD'
-                #         elif 'HD' in d_name:
-                #             articulation = 'HD'
-                #         elif 'TS' in d_name:
-                #             articulation = 'TS'
                 new_tvs.append({
                     'id': str(tv.id),
                     'name': tv.name,
-                    'pic_url': tv.pic_url,
+                    'pic_url': tv.stage_photo if tv.stage_photo else tv.pic_url,
                     'db_mark': tv.db_mark,
                     'actor': tv.actor,
-                    # 'label': label,
                     'label': api_utils.get_show_source_label(tv),
                     'source_nums': len(tv.download),
                     'release_time': tv.release_time.strftime('%Y-%m-%d'),
-                    # 'articulation': articulation,
                     'articulation': api_utils.get_show_source_articulation(tv),
                     'recommend_info': '这部神剧值得一看。',
                     'set_num': tv.set_num if tv.set_num else '',

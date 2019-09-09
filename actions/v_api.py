@@ -356,7 +356,7 @@ class SourceSearchGetViewHandler(WechatAppletHandler):
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
-                    'pic_url': film.pic_url,
+                    'pic_url': film.stage_photo if film.stage_photo else film.pic_url,
                     's_type': 'film'
                 })
             r_dict['films'] = new_films
@@ -368,7 +368,7 @@ class SourceSearchGetViewHandler(WechatAppletHandler):
                 new_tvs.append({
                     'id': str(tv.id),
                     'name': tv.name,
-                    'pic_url': tv.pic_url,
+                    'pic_url': tv.stage_photo if tv.stage_photo else tv.pic_url,
                     's_type': 'tv'
                 })
             r_dict['tvs'] = new_tvs
@@ -442,43 +442,16 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
             id_list = []
             for film in films:
                 id_list.append(str(film.id))
-
-                # if len(film.label) > 0:
-                #     label = film.label[0:3]
-                # else:
-                #     label = []
-                # articulation = ''
-                # if len(film.download) > 0:
-                #     d_name = film.download[0].get('downloadname', '')
-                #     if d_name:
-                #         d_name = d_name.upper()
-                #         if '720' in d_name:
-                #             articulation = '720P'
-                #         elif '1080' in d_name:
-                #             articulation = '1080P'
-                #         elif '2K' in d_name:
-                #             articulation = '2K'
-                #         elif '4K' in d_name:
-                #             articulation = '4K'
-                #         elif 'BD' in d_name:
-                #             articulation = 'BD'
-                #         elif 'HD' in d_name:
-                #             articulation = 'HD'
-                #         elif 'TS' in d_name:
-                #             articulation = 'TS'
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
-                    'pic_url': film.pic_url,
+                    'pic_url': film.stage_photo if film.stage_photo else film.pic_url,
                     'db_mark': film.db_mark,
                     'actor': film.actor,
-                    # 'label': label,
                     'label': api_utils.get_show_source_label(film),
                     'source_nums': len(film.download),
                     'release_time': film.release_time.strftime('%Y-%m-%d'),
-                    # 'articulation': articulation,
                     'articulation': api_utils.get_show_source_articulation(film),
-                    # 'recommend_info': '这部神片值得一看。',
                     'recommend_info': film.recommend_info if film.recommend_info else '这部神片值得一看。',
                     's_type': 'film'
                 })
@@ -802,7 +775,7 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
                     new_films.append({
                         'id': str(film.id),
                         'name': film.name,
-                        'pic_url': film.pic_url,
+                        'pic_url': film.stage_photo if film.stage_photo else film.pic_url,
                         's_type': 'film',
                         'label': api_utils.get_show_source_label(film),
                         'articulation': api_utils.get_show_source_articulation(film),
@@ -810,7 +783,6 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
                         'actor': film.actor,
                         'source_nums': len(film.download),
                         'release_time': film.release_time.strftime('%Y-%m-%d'),
-                        # 'recommend_info': '这部神片值得一看。',
                         'recommend_info': film.recommend_info if film.recommend_info else '这部神片值得一看。'
                     })
                 r_dict['sources'] = new_films
@@ -821,7 +793,7 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
                     new_tvs.append({
                         'id': str(tv.id),
                         'name': tv.name,
-                        'pic_url': tv.pic_url,
+                        'pic_url': tv.stage_photo if tv.stage_photo else tv.pic_url,
                         's_type': 'tv',
                         'label': api_utils.get_show_source_label(tv),
                         'articulation': api_utils.get_show_source_articulation(tv),
@@ -887,7 +859,6 @@ URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
     url(r'/api/member/auth/', MemberAuthViewHandler, name='api_member_auth'),
     url(r'/api/member/info/', MemberInfoViewHandler, name='api_member_info'),
-    # url(r'/api/tvs/latest/', TvsLatestGetViewHandler, name='api_tvs_latest'),
     url(r'/api/films/latest/', FilmsLatestGetViewHandler, name='api_films_latest'),
     url(r'/api/films/score/', FilmsScoreGetViewHandler, name='api_films_score'),
     url(r'/api/films/detail/', FilmsDetailGetViewHandler, name='api_films_detail'),
@@ -901,7 +872,6 @@ URL_MAPPING_LIST = [
     url(r'/api/source/collect/', SourceCollectViewHandler, name='api_source_collect'),
     url(r'/api/source/like/', SourceLikeViewHandler, name='api_source_like'),
     url(r'/api/my/collect/list/', MyCollectListViewHandler, name='api_my_collect_list'),
-
     url(r'/api/source/more_search/', SourceMoreSearchGetViewHandler, name='api_source_more_search'),
     url(r'/api/source/search_related/', SourceSearchRelatedGetViewHandler, name='api_source_search_related'),
 ]
