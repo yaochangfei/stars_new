@@ -1576,7 +1576,9 @@ class Tvs(BaseModel):
     banner_status = IntegerField(choice=TV_STATUS_LIST, default=TV_STATUS_INACTIVE)  # 状态（是否有效）
     recommend_info = StringField()  # 星友推荐
     stage_photo = ListField()  # 剧照
-    _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label']
+
+    _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label', 'status', 'banner_status', 'db_mark',
+                'release_time']
 
 
 class Films(BaseModel):
@@ -1607,6 +1609,7 @@ class Films(BaseModel):
     banner_status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_INACTIVE)  # 状态（是否有效）
     recommend_info = StringField()  # 星友推荐
     stage_photo = ListField()  # 剧照
+
     _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label', 'status', 'banner_status', 'db_mark',
                 'release_time']
 
@@ -1688,7 +1691,7 @@ class DouBanFilmPhotos(BaseModel):
     photos = ListField()  # 剧照
     status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_ACTIVE)  # 状态（是否有效）
 
-    _indexes = ['basetitle', 'status','douban_id']
+    _indexes = ['basetitle', 'status', 'douban_id']
 
 
 class DouBanFilmComments(BaseModel):
@@ -1702,4 +1705,4 @@ class DouBanFilmComments(BaseModel):
     comments = ListField()  # 评论
     status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_ACTIVE)  # 状态（是否有效）
 
-    _indexes = ['basetitle', 'status','douban_id']
+    _indexes = ['basetitle', 'status', 'douban_id']
