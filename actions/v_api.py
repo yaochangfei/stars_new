@@ -20,6 +20,7 @@ from motorengine.stages.limit_stage import LimitStage
 import datetime, random
 from commons import msg_utils, api_utils
 import re
+from pymongo import UpdateOne
 import time
 
 logger = log_utils.get_logging()
@@ -304,7 +305,7 @@ class FilmsDetailGetViewHandler(WechatAppletHandler):
                         r_dict['my_collect'] = 1
                     else:
                         r_dict['my_collect'] = 0
-                    film.stage_photo=[k['img_url'] for k in film.stage_photo] if film.stage_photo else []
+                    film.stage_photo = [k['img_url'] for k in film.stage_photo] if film.stage_photo else []
                     r_dict['film'] = film
                     r_dict['s_type'] = 'film'
                     r_dict['code'] = 1000
@@ -724,11 +725,28 @@ class MyCollectListViewHandler(WechatAppletHandler):
                         if my_collect.s_type == 'film':
                             film = await Films.find_one({'_id': ObjectId(my_collect.source_id)})
                             show_my_list.append(
-                                {'id': str(film.id), 'name': film.name, 'pic_url': film.pic_url, 's_type': 'film'})
+                                {'id': str(film.id), 'name': film.name,
+                                 'pic_url': film.pic_url, 's_type': 'film',
+                                 'db_mark': film.db_mark,
+                                 'actor': film.actor,
+                                 'source_nums': len(film.download),
+                                 'release_time': film.release_time.strftime('%Y-%m-%d'),
+                                 'recommend_info': film.recommend_info if film.recommend_info else '这部神片值得一看。',
+                                 'label': api_utils.get_show_source_label(film)
+                                 })
                         elif my_collect.s_type == 'tv':
                             tv = await Tvs.find_one({'_id': ObjectId(my_collect.source_id)})
                             show_my_list.append(
-                                {'id': str(tv.id), 'name': tv.name, 'pic_url': tv.pic_url, 's_type': 'tv'})
+                                {'id': str(tv.id), 'name': tv.name,
+                                 'pic_url': tv.pic_url, 's_type': 'tv',
+                                 'db_mark': tv.db_mark,
+                                 'actor': tv.actor,
+                                 'source_nums': len(tv.download),
+                                 'release_time': tv.release_time.strftime('%Y-%m-%d'),
+                                 'recommend_info': tv.recommend_info if tv.recommend_info else '这部神剧值得一看。',
+                                 'label': api_utils.get_show_source_label(tv),
+                                 'set_num': tv.set_num if tv.set_num else ''
+                                 })
                     r_dict['my_collect_list'] = show_my_list
                     r_dict['code'] = 1000
             else:
@@ -865,6 +883,47 @@ class SourceSearchRelatedGetViewHandler(WechatAppletHandler):
         return r_dict
 
 
+class MyCollectDeleteViewHandler(WechatAppletHandler):
+    """
+    删除收藏（1个或多个）
+    """
+
+    @decorators.render_json
+    @decorators.wechat_applet_authenticated
+    async def post(self):
+        r_dict = {'code': 0}
+        try:
+            member_cid = self.get_i_argument('member_cid', None)
+            source_ids = self.get_i_argument('source_ids', None)
+            if member_cid and source_ids:
+                member = await find_app_member_by_cid(member_cid)
+                if not member:
+                    r_dict['code'] = 1002  # 没有匹配到用户
+                else:
+                    if not member.is_register:
+                        r_dict['code'] = 1003  # 用户未登陆不展示收藏列表
+                        return r_dict
+                    source_ids = source_ids.split(',')
+                    update_requests = []
+                    for source_id in source_ids:
+                        update_requests.append(UpdateOne({'member_cid': member_cid, 'source_id': source_id},
+                                                         {'$set': {'status': COLLECTION_STATUS_INACTIVE,
+                                                                   'updated_dt': datetime.datetime.now(),
+                                                                   'updated_id': self.current_user.oid}}))
+                    if update_requests:
+                        await MyCollection.update_many(update_requests)
+                        r_dict['code'] = 1000
+            else:
+                if not member_cid:
+                    r_dict['code'] = 1001  # member_cid为空
+                if not source_ids:
+                    r_dict['code'] = 1004  # source_ids为空
+        except Exception:
+            logger.error(traceback.format_exc())
+        print(r_dict)
+        return r_dict
+
+
 URL_MAPPING_LIST = [
     url(r'/api/get/token/', AccessTokenGetViewHandler, name='api_get_token'),
     url(r'/api/member/auth/', MemberAuthViewHandler, name='api_member_auth'),
@@ -884,4 +943,5 @@ URL_MAPPING_LIST = [
     url(r'/api/my/collect/list/', MyCollectListViewHandler, name='api_my_collect_list'),
     url(r'/api/source/more_search/', SourceMoreSearchGetViewHandler, name='api_source_more_search'),
     url(r'/api/source/search_related/', SourceSearchRelatedGetViewHandler, name='api_source_search_related'),
+    url(r'/api/my/collect/delete/', MyCollectDeleteViewHandler, name='api_my_collect_delete'),
 ]
