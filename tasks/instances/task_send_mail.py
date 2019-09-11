@@ -6,7 +6,7 @@ from logger import log_utils
 from services.email_service import send_instant_mail
 from tasks import app
 
-logger = log_utils.get_logging('tasks_send_mail', 'tasks_send_mail.log')
+logger = log_utils.get_logging('tasks_send_mail')
 
 
 @app.task(bind=True)

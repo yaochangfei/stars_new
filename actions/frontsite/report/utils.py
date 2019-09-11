@@ -10,7 +10,7 @@ from db.models import Race, AdministrativeDivision, Member, \
 from motorengine import DESC, log_utils
 from motorengine.stages import MatchStage, GroupStage, ProjectStage, SortStage, LookupStage
 
-logger_cache = log_utils.get_logging('race_cache', 'race_cache.log')
+logger_cache = log_utils.get_logging('race_cache')
 
 
 def get_city_and_district(race_cid):

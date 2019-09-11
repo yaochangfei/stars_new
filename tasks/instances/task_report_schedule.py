@@ -12,7 +12,7 @@ from tasks.instances.task_report_learning_situation import start_statistics_lear
 from tasks.instances.task_report_subject_parameter import start_statistics_subject_quantity
 from tasks.instances.task_report_subject_parameter_cross import start_statistics_subject_parameter_cross
 from tasks.instances.task_report_subject_parameter_radar import start_statistics_subject_parameter_radar
-logger = log_utils.get_logging('task_report_schedule', 'task_report_schedule.log')
+logger = log_utils.get_logging('task_report_schedule')
 
 app.register_schedule('task_report_schedule',
                       'tasks.instances.task_report_schedule.schedule_report_statistics',

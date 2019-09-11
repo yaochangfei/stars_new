@@ -18,7 +18,7 @@ from web import decorators, BaseHandler, datetime2str
 
 logger = log_utils.get_logging()
 
-logger_cache = log_utils.get_logging('race_cache', 'race_cache.log')
+logger_cache = log_utils.get_logging('race_cache')
 
 
 class RaceReportMapHandler(BaseHandler):

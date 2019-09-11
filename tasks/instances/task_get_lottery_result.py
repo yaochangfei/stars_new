@@ -13,7 +13,7 @@ from logger import log_utils
 from settings import REDPACKET_PLATFORM_QUERY_RESULT_URL, REDPACKET_PLATFORM_HOST
 from tasks import app
 
-logger = log_utils.get_logging('lottery_result', 'lottery_result.log')
+logger = log_utils.get_logging('lottery_result')
 
 
 @app.task(bind=True, queue='lottery_result')

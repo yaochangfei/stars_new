@@ -15,7 +15,7 @@ from logger import log_utils
 from tasks import app
 from tasks.config import task_time_limit
 
-logger = log_utils.get_logging('task_docking_statistics', 'task_docking_statistics.log')
+logger = log_utils.get_logging('task_docking_statistics')
 
 
 async def start_docking_statistics(history_model, member: Member = None, docking_code=None):

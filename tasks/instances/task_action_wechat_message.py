@@ -13,7 +13,7 @@ from logger import log_utils
 from tasks import app
 from wechat.wechat_utils import push_active_template_message
 
-logger = log_utils.get_logging('task_action_wechat_message', 'task_action_wechat_message.log')
+logger = log_utils.get_logging('task_action_wechat_message')
 
 MSG_TEMPLATE_ID = '_ASB1CRcfTM0Mi8v81LQAUqirEiW2dviSs6kYmgcTrI'
 

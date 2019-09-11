@@ -11,7 +11,7 @@ from logger import log_utils
 from tasks import app
 from tasks.instances.task_subject_statistics import start_split_subject_stat_task
 
-logger = log_utils.get_logging('task_subject_statistics', 'task_subject_statistics.log')
+logger = log_utils.get_logging('task_subject_statistics')
 app.register_schedule('subject_stat_schedule',
                       'tasks.instances.task_subject_statistics_schedule.start_subject_statistics_schedule',
                       crontab(hour=2, minute=0))

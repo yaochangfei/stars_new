@@ -31,7 +31,7 @@ from wechat import wechat_utils
 from wechat.enums import MINI_APP_STATIC_URL_PREFIX
 from .utils import get_dan_grade_by_index, convert_subject_dimension_dict
 
-logger = log_utils.get_logging('a_game', 'a_game.log')
+logger = log_utils.get_logging('a_game')
 
 
 class AppletGameFightQuestionsGetViewHandler(WechatAppletHandler):

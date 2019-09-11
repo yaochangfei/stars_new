@@ -15,7 +15,7 @@ from tasks import app
 from settings import SITE_ROOT
 from tasks.instances.task_member_statistics_single import start_single_member_statistics
 
-logger = log_utils.get_logging('member_stat_schedule', 'member_stat_schedule.log')
+logger = log_utils.get_logging('member_stat_schedule')
 app.register_schedule('member_stat_schedule',
                       'tasks.instances.task_member_statistics_schedule.start_member_statistics_schedule',
                       crontab(hour=1, minute=30))

@@ -5,7 +5,7 @@
 from logger import log_utils
 from tasks import app
 
-logger = log_utils.get_logging('task_lottery', 'task_lottery')
+logger = log_utils.get_logging('task_lottery')
 
 
 @app.task(bind=True, queue='task_distribute_reaward')

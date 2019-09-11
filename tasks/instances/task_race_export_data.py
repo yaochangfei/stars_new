@@ -11,7 +11,7 @@ from settings import SITE_ROOT
 from tasks import app
 from tasks.utils import write_sheet_enter_data, write_sheet_daily_increase_people
 
-logger = log_utils.get_logging('task_race_export_data', 'task_race_export_data.log')
+logger = log_utils.get_logging('task_race_export_data')
 
 
 @app.task(bind=True, queue='race_export_data')

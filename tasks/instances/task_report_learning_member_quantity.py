@@ -19,7 +19,7 @@ from tasks import app
 from tasks.instances.utils import early_warning, early_warning_empty
 from tasks.utils import save_cache_condition, get_yesterday, get_merge_city_data
 
-logger = log_utils.get_logging('task_report_learning_member_quantity', 'task_report_learning_member_quantity.log')
+logger = log_utils.get_logging('task_report_learning_member_quantity')
 
 
 @app.task(bind=True, queue='member_quantity')

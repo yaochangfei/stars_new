@@ -13,7 +13,7 @@ from pymongo import ReadPreference
 from settings import SKIP_NUM
 from tasks import app
 
-logger = log_utils.get_logging('task_subject_statistics', 'task_subject_statistics.log')
+logger = log_utils.get_logging('task_subject_statistics')
 
 
 @app.task(bind=True, queue='subject_stat_split')

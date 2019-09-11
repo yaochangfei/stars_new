@@ -5,7 +5,7 @@ from initialize.incremental.member_statistic import task_one_day, get_date_range
 from logger import log_utils
 from tasks import app
 
-logger = log_utils.get_logging('member_stat_schedule', 'member_stat_schedule_single.log')
+logger = log_utils.get_logging('member_stat_schedule')
 
 
 @app.task(bind=True, queue='single_member_statistic')

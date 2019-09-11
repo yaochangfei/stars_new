@@ -15,7 +15,7 @@ from settings import STATIC_URL_PREFIX
 from web import WechatAppletHandler, decorators
 from caches.redis_utils import RedisCache
 
-logger = log_utils.get_logging('race', 'race.log')
+logger = log_utils.get_logging('race')
 
 
 class AppletActivityListViewHandler(WechatAppletHandler):

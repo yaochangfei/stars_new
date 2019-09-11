@@ -29,7 +29,7 @@ from tasks.instances.task_update_member_info import update_memberinfo_in_other_c
 from web import WechatAppletHandler, decorators, json
 from wechat import API_CODE_EXCHANGE_SESSION_URL
 
-logger = log_utils.get_logging('a_member', 'a_member.log')
+logger = log_utils.get_logging('a_member')
 
 
 class AppletMemberAuthViewHandler(WechatAppletHandler):

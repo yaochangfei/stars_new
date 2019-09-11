@@ -16,7 +16,7 @@ from enums import KEY_RACE_LOTTERY_RESULT
 from logger import log_utils
 from tasks import app
 
-logger = log_utils.get_logging('task_lottery', 'task_lottery.log')
+logger = log_utils.get_logging('task_lottery')
 
 
 @app.task(bind=True, queue='lottery')

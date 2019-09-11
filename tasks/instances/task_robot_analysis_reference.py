@@ -17,7 +17,7 @@ from tasks import app
 from tasks.config import task_time_limit
 
 logger = log_utils.get_logging(
-    'task_robot_analysis_reference_statistics', 'task_robot_analysis_reference_statistics.log')
+    'task_robot_analysis_reference_statistics')
 
 
 @app.task(bind=True, queue='robot_analysis_reference')

@@ -25,7 +25,7 @@ from pymongo import ReadPreference
 from tasks import app
 from tasks.config import task_time_limit
 
-logger = log_utils.get_logging('task_dashboard_report_statistics', 'task_dashboard_report_statistics.log')
+logger = log_utils.get_logging('task_dashboard_report_statistics')
 
 
 async def start_dashboard_report_statistics(

@@ -24,7 +24,7 @@ from tasks.instances.task_report_learning_member_quantity import early_warning
 from tasks.instances.utils import early_warning_empty
 from tasks.utils import save_cache_condition, get_yesterday
 
-logger = log_utils.get_logging('task_report_learning_situation', 'task_report_learning_situation.log')
+logger = log_utils.get_logging('task_report_learning_situation')
 
 
 @app.task(bind=True, queue='learning_situation')

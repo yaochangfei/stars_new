@@ -31,7 +31,7 @@ from tasks.instances.task_report_subject_parameter import start_statistics_subje
 from web import BaseHandler, decorators
 
 logger = log_utils.get_logging()
-logger_cache = log_utils.get_logging('cache', 'cache.log')
+logger_cache = log_utils.get_logging('cache')
 
 
 class ReportLearningSituationViewHandler(BaseHandler):

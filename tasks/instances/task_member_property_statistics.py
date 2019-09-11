@@ -18,7 +18,7 @@ from logger import log_utils
 from tasks import app
 from tasks.config import task_time_limit
 
-logger = log_utils.get_logging('task_member_property_statistics', 'task_member_property_statistics.log')
+logger = log_utils.get_logging('task_member_property_statistics')
 
 
 async def start_task_member_property_statistics(member: Member, orig_member: Member = None):

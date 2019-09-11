@@ -7,7 +7,7 @@ from db.models import Member, MemberShareStatistics, SubjectWrongViewedStatistic
     RaceMapping
 from logger import log_utils
 
-logger = log_utils.get_logging('task_update_member_info', 'task_update_member_info.log')
+logger = log_utils.get_logging('task_update_member_info')
 
 
 @app.task(bind=True, queue="update_memberinfo_in_other_collections")

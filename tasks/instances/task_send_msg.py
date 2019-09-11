@@ -7,7 +7,7 @@ from logger import log_utils
 from services.msg_service import send_instant_sms
 from tasks import app
 
-logger = log_utils.get_logging('tasks_send_sms', 'tasks_send_sms.log')
+logger = log_utils.get_logging('tasks_send_sms')
 
 
 @app.task(bind=True, queue='send_msg')

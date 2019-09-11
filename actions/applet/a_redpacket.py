@@ -31,7 +31,7 @@ from tasks.instances.task_lottery_queuing import start_lottery_queuing
 from tornado.web import url
 from web import WechatAppletHandler, decorators
 
-logger = log_utils.get_logging('a_redpacket', 'a_redpacket.log')
+logger = log_utils.get_logging('a_redpacket')
 
 
 class AppletLotteryTurntableGet(WechatAppletHandler):

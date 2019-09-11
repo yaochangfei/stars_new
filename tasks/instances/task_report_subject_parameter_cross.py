@@ -18,7 +18,7 @@ from tasks.instances.task_report_learning_member_quantity import early_warning
 from tasks.instances.utils import early_warning_empty
 from tasks.utils import save_cache_condition, get_yesterday
 
-logger = log_utils.get_logging('task_report_subject_parameter_cross', 'task_report_subject_parameter_cross.log')
+logger = log_utils.get_logging('task_report_subject_parameter_cross')
 
 
 @app.task(bind=True, queue='subject_dimension_cross')

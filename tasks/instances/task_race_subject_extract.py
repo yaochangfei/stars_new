@@ -18,7 +18,7 @@ from logger import log_utils
 from motorengine.stages import MatchStage, LookupStage
 from tasks import app
 
-logger = log_utils.get_logging('task_race_subject_choice', 'task_race_subject_choice.log')
+logger = log_utils.get_logging('task_race_subject_choice')
 
 
 @app.task(bind=True, queue='race_subject_extract')

@@ -33,7 +33,7 @@ from tasks.instances.task_report_subject_parameter_radar import start_statistics
 from tasks.instances.task_subject_statistics import start_split_subject_stat_task
 from web import BaseHandler, decorators
 
-logger = log_utils.get_logging('subject_analysis', 'subject_analysis.log')
+logger = log_utils.get_logging('subject_analysis')
 
 
 class SubjectAnalysisListViewHandler(BaseHandler):

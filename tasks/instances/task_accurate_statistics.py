@@ -18,7 +18,7 @@ from logger import log_utils
 from tasks import app
 from tasks.config import task_time_limit
 
-logger = log_utils.get_logging('task_accurate_statistics', 'task_accurate_statistics.log')
+logger = log_utils.get_logging('task_accurate_statistics')
 
 
 @app.task(bind=True, queue='accurate_statistics')
