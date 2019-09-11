@@ -157,6 +157,7 @@ class TvsDetailGetViewHandler(WechatAppletHandler):
                         r_dict['my_collect'] = 1
                     else:
                         r_dict['my_collect'] = 0
+                    tv.stage_photo = [k['img_url'] for k in tv.stage_photo] if tv.stage_photo else []
                     r_dict['tv'] = tv
                     r_dict['s_type'] = 'tv'
                     r_dict['code'] = 1000

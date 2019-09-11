@@ -304,6 +304,7 @@ class FilmsDetailGetViewHandler(WechatAppletHandler):
                         r_dict['my_collect'] = 1
                     else:
                         r_dict['my_collect'] = 0
+                    film.stage_photo=[k['img_url'] for k in film.stage_photo] if film.stage_photo else []
                     r_dict['film'] = film
                     r_dict['s_type'] = 'film'
                     r_dict['code'] = 1000
