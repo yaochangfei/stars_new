@@ -356,8 +356,9 @@ class SourceSearchGetViewHandler(WechatAppletHandler):
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
-                    'pic_url': film.stage_photo if film.stage_photo else film.pic_url,
-                    's_type': 'film'
+                    'pic_url': film.pic_url,
+                    's_type': 'film',
+                    'stage_photo': [k['img_url'] for k in film.stage_photo][0:4] if film.stage_photo else []
                 })
             r_dict['films'] = new_films
             r_dict['films_count'] = films_count
@@ -368,8 +369,9 @@ class SourceSearchGetViewHandler(WechatAppletHandler):
                 new_tvs.append({
                     'id': str(tv.id),
                     'name': tv.name,
-                    'pic_url': tv.stage_photo if tv.stage_photo else tv.pic_url,
-                    's_type': 'tv'
+                    'pic_url': tv.pic_url,
+                    's_type': 'tv',
+                    'stage_photo': [k['img_url'] for k in tv.stage_photo][0:4] if tv.stage_photo else []
                 })
             r_dict['tvs'] = new_tvs
             r_dict['tvs_count'] = tvs_count
@@ -445,7 +447,7 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                 new_films.append({
                     'id': str(film.id),
                     'name': film.name,
-                    'pic_url': film.stage_photo if film.stage_photo else film.pic_url,
+                    'pic_url': film.pic_url,
                     'db_mark': film.db_mark,
                     'actor': film.actor,
                     'label': api_utils.get_show_source_label(film),
@@ -453,7 +455,8 @@ class FilmsPersonalRecommendGetViewHandler(WechatAppletHandler):
                     'release_time': film.release_time.strftime('%Y-%m-%d'),
                     'articulation': api_utils.get_show_source_articulation(film),
                     'recommend_info': film.recommend_info if film.recommend_info else '这部神片值得一看。',
-                    's_type': 'film'
+                    's_type': 'film',
+                    'stage_photo': [k['img_url'] for k in film.stage_photo][0:4] if film.stage_photo else []
                 })
             r_dict['films'] = new_films
             if id_list:
@@ -779,7 +782,8 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
                     new_films.append({
                         'id': str(film.id),
                         'name': film.name,
-                        'pic_url': film.stage_photo if film.stage_photo else film.pic_url,
+                        'pic_url': film.pic_url,
+                        'stage_photo': [k['img_url'] for k in film.stage_photo][0:4] if film.stage_photo else [],
                         's_type': 'film',
                         'label': api_utils.get_show_source_label(film),
                         'articulation': api_utils.get_show_source_articulation(film),
@@ -797,7 +801,8 @@ class SourceMoreSearchGetViewHandler(WechatAppletHandler):
                     new_tvs.append({
                         'id': str(tv.id),
                         'name': tv.name,
-                        'pic_url': tv.stage_photo if tv.stage_photo else tv.pic_url,
+                        'pic_url': tv.pic_url,
+                        'stage_photo': [k['img_url'] for k in tv.stage_photo][0:4] if tv.stage_photo else [],
                         's_type': 'tv',
                         'label': api_utils.get_show_source_label(tv),
                         'articulation': api_utils.get_show_source_articulation(tv),

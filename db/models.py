@@ -1575,7 +1575,7 @@ class Tvs(BaseModel):
     banner_pic = StringField()  #
     banner_status = IntegerField(choice=TV_STATUS_LIST, default=TV_STATUS_INACTIVE)  # 状态（是否有效）
     recommend_info = StringField()  # 星友推荐
-    stage_photo = StringField()  # 剧照
+    stage_photo = ListField()  # 剧照
     _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label']
 
 
@@ -1606,7 +1606,7 @@ class Films(BaseModel):
     banner_pic = StringField()  #
     banner_status = IntegerField(choice=FILM_STATUS_LIST, default=FILM_STATUS_INACTIVE)  # 状态（是否有效）
     recommend_info = StringField()  # 星友推荐
-    stage_photo = StringField()  # 剧照
+    stage_photo = ListField()  # 剧照
     _indexes = ['name', 'area', 'language', 'year', 'director', 'actor', 'label', 'status', 'banner_status', 'db_mark',
                 'release_time']
 

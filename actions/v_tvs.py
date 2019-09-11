@@ -205,7 +205,8 @@ class TvsPersonalRecommendGetViewHandler(WechatAppletHandler):
                 new_tvs.append({
                     'id': str(tv.id),
                     'name': tv.name,
-                    'pic_url': tv.stage_photo if tv.stage_photo else tv.pic_url,
+                    'pic_url': tv.pic_url,
+                    'stage_photo': [k['img_url'] for k in tv.stage_photo][0:4] if tv.stage_photo else [],
                     'db_mark': tv.db_mark,
                     'actor': tv.actor,
                     'label': api_utils.get_show_source_label(tv),
