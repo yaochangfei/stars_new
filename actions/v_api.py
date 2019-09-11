@@ -908,8 +908,7 @@ class MyCollectDeleteViewHandler(WechatAppletHandler):
                     for source_id in source_ids:
                         update_requests.append(UpdateOne({'member_cid': member_cid, 'source_id': source_id},
                                                          {'$set': {'status': COLLECTION_STATUS_INACTIVE,
-                                                                   'updated_dt': datetime.datetime.now(),
-                                                                   'updated_id': self.current_user.oid}}))
+                                                                   'updated_dt': datetime.datetime.now()}}))
                     if update_requests:
                         await MyCollection.update_many(update_requests)
                         r_dict['code'] = 1000
